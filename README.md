@@ -12,3 +12,17 @@
 ![Stars](https://img.shields.io/github/stars/joeaoregan/TUS-26-Dissertation-Cloud-Native-Image-Deduplication?style=social)
 
 A multi-stage, cascading image deduplication pipeline designed to identify exact file duplicates alongside visually similar, compressed, or resized media variations.
+
+---
+
+## Setup
+
+1. Initialise and Active Virtual Environment
+
+```bash
+# Create the virtual environment (run once)
+python -m venv venv
+
+# Activate the environment (Windows Git Bash)
+source venv/Scripts/activate
+```
