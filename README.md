@@ -15,6 +15,18 @@ A multi-stage, cascading image deduplication pipeline designed to identify exact
 
 ---
 
+## Structure
+
+```text
+.
+├── core-engine/
+│   ├── requirements.txt         # Python dependencies (Pillow, ImageHash)
+│   └── utils/
+│       ├── dedupe_exact.py      # Stage 1: Cryptographic byte-level verification
+│       └── dedupe_perceptual.py # Stage 2: Perceptual structural matching
+└── dedupe_test/                 # Evaluation testing dataset
+```
+
 ## Setup
 
 1. Initialise and Active Virtual Environment
@@ -25,4 +37,25 @@ python -m venv venv
 
 # Activate the environment (Windows Git Bash)
 source venv/Scripts/activate
+```
+
+## Requirements
+
+```bash
+# Install dependencies from the requirements file
+pip install -r core-engine/requirements.txt
+```
+
+## Run Stage Execution
+
+1. Exact Byte-Level Deduplication (SHA-256)
+This script performs rapid cryptographic verification at the binary level. It catches exact copies but misses modified file formats or compressed streams due to the avalanche effect.
+
+```bash
+python core-engine/utils/dedupe_exact.py dedupe_test
+```
+2. Perceptual Image Hashing (pHash)
+This script calculates structural visual fingerprints to identify near-duplicates (e.g., format shifts, resizing, compression noise) by computing bitwise Hamming Distances.
+```bash
+python core-engine/utils/dedupe_perceptual.py dedupe_test
 ```
