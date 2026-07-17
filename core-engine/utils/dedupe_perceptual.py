@@ -2,6 +2,9 @@ from pathlib import Path
 import sys
 from PIL import Image
 import imagehash
+from colorama import Fore, init
+
+init(autoreset=True) # colorama: auto clear colours after printing
 
 # Supported cloud-native media file extensions
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
@@ -23,7 +26,7 @@ def find_perceptual_duplicates(folder: Path, threshold: int = 5):
                     phash_value = imagehash.phash(img)
                     hashes[path] = phash_value
             except Exception as e:
-                print(f"Could not process image {path}: {e}")
+                print(f"{Fore.RED}Could not process image {path}: {e}")
 
     duplicates_found = []
     processed_paths = list(hashes.keys())
@@ -45,27 +48,27 @@ def find_perceptual_duplicates(folder: Path, threshold: int = 5):
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python dedupe_perceptual.py <folder>")
+        print(f"{Fore.YELLOW}Usage: python dedupe_perceptual.py <folder>")
         sys.exit(1)
 
     folder = Path(sys.argv[1])
 
     if not folder.exists() or not folder.is_dir():
-        print(f"Invalid folder: {folder}")
+        print(f"{Fore.RED}Invalid folder: {folder}")
         sys.exit(1)
 
-    print("Scanning folder for perceptual/compressed duplicates...")
+    print(f"{Fore.GREEN}Scanning folder for perceptual/compressed duplicates...")
     similar_images = find_perceptual_duplicates(folder)
 
     if not similar_images:
-        print("No visually similar images found.")
+        print(f"{Fore.RED}No visually similar images found.")
         return
 
-    print(f"\nFound {len(similar_images)} pairs of visually similar images:\n")
+    print(f"\n{Fore.GREEN}Found {len(similar_images)} pairs of visually similar images:\n")
     for p1, p2, dist in similar_images:
-        print(f"Hamming Distance: {dist}")
-        print(f"  - {p1}")
-        print(f"  - {p2}")
+        print(f"{Fore.YELLOW}Hamming Distance: {dist}")
+        print(f"  - {Fore.GREEN}{p1}")
+        print(f"  - {Fore.GREEN}{p2}")
         print()
 
 if __name__ == "__main__":
