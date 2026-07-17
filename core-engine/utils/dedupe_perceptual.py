@@ -9,6 +9,7 @@ init(autoreset=True) # colorama: auto clear colours after printing
 # Supported cloud-native media file extensions
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 
+
 def find_perceptual_duplicates(folder: Path, threshold: int = 5):
     """
     Scans a folder structure to identify visually similar or near-duplicate
@@ -46,6 +47,34 @@ def find_perceptual_duplicates(folder: Path, threshold: int = 5):
 
     return duplicates_found
 
+
+def print_perceptual_summary(similar_images: list):
+    """Prints a styled, colorized summary of visually similar image groups."""
+    print(f"{Fore.GREEN}Found {len(similar_images)} pairs of visually similar images:\n")
+    
+    unique_duplicates = set()
+    total_wasted_bytes = 0
+
+    for p1, p2, distance in similar_images:
+        print(f"Hamming Distance: {Fore.CYAN}{distance}")
+        print(f"  - {Fore.GREEN}{p1}")
+        print(f"  - {Fore.GREEN}{p2}")
+        print()
+        
+        # Track unique duplicate files (assuming the second file is the redundant copy)
+        if p2 not in unique_duplicates:
+            unique_duplicates.add(p2)
+            total_wasted_bytes += p2.stat().st_size
+
+    # Convert bytes to megabytes and kilobytes
+    wasted_kb = total_wasted_bytes / 1024
+    wasted_mb = wasted_kb / 1024
+
+    print(f"{Fore.YELLOW}Summary of Wasted Storage:")
+    print(f"  - Redundant Files Identified: {Fore.CYAN}{len(unique_duplicates)}")
+    print(f"  - Estimated Wasted Space:     {Fore.CYAN}{wasted_mb:.2f} MB ({wasted_kb:.1f} KB)\n")
+
+
 def main():
     if len(sys.argv) != 2:
         print(f"{Fore.YELLOW}Usage: python dedupe_perceptual.py <folder>")
@@ -64,12 +93,8 @@ def main():
         print(f"{Fore.RED}No visually similar images found.")
         return
 
-    print(f"\n{Fore.GREEN}Found {len(similar_images)} pairs of visually similar images:\n")
-    for p1, p2, dist in similar_images:
-        print(f"{Fore.YELLOW}Hamming Distance: {dist}")
-        print(f"  - {Fore.GREEN}{p1}")
-        print(f"  - {Fore.GREEN}{p2}")
-        print()
+    print_perceptual_summary(similar_images)
+
 
 if __name__ == "__main__":
     main()
