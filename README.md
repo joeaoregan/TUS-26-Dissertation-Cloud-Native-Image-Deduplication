@@ -18,10 +18,11 @@ A multi-stage, cascading image deduplication pipeline designed to identify exact
 ## Structure
 
 ```text
-.
 ├── core-engine/
-│   ├── requirements.txt         # Python dependencies (Pillow, ImageHash)
+│   ├── pipeline.py              # Cascading Hybrid Entry Point
+│   ├── requirements.txt         # Python dependencies (Pillow, ImageHash, colorama)
 │   └── utils/
+│       ├── __init__.py          # Python package marker file
 │       ├── dedupe_exact.py      # Stage 1: Cryptographic byte-level verification
 │       └── dedupe_perceptual.py # Stage 2: Perceptual structural matching
 └── dedupe_test/                 # Evaluation testing dataset
@@ -42,7 +43,7 @@ source venv/Scripts/activate
 ## Requirements
 
 ```bash
-# Install dependencies from the requirements file
+# Install core dependencies (Pillow, ImageHash, and colorama)
 pip install -r core-engine/requirements.txt
 ```
 
@@ -59,3 +60,13 @@ This script calculates structural visual fingerprints to identify near-duplicate
 ```bash
 python core-engine/utils/dedupe_perceptual.py dedupe_test
 ```
+
+## Running the Hybrid Cascading Pipeline
+
+The unified hybrid execution combines both modules to optimise compute times. It runs exact byte-matching first, and then executes visual analysis only on unique candidates to minimise heavy processing.
+
+Because of relative utility package imports, you must change directories to `core-engine/` before executing the pipeline:
+
+```bash
+cd core-engine
+python pipeline.py ../dedupe_test
