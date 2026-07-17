@@ -10,6 +10,30 @@ init(autoreset=True) # colorama: auto clear colours after printing
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 
 
+def compare_perceptual_hashes(hashes: dict, threshold: int = 5) -> list:
+    """
+    Compares a dictionary of {Path: imagehash} values using bitwise Hamming Distance
+    to identify visually similar image pairs below the specified threshold.
+    """
+    duplicates_found = []
+    processed_paths = list(hashes.keys())
+
+    # Compare calculated hashes using bitwise Hamming Distance
+    for i in range(len(processed_paths)):
+        for j in range(i + 1, len(processed_paths)):
+            path1 = processed_paths[i]
+            path2 = processed_paths[j]
+            
+            # Subtracting imagehashes calculates the visual distance matrix
+            distance = hashes[path1] - hashes[path2]
+            
+            # A threshold between 5 and 10 catches resized and compressed versions
+            if distance <= threshold:
+                duplicates_found.append((path1, path2, distance))
+
+    return duplicates_found
+
+
 def find_perceptual_duplicates(folder: Path, threshold: int = 5):
     """
     Scans a folder structure to identify visually similar or near-duplicate
@@ -32,24 +56,12 @@ def find_perceptual_duplicates(folder: Path, threshold: int = 5):
     duplicates_found = []
     processed_paths = list(hashes.keys())
 
-    # Compare calculated hashes using bitwise Hamming Distance
-    for i in range(len(processed_paths)):
-        for j in range(i + 1, len(processed_paths)):
-            path1 = processed_paths[i]
-            path2 = processed_paths[j]
-            
-            # Subtracting imagehashes calculates the visual distance matrix
-            distance = hashes[path1] - hashes[path2]
-            
-            # A threshold between 5 and 10 catches resized and compressed versions
-            if distance <= threshold:
-                duplicates_found.append((path1, path2, distance))
-
-    return duplicates_found
+    # Shared comparison helper function to identify visually similar pairs
+    return compare_perceptual_hashes(hashes, threshold)
 
 
 def print_perceptual_summary(similar_images: list):
-    """Prints a styled, colorized summary of visually similar image groups."""
+    """Prints a styled, coloured summary of visually similar image groups."""
     print(f"{Fore.GREEN}Found {len(similar_images)} pairs of visually similar images:\n")
     
     unique_duplicates = set()
