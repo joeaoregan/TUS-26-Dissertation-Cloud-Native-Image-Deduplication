@@ -4,9 +4,9 @@ from PIL import Image
 import imagehash
 from colorama import Fore, init
 
-# Import working utility functions directly
-from utils.dedupe_exact import file_hash
-from utils.dedupe_perceptual import IMAGE_EXTENSIONS, compare_perceptual_hashes
+# Import working utility functions relative to the core_engine package
+from core_engine.utils.dedupe_exact import file_hash
+from core_engine.utils.dedupe_perceptual import IMAGE_EXTENSIONS, compare_perceptual_hashes
 
 init(autoreset=True) # colorama: auto clear colours after printing
 

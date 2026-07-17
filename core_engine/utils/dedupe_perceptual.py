@@ -53,9 +53,6 @@ def find_perceptual_duplicates(folder: Path, threshold: int = 5):
             except Exception as e:
                 print(f"{Fore.RED}Could not process image {path}: {e}")
 
-    duplicates_found = []
-    processed_paths = list(hashes.keys())
-
     # Shared comparison helper function to identify visually similar pairs
     return compare_perceptual_hashes(hashes, threshold)
 

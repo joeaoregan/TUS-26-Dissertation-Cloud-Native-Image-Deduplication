@@ -33,7 +33,7 @@ def find_duplicates(folder: Path):
 
 
 def print_duplicate_summary(duplicates: dict):
-    """Calculates storage metrics and prints a colored summary of duplicate files."""
+    """Calculates storage metrics and prints a summary of duplicate files."""
     print(f"{Fore.GREEN}Exact duplicates found:\n")
     
     total_redundant_files = 0

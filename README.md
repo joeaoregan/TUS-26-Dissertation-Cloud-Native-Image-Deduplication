@@ -18,7 +18,7 @@ A multi-stage, cascading image deduplication pipeline designed to identify exact
 ## Structure
 
 ```text
-├── core-engine/
+├── core_engine/
 │   ├── pipeline.py              # Cascading Hybrid Entry Point
 │   ├── requirements.txt         # Python dependencies (Pillow, ImageHash, colorama)
 │   └── utils/
@@ -53,20 +53,21 @@ pip install -r core-engine/requirements.txt
 This script performs rapid cryptographic verification at the binary level. It catches exact copies but misses modified file formats or compressed streams due to the avalanche effect.
 
 ```bash
-python core-engine/utils/dedupe_exact.py dedupe_test
+python core_engine/utils/dedupe_exact.py dedupe_test
 ```
 2. Perceptual Image Hashing (pHash)
 This script calculates structural visual fingerprints to identify near-duplicates (e.g., format shifts, resizing, compression noise) by computing bitwise Hamming Distances.
+
 ```bash
-python core-engine/utils/dedupe_perceptual.py dedupe_test
+python core_engine/utils/dedupe_perceptual.py dedupe_test
 ```
 
 ## Running the Hybrid Cascading Pipeline
 
 The unified hybrid execution combines both modules to optimise compute times. It runs exact byte-matching first, and then executes visual analysis only on unique candidates to minimise heavy processing.
 
-Because of relative utility package imports, you must change directories to `core-engine/` before executing the pipeline:
+You can execute the entire pipeline directly from your main project root directory:
 
 ```bash
-cd core-engine
-python pipeline.py ../dedupe_test
+python -m core_engine.pipeline dedupe_test
+```
