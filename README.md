@@ -25,6 +25,7 @@ A multi-stage, cascading image deduplication pipeline designed to identify exact
 │       ├── __init__.py          # Python package marker file
 │       ├── dedupe_exact.py      # Stage 1: Cryptographic byte-level verification
 │       └── dedupe_perceptual.py # Stage 2: Perceptual structural matching
+│       └── dedupe_ssim.py       # Stage 3: Fine Structural Similarity (SSIM) verification
 └── dedupe_test/                 # Evaluation testing dataset
 ```
 
@@ -44,7 +45,7 @@ source venv/Scripts/activate
 
 ```bash
 # Install core dependencies (Pillow, ImageHash, and colorama)
-pip install -r core-engine/requirements.txt
+pip install -r core_engine/requirements.txt
 ```
 
 ## Run Stage Execution
@@ -62,9 +63,16 @@ This script calculates structural visual fingerprints to identify near-duplicate
 python core_engine/utils/dedupe_perceptual.py dedupe_test
 ```
 
+3. Structural Similarity Index Measure (SSIM) Verification
+This script performs fine-grained structural comparison between two candidate image paths to output a similarity score (-1.0 to 1.0).
+
+```bash
+python -m core_engine.utils.dedupe_ssim "dedupe_test/me.jpg" "dedupe_test/me - Copy.jpg"
+```
+
 ## Running the Hybrid Cascading Pipeline
 
-The unified hybrid execution combines both modules to optimise compute times. It runs exact byte-matching first, and then executes visual analysis only on unique candidates to minimise heavy processing.
+The unified hybrid execution combines all three modules to optimize compute performance. It runs SHA-256 byte-matching first, evaluates pHash visual candidates on unique media, and applies an SSIM verification gate to confirm high-confidence visual matches.
 
 You can execute the entire pipeline directly from your main project root directory:
 
