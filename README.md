@@ -5,6 +5,7 @@
 ![Topic](https://img.shields.io/badge/Topic-Perceptual%20Image%20Deduplication-yellow?style=flat-square)
 
 [![Python Version](https://img.shields.io/badge/Python-3.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
+![pytest](https://img.shields.io/badge/pytest-passing-brightgreen?style=flat-square&logo=pytest)
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/joeaoregan/TUS-26-Dissertation-Cloud-Native-Image-Deduplication?color=orange)
 ![GitHub last commit](https://img.shields.io/github/last-commit/joeaoregan/TUS-26-Dissertation-Cloud-Native-Image-Deduplication?color=blue)
@@ -79,3 +80,19 @@ You can execute the entire pipeline directly from your main project root directo
 ```bash
 python -m core_engine.pipeline dedupe_test
 ```
+
+## Testing
+
+The project includes a `pytest` unit and integration test suite covering all deduplication stages and edge cases.
+
+### Run All Tests
+To execute the full test suite, run from the repository root:
+
+* Run standard tests: `pytest`
+* Run with verbose output: `pytest -v`
+
+### Test Suite Structure
+* **`tests/test_dedupe_exact.py`** – Stage 1 SHA-256 exact byte-hashing tests.
+* **`tests/test_dedupe_perceptual.py`** – Stage 2 pHash perceptual matching tests.
+* **`tests/test_dedupe_ssim.py`** – Stage 3 SSIM structural similarity tests.
+* **`tests/test_pipeline.py`** – End-to-end cascading pipeline integration tests.
