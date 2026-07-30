@@ -5,12 +5,14 @@ import imagehash
 from colorama import Fore, init
 
 # Import working utility functions relative to the core_engine package
-from core_engine.utils.dedupe_exact import file_hash
-from core_engine.utils.dedupe_perceptual import IMAGE_EXTENSIONS, compare_perceptual_hashes
+from core_engine.utils.dedupe_exact import file_hash # Stage 1: Exact Byte-Level Check
+from core_engine.utils.dedupe_perceptual import IMAGE_EXTENSIONS, compare_perceptual_hashes # Stage 2: Perceptual Hashing Check
+from core_engine.utils.dedupe_ssim import calculate_ssim # Stage 3: Structural Similarity Index Measure (SSIM) Check
 
 init(autoreset=True) # colorama: auto clear colours after printing
 
-def print_pipeline_summary(exact_groups: dict, perceptual_pairs: list):
+
+def print_pipeline_summary(exact_groups: dict, ssim_matches: list):
     """Prints a styled, colourised summary of the hybrid cascading results."""
     print(f"\n{Fore.GREEN}=== CASCADING PIPELINE RESULTS ===\n")
 
@@ -37,15 +39,15 @@ def print_pipeline_summary(exact_groups: dict, perceptual_pairs: list):
 
     print()
 
-    # 2. Report Stage 2: Perceptual Matches
-    print(f"{Fore.YELLOW}Stage 2: Visual Near-Matches (pHash)")
-    if not perceptual_pairs:
+    # 2. Report Stage 2 (Perceptual Matches) & 3 (SSIM-Verified Visual Matches)
+    print(f"{Fore.YELLOW}Stage 2 & 3: Visual Near-Matches (pHash + SSIM Verification)")
+    if not ssim_matches:
         print("  No visually similar image shifts detected.")
     else:
-        for p1, p2, dist in perceptual_pairs:
-            print(f"  Hamming Distance: {Fore.CYAN}{dist}")
-            print(f"    - {Fore.GREEN}{p1}")
-            print(f"    - {Fore.GREEN}{p2}")
+        for p1, p2, dist, score in ssim_matches: # Unpack SSIM core
+            print(f"  Match: {Fore.GREEN}{p1.name} <-> {p2.name}")
+            print(f"    - Hamming Distance: {Fore.CYAN}{dist}")
+            print(f"    - SSIM Score:       {Fore.CYAN}{score:.4f}")
             
             if p2 not in tracked_duplicates:
                 tracked_duplicates.add(p2)
@@ -62,7 +64,8 @@ def print_pipeline_summary(exact_groups: dict, perceptual_pairs: list):
     print(f"  - Redundant Files Identified: {Fore.CYAN}{total_redundant_files}")
     print(f"  - Estimated Wasted Space:     {Fore.CYAN}{wasted_mb:.2f} MB ({wasted_kb:.1f} KB)\n")
 
-def run_pipeline(folder: Path, phash_threshold: int = 5):
+
+def run_pipeline(folder: Path, phash_threshold: int = 5, ssim_threshold: float = 0.80):
     """Executes the cascading deduplication check."""
     print(f"Scanning '{folder}' using cascading hybrid logic...\n")
     
@@ -90,15 +93,22 @@ def run_pipeline(folder: Path, phash_threshold: int = 5):
             except Exception as e:
                 print(f"{Fore.RED}Error processing visual hash for {path}: {e}")
 
-    # Used the imported, shared comparison helper function
     perceptual_pairs = compare_perceptual_hashes(perceptual_hashes, phash_threshold)
 
+    # --- STAGE 3: Structural Similarity Index (SSIM) Gate
+    ssim_matches = []
+    for p1, p2, dist in perceptual_pairs:
+        score = calculate_ssim(p1, p2)
+        if score >= ssim_threshold:
+            ssim_matches.append((p1, p2, dist, score))
+
     # Output combined summary
-    print_pipeline_summary(exact_groups, perceptual_pairs)
+    print_pipeline_summary(exact_groups, ssim_matches)
+
 
 def main():
     if len(sys.argv) != 2:
-        print(f"{Fore.YELLOW}Usage: python pipeline.py <folder>")
+        print(f"{Fore.YELLOW}Usage: python -m core_engine.pipeline <folder>")
         sys.exit(1)
 
     folder = Path(sys.argv[1])
@@ -107,6 +117,7 @@ def main():
         sys.exit(1)
 
     run_pipeline(folder)
+
 
 if __name__ == "__main__":
     main()
