@@ -4,8 +4,11 @@
 ![Module](https://img.shields.io/badge/Module-Dissertation-blue?style=flat-square)
 ![Topic](https://img.shields.io/badge/Topic-Perceptual%20Image%20Deduplication-yellow?style=flat-square)
 
+![testing](https://img.shields.io/badge/testing-pytest-blue?style=flat-square&logo=pytest)
+![benchmarks](https://img.shields.io/badge/benchmarks-included-blue?style=flat-square&logo=speedtest)
+
 [![Python Version](https://img.shields.io/badge/Python-3.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
-![pytest](https://img.shields.io/badge/pytest-passing-brightgreen?style=flat-square&logo=pytest)
+![pytest](https://img.shields.io/badge/pytest-passing-brightgreen?logo=pytest)
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/joeaoregan/TUS-26-Dissertation-Cloud-Native-Image-Deduplication?color=orange)
 ![GitHub last commit](https://img.shields.io/github/last-commit/joeaoregan/TUS-26-Dissertation-Cloud-Native-Image-Deduplication?color=blue)
@@ -96,3 +99,27 @@ To execute the full test suite, run from the repository root:
 * **`tests/test_dedupe_perceptual.py`** – Stage 2 pHash perceptual matching tests.
 * **`tests/test_dedupe_ssim.py`** – Stage 3 SSIM structural similarity tests.
 * **`tests/test_pipeline.py`** – End-to-end cascading pipeline integration tests.
+
+## Performance Benchmarking
+
+The project includes an empirical benchmarking module to profile execution timing and peak memory usage across all three deduplication stages.
+
+### Run Benchmarks
+To run the performance benchmark and generate a metric report:
+
+* Execute script: `python -m benchmarks.benchmark_pipeline`
+
+### Output Metrics
+Results are automatically exported to `benchmarks/results.json` containing:
+* Execution duration (in milliseconds) per stage.
+* Peak memory allocation (in MB) tracked via `tracemalloc`.
+* Total cascading pipeline elapsed time.
+
+### Benchmark Baseline (`dedupe_test`)
+
+| Stage | Algorithm | Execution Time | Peak Memory | Output |
+| :--- | :--- | :---: | :---: | :---: |
+| **Stage 1** | SHA-256 Hashing | 2.22 ms | 1.75 MB | Filtered exact copies |
+| **Stage 2** | Perceptual Hash (pHash) | 103.18 ms | 1.49 MB | 4 candidate pairs |
+| **Stage 3** | SSIM Verification | 83.16 ms | 11.86 MB | 2 verified duplicates |
+| **Total** | **Cascading Pipeline** | **188.56 ms** | — | — |
