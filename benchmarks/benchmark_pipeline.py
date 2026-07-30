@@ -1,3 +1,4 @@
+import json
 import time
 import tracemalloc
 from pathlib import Path
@@ -24,15 +25,19 @@ def measure_stage_execution(func, *args, **kwargs):
     return result, elapsed_time, peak_mem_mb
 
 
-def run_benchmark(dataset_dir: Path):
-    """Executes performance benchmark on standard test directory."""
+def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/results.json")):
+    """Executes performance benchmark on standard test directory and exports JSON metrics."""
     print(f"\n--- Running Benchmark on: {dataset_dir} ---")
     
     # Collect valid images
     images = [p for p in dataset_dir.rglob("*") if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS]
     print(f"Total target images found: {len(images)}")
 
-    metrics = {}
+    metrics = {
+        "dataset": str(dataset_dir),
+        "total_images": len(images),
+        "stages": {}
+    }
 
     # -------------------------------------------------------------
     # Stage 1: Exact Byte Matching (SHA-256)
@@ -45,7 +50,7 @@ def run_benchmark(dataset_dir: Path):
         return hashes
 
     _, s1_time, s1_mem = measure_stage_execution(stage1_work)
-    metrics["stage1_sha256"] = {"time_ms": round(s1_time, 2), "peak_ram_mb": round(s1_mem, 4)}
+    metrics["stages"]["stage1_sha256"] = {"time_ms": round(s1_time, 2), "peak_ram_mb": round(s1_mem, 4)}
     print(f"Stage 1 (SHA-256): {s1_time:.2f} ms | Peak RAM: {s1_mem:.4f} MB")
 
     # -------------------------------------------------------------
@@ -59,7 +64,11 @@ def run_benchmark(dataset_dir: Path):
         return compare_perceptual_hashes(phash_dict, threshold=5)
 
     candidates, s2_time, s2_mem = measure_stage_execution(stage2_work)
-    metrics["stage2_phash"] = {"time_ms": round(s2_time, 2), "peak_ram_mb": round(s2_mem, 4)}
+    metrics["stages"]["stage2_phash"] = {
+        "time_ms": round(s2_time, 2),
+        "peak_ram_mb": round(s2_mem, 4),
+        "candidate_pairs": len(candidates)
+    }
     print(f"Stage 2 (pHash):  {s2_time:.2f} ms | Peak RAM: {s2_mem:.4f} MB | Candidates: {len(candidates)}")
 
     # -------------------------------------------------------------
@@ -74,11 +83,23 @@ def run_benchmark(dataset_dir: Path):
         return ssim_results
 
     verified, s3_time, s3_mem = measure_stage_execution(stage3_work)
-    metrics["stage3_ssim"] = {"time_ms": round(s3_time, 2), "peak_ram_mb": round(s3_mem, 4)}
+    metrics["stages"]["stage3_ssim"] = {
+        "time_ms": round(s3_time, 2),
+        "peak_ram_mb": round(s3_mem, 4),
+        "verified_pairs": len(verified)
+    }
     print(f"Stage 3 (SSIM):   {s3_time:.2f} ms | Peak RAM: {s3_mem:.4f} MB | Verified Pairs: {len(verified)}")
 
     total_time = s1_time + s2_time + s3_time
+    metrics["total_pipeline_time_ms"] = round(total_time, 2)
     print(f"\nTotal Cascading Pipeline Time: {total_time:.2f} ms")
+
+    # Export metrics to JSON
+    output_json.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_json, "w") as f:
+        json.dump(metrics, f, indent=4)
+    print(f"Benchmark report successfully exported to: {output_json}")
+
     return metrics
 
 

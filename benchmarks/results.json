@@ -1,0 +1,21 @@
+{
+    "dataset": "dedupe_test",
+    "total_images": 5,
+    "stages": {
+        "stage1_sha256": {
+            "time_ms": 2.22,
+            "peak_ram_mb": 1.754
+        },
+        "stage2_phash": {
+            "time_ms": 103.18,
+            "peak_ram_mb": 1.4915,
+            "candidate_pairs": 4
+        },
+        "stage3_ssim": {
+            "time_ms": 83.16,
+            "peak_ram_mb": 11.8575,
+            "verified_pairs": 2
+        }
+    },
+    "total_pipeline_time_ms": 188.56
+}
