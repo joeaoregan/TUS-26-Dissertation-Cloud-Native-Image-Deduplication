@@ -9,6 +9,8 @@ from core_engine.utils.dedupe_ssim import calculate_ssim
 from PIL import Image
 import imagehash
 from datetime import datetime
+from colorama import Fore, Style, init
+init(autoreset=True)
 
 
 WARMUP_RUNS = 1
@@ -68,10 +70,10 @@ def summarise(values):
 
 
 def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/results.json"), timestamp_output: bool = True):
-    print(f"\n--- Running Benchmark on: {dataset_dir} ---")
+    print(f"\n{Fore.GREEN}--- Running Benchmark on: {Fore.CYAN}{dataset_dir}{Fore.GREEN} ---")
 
     images = [p for p in dataset_dir.rglob("*") if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS]
-    print(f"Total target images found: {len(images)}")
+    print(f"{Fore.YELLOW}Total target images found: {Fore.CYAN}{len(images)}")
 
     metrics = {
         "dataset": str(dataset_dir),
@@ -153,18 +155,18 @@ def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/result
         **summarise(total_times)
     }
 
-    print("\n--- Summary (mean ± std dev, ms) ---")
-    print(f"Stage 1 (SHA-256): {metrics['stages']['stage1_sha256']['time_ms']['mean']} ± {metrics['stages']['stage1_sha256']['time_ms']['std_dev']}")
-    print(f"Stage 2 (pHash):   {metrics['stages']['stage2_phash']['time_ms']['mean']} ± {metrics['stages']['stage2_phash']['time_ms']['std_dev']}")
-    print(f"Stage 3 (SSIM):    {metrics['stages']['stage3_ssim']['time_ms']['mean']} ± {metrics['stages']['stage3_ssim']['time_ms']['std_dev']}")
-    print(f"Total Pipeline:    {metrics['total_pipeline_time_ms']['mean']} ± {metrics['total_pipeline_time_ms']['std_dev']}")
+    print(f"\n{Fore.GREEN}--- Summary (mean ± std dev, ms) ---")
+    print(f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}{metrics['stages']['stage1_sha256']['time_ms']['mean']} ± {metrics['stages']['stage1_sha256']['time_ms']['std_dev']}")
+    print(f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}{metrics['stages']['stage2_phash']['time_ms']['mean']} ± {metrics['stages']['stage2_phash']['time_ms']['std_dev']}")
+    print(f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}{metrics['stages']['stage3_ssim']['time_ms']['mean']} ± {metrics['stages']['stage3_ssim']['time_ms']['std_dev']}")
+    print(f"{Fore.MAGENTA}Total Pipeline:    {Fore.CYAN}{metrics['total_pipeline_time_ms']['mean']} ± {metrics['total_pipeline_time_ms']['std_dev']}")
 
     output_json.parent.mkdir(parents=True, exist_ok=True)
 
     # Always write/update canonical latest file
     with open(output_json, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=4)
-    print(f"\nBenchmark report exported to: {output_json}")
+    print(f"\n{Fore.GREEN}Benchmark report exported to: {Fore.CYAN}{output_json}")
 
     # Optionally write immutable timestamped snapshot
     if timestamp_output:
@@ -172,7 +174,7 @@ def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/result
         stamped = output_json.with_name(f"{output_json.stem}-{ts}{output_json.suffix}")
         with open(stamped, "w", encoding="utf-8") as f:
             json.dump(metrics, f, indent=4)
-        print(f"Timestamped snapshot exported to: {stamped}")
+        print(f"{Fore.GREEN}Timestamped snapshot exported to: {Fore.CYAN}{stamped}")
 
     return metrics
 
@@ -182,4 +184,4 @@ if __name__ == "__main__":
     if target.exists():
         run_benchmark(target)
     else:
-        print(f"Directory '{target}' not found.")
+        print(f"{Fore.RED}Directory '{target}' not found.")
