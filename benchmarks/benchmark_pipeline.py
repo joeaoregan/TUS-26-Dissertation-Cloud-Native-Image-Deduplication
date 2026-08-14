@@ -8,6 +8,7 @@ from core_engine.utils.dedupe_perceptual import compare_perceptual_hashes, IMAGE
 from core_engine.utils.dedupe_ssim import calculate_ssim
 from PIL import Image
 import imagehash
+from datetime import datetime
 
 
 WARMUP_RUNS = 1
@@ -66,7 +67,7 @@ def summarise(values):
     }
 
 
-def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/results.json")):
+def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/results.json"), timestamp_output: bool = True):
     print(f"\n--- Running Benchmark on: {dataset_dir} ---")
 
     images = [p for p in dataset_dir.rglob("*") if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS]
@@ -159,9 +160,19 @@ def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/result
     print(f"Total Pipeline:    {metrics['total_pipeline_time_ms']['mean']} ± {metrics['total_pipeline_time_ms']['std_dev']}")
 
     output_json.parent.mkdir(parents=True, exist_ok=True)
+
+    # Always write/update canonical latest file
     with open(output_json, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=4)
     print(f"\nBenchmark report exported to: {output_json}")
+
+    # Optionally write immutable timestamped snapshot
+    if timestamp_output:
+        ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+        stamped = output_json.with_name(f"{output_json.stem}-{ts}{output_json.suffix}")
+        with open(stamped, "w", encoding="utf-8") as f:
+            json.dump(metrics, f, indent=4)
+        print(f"Timestamped snapshot exported to: {stamped}")
 
     return metrics
 
