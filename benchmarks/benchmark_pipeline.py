@@ -160,6 +160,11 @@ def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/result
     print(f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}{metrics['stages']['stage2_phash']['time_ms']['mean']} ± {metrics['stages']['stage2_phash']['time_ms']['std_dev']}")
     print(f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}{metrics['stages']['stage3_ssim']['time_ms']['mean']} ± {metrics['stages']['stage3_ssim']['time_ms']['std_dev']}")
     print(f"{Fore.MAGENTA}Total Pipeline:    {Fore.CYAN}{metrics['total_pipeline_time_ms']['mean']} ± {metrics['total_pipeline_time_ms']['std_dev']}")
+    
+    print(f"\n{Fore.GREEN}--- Peak RAM (MB, mean ± std dev) ---")
+    print(f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}{metrics['stages']['stage1_sha256']['peak_ram_mb']['mean']} ± {metrics['stages']['stage1_sha256']['peak_ram_mb']['std_dev']}")
+    print(f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}{metrics['stages']['stage2_phash']['peak_ram_mb']['mean']} ± {metrics['stages']['stage2_phash']['peak_ram_mb']['std_dev']}")
+    print(f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}{metrics['stages']['stage3_ssim']['peak_ram_mb']['mean']} ± {metrics['stages']['stage3_ssim']['peak_ram_mb']['std_dev']}")
 
     output_json.parent.mkdir(parents=True, exist_ok=True)
 
