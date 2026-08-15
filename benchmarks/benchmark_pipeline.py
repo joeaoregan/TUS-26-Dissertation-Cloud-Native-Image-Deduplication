@@ -2,6 +2,7 @@ import json
 import platform
 import time
 import tracemalloc
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from statistics import mean, stdev
@@ -76,6 +77,67 @@ def summarise(values):
     return {"mean": round(mean(values), 2), "std_dev": round(stdev(values), 2)}
 
 
+def build_dataset_profile(images: list[Path]) -> dict:
+    """
+    Build reproducible dataset metadata:
+    - total size (bytes/MB)
+    - format counts by file extension
+    - resolution min/max (width x height)
+    """
+    if not images:
+        return {
+            "total_files": 0,
+            "total_size_bytes": 0,
+            "total_size_mb": 0.0,
+            "format_counts": {},
+            "resolution_range": None,
+            "width_range": None,
+            "height_range": None,
+        }
+
+    format_counts = Counter(p.suffix.lower() for p in images)
+
+    total_size_bytes = 0
+    widths = []
+    heights = []
+
+    resolution_read_errors = 0
+
+    for p in images:
+        total_size_bytes += p.stat().st_size
+        try:
+            with Image.open(p) as im:
+                w, h = im.size
+                widths.append(w)
+                heights.append(h)
+        except Exception as e:
+            resolution_read_errors += 1
+            print(f"{Fore.RED}Warning: could not read resolution for {p}: {e}")
+
+    total_size_mb = round(total_size_bytes / (1024 * 1024), 2)
+
+    profile = {
+        "total_files": len(images),
+        "total_size_bytes": total_size_bytes,
+        "total_size_mb": total_size_mb,
+        "format_counts": dict(sorted(format_counts.items())),
+        "resolution_range": None,
+        "width_range": None,
+        "height_range": None,
+        "profile_read_errors": resolution_read_errors,
+    }
+
+    if widths and heights:
+        profile["width_range"] = {"min": min(widths), "max": max(widths)}
+        profile["height_range"] = {"min": min(heights), "max": max(heights)}
+        profile["resolution_range"] = {
+            "min": f"{min(widths)}x{min(heights)}",
+            "max": f"{max(widths)}x{max(heights)}",
+        }
+
+    return profile
+
+
 def run_benchmark(
     dataset_dir: Path,
     output_json: Path = Path("benchmarks/results.json"),
@@ -98,6 +160,20 @@ def run_benchmark(
         print(f"{Fore.RED}No valid images found in {dataset_dir}")
         return None
 
+    dataset_profile = build_dataset_profile(images)
+
+    print(
+        f"{Fore.YELLOW}Dataset size: {Fore.CYAN}{dataset_profile['total_size_mb']} MB "
+        f"({dataset_profile['total_size_bytes']} bytes)"
+    )
+
+    print(f"{Fore.YELLOW}Formats: {Fore.CYAN}{dataset_profile['format_counts']}")
+    if dataset_profile["resolution_range"]:
+        print(
+            f"{Fore.YELLOW}Resolution range: {Fore.CYAN}"
+            f"{dataset_profile['resolution_range']['min']} -> {dataset_profile['resolution_range']['max']}"
+        )
+
     metrics = {
         "dataset": str(dataset_dir),
         "total_images": len(images),
@@ -110,6 +186,7 @@ def run_benchmark(
             "machine": platform.machine(),
             "total_ram_gb": round(psutil.virtual_memory().total / (1024**3), 2),
         },
+        "dataset_profile": dataset_profile,
     }
 
     # Stage 1
