@@ -45,10 +45,22 @@ python -m venv venv
 source venv/Scripts/activate
 ```
 
-## Requirements
+### Requirements
 
 ```bash
 # Install core dependencies (Pillow, ImageHash, and colorama)
+pip install -r core_engine/requirements.txt
+```
+### Python Version
+
+This project is tested with **Python 3.13.x** (benchmark runs validated on **3.13.15**).
+
+> Note: Python 3.14 may fail dependency installation (notably NumPy/scikit-image wheel compatibility) unless package versions are updated.
+
+
+```bash
+py -3.13 -m venv venv
+source venv/Scripts/activate
 pip install -r core_engine/requirements.txt
 ```
 
