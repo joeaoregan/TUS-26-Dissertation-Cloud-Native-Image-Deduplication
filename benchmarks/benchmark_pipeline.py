@@ -1,15 +1,23 @@
 import json
+import platform
 import time
 import tracemalloc
+from datetime import datetime
 from pathlib import Path
 from statistics import mean, stdev
-from core_engine.utils.dedupe_exact import file_hash
-from core_engine.utils.dedupe_perceptual import compare_perceptual_hashes, IMAGE_EXTENSIONS
-from core_engine.utils.dedupe_ssim import calculate_ssim
-from PIL import Image
+
 import imagehash
-from datetime import datetime
-from colorama import Fore, Style, init
+import psutil
+from colorama import Fore, init
+from PIL import Image
+
+from core_engine.utils.dedupe_exact import file_hash
+from core_engine.utils.dedupe_perceptual import (
+    IMAGE_EXTENSIONS,
+    compare_perceptual_hashes,
+)
+from core_engine.utils.dedupe_ssim import calculate_ssim
+
 init(autoreset=True)
 
 
@@ -32,7 +40,9 @@ def measure_once(func, *args, **kwargs):
     return result, elapsed_ms, peak_mem_mb
 
 
-def run_repeated(func, warmup_runs=WARMUP_RUNS, measured_runs=MEASURED_RUNS, *args, **kwargs):
+def run_repeated(
+    func, warmup_runs=WARMUP_RUNS, measured_runs=MEASURED_RUNS, *args, **kwargs
+):
     """
     Execute warm-up runs (discarded), then measured runs.
     Returns:
@@ -63,26 +73,43 @@ def summarise(values):
         return {"mean": 0.0, "std_dev": 0.0}
     if len(values) == 1:
         return {"mean": round(values[0], 2), "std_dev": 0.0}
-    return {
-        "mean": round(mean(values), 2),
-        "std_dev": round(stdev(values), 2)
-    }
+    return {"mean": round(mean(values), 2), "std_dev": round(stdev(values), 2)}
 
 
-def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/results.json"), timestamp_output: bool = True):
-    print(f"\n{Fore.GREEN}--- Running Benchmark on: {Fore.CYAN}{dataset_dir}{Fore.GREEN} ---")
+def run_benchmark(
+    dataset_dir: Path,
+    output_json: Path = Path("benchmarks/results.json"),
+    timestamp_output: bool = True,
+):
+    print(
+        f"\n{Fore.GREEN}--- Running Benchmark on: {Fore.CYAN}{dataset_dir}{Fore.GREEN} ---"
+    )
 
-    images = [p for p in dataset_dir.rglob("*") if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS]
+    images = sorted(
+        [
+            p
+            for p in dataset_dir.rglob("*")
+            if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
+        ],
+        key=lambda p: str(p).lower(),
+    )
     print(f"{Fore.YELLOW}Total target images found: {Fore.CYAN}{len(images)}")
+    if not images:
+        print(f"{Fore.RED}No valid images found in {dataset_dir}")
+        return None
 
     metrics = {
         "dataset": str(dataset_dir),
         "total_images": len(images),
-        "runs": {
-            "warmup_discarded": WARMUP_RUNS,
-            "measured_iterations": MEASURED_RUNS
+        "runs": {"warmup_discarded": WARMUP_RUNS, "measured_iterations": MEASURED_RUNS},
+        "stages": {},
+        "environment": {
+            "os": platform.platform(),
+            "python_version": platform.python_version(),
+            "processor": platform.processor(),
+            "machine": platform.machine(),
+            "total_ram_gb": round(psutil.virtual_memory().total / (1024**3), 2),
         },
-        "stages": {}
     }
 
     # Stage 1
@@ -93,16 +120,10 @@ def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/result
             hashes.setdefault(h, []).append(img)
         return hashes
 
-    stage1_result, s1_times, s1_peaks = run_repeated(stage1_work)
+    _, s1_times, s1_peaks = run_repeated(stage1_work)
     metrics["stages"]["stage1_sha256"] = {
-        "time_ms": {
-            "raw": [round(x, 2) for x in s1_times],
-            **summarise(s1_times)
-        },
-        "peak_ram_mb": {
-            "raw": [round(x, 4) for x in s1_peaks],
-            **summarise(s1_peaks)
-        }
+        "time_ms": {"raw": [round(x, 2) for x in s1_times], **summarise(s1_times)},
+        "peak_ram_mb": {"raw": [round(x, 4) for x in s1_peaks], **summarise(s1_peaks)},
     }
 
     # Stage 2
@@ -115,15 +136,9 @@ def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/result
 
     candidates, s2_times, s2_peaks = run_repeated(stage2_work)
     metrics["stages"]["stage2_phash"] = {
-        "time_ms": {
-            "raw": [round(x, 2) for x in s2_times],
-            **summarise(s2_times)
-        },
-        "peak_ram_mb": {
-            "raw": [round(x, 4) for x in s2_peaks],
-            **summarise(s2_peaks)
-        },
-        "candidate_pairs": len(candidates)
+        "time_ms": {"raw": [round(x, 2) for x in s2_times], **summarise(s2_times)},
+        "peak_ram_mb": {"raw": [round(x, 4) for x in s2_peaks], **summarise(s2_peaks)},
+        "candidate_pairs": len(candidates),
     }
 
     # Stage 3
@@ -137,34 +152,51 @@ def run_benchmark(dataset_dir: Path, output_json: Path = Path("benchmarks/result
 
     verified, s3_times, s3_peaks = run_repeated(stage3_work)
     metrics["stages"]["stage3_ssim"] = {
-        "time_ms": {
-            "raw": [round(x, 2) for x in s3_times],
-            **summarise(s3_times)
-        },
-        "peak_ram_mb": {
-            "raw": [round(x, 4) for x in s3_peaks],
-            **summarise(s3_peaks)
-        },
-        "verified_pairs": len(verified)
+        "time_ms": {"raw": [round(x, 2) for x in s3_times], **summarise(s3_times)},
+        "peak_ram_mb": {"raw": [round(x, 4) for x in s3_peaks], **summarise(s3_peaks)},
+        "verified_pairs": len(verified),
     }
 
     # Total pipeline timing estimate from per-iteration sums
     total_times = [a + b + c for a, b, c in zip(s1_times, s2_times, s3_times)]
     metrics["total_pipeline_time_ms"] = {
         "raw": [round(x, 2) for x in total_times],
-        **summarise(total_times)
+        **summarise(total_times),
     }
+    pipeline_peak_mb = max(
+        metrics["stages"]["stage1_sha256"]["peak_ram_mb"]["mean"],
+        metrics["stages"]["stage2_phash"]["peak_ram_mb"]["mean"],
+        metrics["stages"]["stage3_ssim"]["peak_ram_mb"]["mean"],
+    )
+    metrics["total_pipeline_peak_ram_mb"] = round(pipeline_peak_mb, 2)
 
     print(f"\n{Fore.GREEN}--- Summary (mean ± std dev, ms) ---")
-    print(f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}{metrics['stages']['stage1_sha256']['time_ms']['mean']} ± {metrics['stages']['stage1_sha256']['time_ms']['std_dev']}")
-    print(f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}{metrics['stages']['stage2_phash']['time_ms']['mean']} ± {metrics['stages']['stage2_phash']['time_ms']['std_dev']}")
-    print(f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}{metrics['stages']['stage3_ssim']['time_ms']['mean']} ± {metrics['stages']['stage3_ssim']['time_ms']['std_dev']}")
-    print(f"{Fore.MAGENTA}Total Pipeline:    {Fore.CYAN}{metrics['total_pipeline_time_ms']['mean']} ± {metrics['total_pipeline_time_ms']['std_dev']}")
-    
+    print(
+        f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}{metrics['stages']['stage1_sha256']['time_ms']['mean']} ± {metrics['stages']['stage1_sha256']['time_ms']['std_dev']}"
+    )
+    print(
+        f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}{metrics['stages']['stage2_phash']['time_ms']['mean']} ± {metrics['stages']['stage2_phash']['time_ms']['std_dev']}"
+    )
+    print(
+        f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}{metrics['stages']['stage3_ssim']['time_ms']['mean']} ± {metrics['stages']['stage3_ssim']['time_ms']['std_dev']}"
+    )
+    print(
+        f"{Fore.MAGENTA}Total Pipeline:    {Fore.CYAN}{metrics['total_pipeline_time_ms']['mean']} ± {metrics['total_pipeline_time_ms']['std_dev']}"
+    )
+
     print(f"\n{Fore.GREEN}--- Peak RAM (MB, mean ± std dev) ---")
-    print(f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}{metrics['stages']['stage1_sha256']['peak_ram_mb']['mean']} ± {metrics['stages']['stage1_sha256']['peak_ram_mb']['std_dev']}")
-    print(f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}{metrics['stages']['stage2_phash']['peak_ram_mb']['mean']} ± {metrics['stages']['stage2_phash']['peak_ram_mb']['std_dev']}")
-    print(f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}{metrics['stages']['stage3_ssim']['peak_ram_mb']['mean']} ± {metrics['stages']['stage3_ssim']['peak_ram_mb']['std_dev']}")
+    print(
+        f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}{metrics['stages']['stage1_sha256']['peak_ram_mb']['mean']} ± {metrics['stages']['stage1_sha256']['peak_ram_mb']['std_dev']}"
+    )
+    print(
+        f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}{metrics['stages']['stage2_phash']['peak_ram_mb']['mean']} ± {metrics['stages']['stage2_phash']['peak_ram_mb']['std_dev']}"
+    )
+    print(
+        f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}{metrics['stages']['stage3_ssim']['peak_ram_mb']['mean']} ± {metrics['stages']['stage3_ssim']['peak_ram_mb']['std_dev']}"
+    )
+    print(
+        f"{Fore.MAGENTA}Pipeline Peak RAM: {Fore.CYAN}{metrics['total_pipeline_peak_ram_mb']} MB"
+    )
 
     output_json.parent.mkdir(parents=True, exist_ok=True)
 
