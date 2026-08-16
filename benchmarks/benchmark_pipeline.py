@@ -1,3 +1,4 @@
+import argparse
 import json
 import platform
 import time
@@ -162,6 +163,12 @@ def run_benchmark(
 
     dataset_profile = build_dataset_profile(images)
 
+    if dataset_profile["profile_read_errors"] > 0:
+        print(
+            f"{Fore.RED}Resolution profiling warnings: "
+            f"{dataset_profile['profile_read_errors']} file(s) could not be read."
+        )
+
     print(
         f"{Fore.YELLOW}Dataset size: {Fore.CYAN}{dataset_profile['total_size_mb']} MB "
         f"({dataset_profile['total_size_bytes']} bytes)"
@@ -197,7 +204,7 @@ def run_benchmark(
             hashes.setdefault(h, []).append(img)
         return hashes
 
-    _, s1_times, s1_peaks = run_repeated(stage1_work)
+    stage1_result, s1_times, s1_peaks = run_repeated(stage1_work)
     metrics["stages"]["stage1_sha256"] = {
         "time_ms": {"raw": [round(x, 2) for x in s1_times], **summarise(s1_times)},
         "peak_ram_mb": {"raw": [round(x, 4) for x in s1_peaks], **summarise(s1_peaks)},
@@ -247,6 +254,30 @@ def run_benchmark(
     )
     metrics["total_pipeline_peak_ram_mb"] = round(pipeline_peak_mb, 2)
 
+    exact_duplicate_groups = sum(
+        1 for paths in stage1_result.values() if len(paths) > 1
+    )
+    exact_redundant_files = sum(
+        len(paths) - 1 for paths in stage1_result.values() if len(paths) > 1
+    )
+
+    print(f"{Fore.GREEN}\n--- Detection Counts ---")
+    print(
+        f"{Fore.YELLOW}Stage 1 exact duplicate groups: {Fore.CYAN}{exact_duplicate_groups}"
+    )
+    print(
+        f"{Fore.YELLOW}Stage 1 redundant files:        {Fore.CYAN}{exact_redundant_files}"
+    )
+    print(f"{Fore.YELLOW}Stage 2 candidate pairs:        {Fore.CYAN}{len(candidates)}")
+    print(f"{Fore.YELLOW}Stage 3 verified pairs:         {Fore.CYAN}{len(verified)}")
+
+    metrics["detections"] = {
+        "stage1_exact_duplicate_groups": exact_duplicate_groups,
+        "stage1_redundant_files": exact_redundant_files,
+        "stage2_candidate_pairs": len(candidates),
+        "stage3_verified_pairs": len(verified),
+    }
+
     print(f"\n{Fore.GREEN}--- Summary (mean ± std dev, ms) ---")
     print(
         f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}{metrics['stages']['stage1_sha256']['time_ms']['mean']} ± {metrics['stages']['stage1_sha256']['time_ms']['std_dev']}"
@@ -294,8 +325,36 @@ def run_benchmark(
 
 
 if __name__ == "__main__":
-    target = Path("dedupe_test")
-    if target.exists():
-        run_benchmark(target)
+    parser = argparse.ArgumentParser(
+        description="Run cascading deduplication benchmark."
+    )
+    parser.add_argument(
+        "--dir",
+        dest="dataset_dir",
+        type=Path,
+        default=Path("dedupe_test"),
+        help="Dataset directory to benchmark (default: dedupe_test)",
+    )
+    parser.add_argument(
+        "--output",
+        dest="output_json",
+        type=Path,
+        default=Path("benchmarks/results.json"),
+        help="Output JSON path (default: benchmarks/results.json)",
+    )
+    parser.add_argument(
+        "--no-timestamp",
+        action="store_true",
+        help="Disable timestamped snapshot output",
+    )
+
+    args = parser.parse_args()
+
+    if args.dataset_dir.exists() and args.dataset_dir.is_dir():
+        run_benchmark(
+            dataset_dir=args.dataset_dir,
+            output_json=args.output_json,
+            timestamp_output=not args.no_timestamp,
+        )
     else:
-        print(f"{Fore.RED}Directory '{target}' not found.")
+        print(f"Directory '{args.dataset_dir}' not found or is not a folder.")

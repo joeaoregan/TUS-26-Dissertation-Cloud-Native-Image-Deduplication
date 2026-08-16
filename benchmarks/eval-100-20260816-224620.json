@@ -1,0 +1,165 @@
+{
+    "dataset": "dedupe_test_100",
+    "total_images": 100,
+    "runs": {
+        "warmup_discarded": 1,
+        "measured_iterations": 10
+    },
+    "stages": {
+        "stage1_sha256": {
+            "time_ms": {
+                "raw": [
+                    9.68,
+                    9.66,
+                    9.54,
+                    9.43,
+                    10.1,
+                    9.6,
+                    10.26,
+                    10.22,
+                    9.61,
+                    10.2
+                ],
+                "mean": 9.83,
+                "std_dev": 0.32
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    1.6512,
+                    1.6554,
+                    1.6512,
+                    1.6512,
+                    1.6512,
+                    1.6512,
+                    1.6512,
+                    1.6512,
+                    1.6512,
+                    1.6512
+                ],
+                "mean": 1.65,
+                "std_dev": 0.0
+            }
+        },
+        "stage2_phash": {
+            "time_ms": {
+                "raw": [
+                    183.45,
+                    191.35,
+                    189.62,
+                    192.67,
+                    190.37,
+                    190.48,
+                    189.2,
+                    183.9,
+                    187.56,
+                    186.03
+                ],
+                "mean": 188.46,
+                "std_dev": 3.13
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    0.1972,
+                    0.1958,
+                    0.1946,
+                    0.1945,
+                    0.1945,
+                    0.1946,
+                    0.1945,
+                    0.1945,
+                    0.1946,
+                    0.1945
+                ],
+                "mean": 0.19,
+                "std_dev": 0.0
+            },
+            "candidate_pairs": 0
+        },
+        "stage3_ssim": {
+            "time_ms": {
+                "raw": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "mean": 0.0,
+                "std_dev": 0.0
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "mean": 0.0,
+                "std_dev": 0.0
+            },
+            "verified_pairs": 0
+        }
+    },
+    "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python_version": "3.13.14",
+        "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+        "machine": "AMD64",
+        "total_ram_gb": 63.71
+    },
+    "dataset_profile": {
+        "total_files": 100,
+        "total_size_bytes": 13596493,
+        "total_size_mb": 12.97,
+        "format_counts": {
+            ".jpeg": 100
+        },
+        "resolution_range": {
+            "min": "120x90",
+            "max": "900x1000"
+        },
+        "width_range": {
+            "min": 120,
+            "max": 900
+        },
+        "height_range": {
+            "min": 90,
+            "max": 1000
+        },
+        "profile_read_errors": 0
+    },
+    "total_pipeline_time_ms": {
+        "raw": [
+            193.14,
+            201.01,
+            199.16,
+            202.1,
+            200.47,
+            200.08,
+            199.46,
+            194.12,
+            197.17,
+            196.23
+        ],
+        "mean": 198.29,
+        "std_dev": 3.01
+    },
+    "total_pipeline_peak_ram_mb": 1.65,
+    "detections": {
+        "stage1_exact_duplicate_groups": 0,
+        "stage1_redundant_files": 0,
+        "stage2_candidate_pairs": 0,
+        "stage3_verified_pairs": 0
+    }
+}
