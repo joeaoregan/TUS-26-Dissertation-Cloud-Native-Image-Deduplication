@@ -33,6 +33,7 @@ coverage/
 
 dedupe_test/
 dedupe_test_100/
+dedupe_test_100_clean/
 
 # Local data or benchmark image dumps (to prevent uploading raw media)
 core-engine/utils/__pycache__/
