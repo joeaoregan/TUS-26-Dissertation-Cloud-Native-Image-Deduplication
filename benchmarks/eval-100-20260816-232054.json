@@ -1,0 +1,173 @@
+{
+    "dataset": "dedupe_test_100",
+    "total_images": 100,
+    "runs": {
+        "warmup_discarded": 1,
+        "measured_iterations": 10
+    },
+    "stages": {
+        "stage1_sha256": {
+            "time_ms": {
+                "raw": [
+                    9.0,
+                    8.73,
+                    8.59,
+                    8.43,
+                    8.29,
+                    11.28,
+                    9.25,
+                    9.54,
+                    10.03,
+                    8.49
+                ],
+                "mean": 9.16,
+                "std_dev": 0.92
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    1.5205,
+                    1.5227,
+                    1.5205,
+                    1.5205,
+                    1.5205,
+                    1.5205,
+                    1.5205,
+                    1.5205,
+                    1.5205,
+                    1.5205
+                ],
+                "mean": 1.52,
+                "std_dev": 0.0
+            }
+        },
+        "stage2_phash": {
+            "time_ms": {
+                "raw": [
+                    185.74,
+                    183.05,
+                    184.56,
+                    191.8,
+                    179.46,
+                    183.65,
+                    182.43,
+                    184.39,
+                    183.65,
+                    193.82
+                ],
+                "mean": 185.26,
+                "std_dev": 4.34
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    0.1843,
+                    0.1835,
+                    0.1829,
+                    0.1823,
+                    0.1817,
+                    0.1823,
+                    0.1818,
+                    0.1818,
+                    0.1816,
+                    0.1819
+                ],
+                "mean": 0.18,
+                "std_dev": 0.0
+            },
+            "candidate_pairs": 52
+        },
+        "stage3_ssim": {
+            "time_ms": {
+                "raw": [
+                    503.13,
+                    500.28,
+                    495.34,
+                    511.62,
+                    504.47,
+                    498.51,
+                    512.1,
+                    497.97,
+                    487.84,
+                    492.51
+                ],
+                "mean": 500.38,
+                "std_dev": 7.76
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    11.9579,
+                    11.9578,
+                    11.9567,
+                    11.9563,
+                    11.9569,
+                    11.957,
+                    11.9565,
+                    11.9567,
+                    11.9566,
+                    11.9565
+                ],
+                "mean": 11.96,
+                "std_dev": 0.0
+            },
+            "verified_pairs": 48
+        }
+    },
+    "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python_version": "3.13.14",
+        "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+        "machine": "AMD64",
+        "total_ram_gb": 63.71
+    },
+    "dataset_profile": {
+        "total_files": 100,
+        "total_size_bytes": 10950096,
+        "total_size_mb": 10.44,
+        "format_counts": {
+            ".jpeg": 60,
+            ".jpg": 30,
+            ".png": 10
+        },
+        "resolution_range": {
+            "min": "334x296",
+            "max": "1061x668"
+        },
+        "width_range": {
+            "min": 334,
+            "max": 1061
+        },
+        "height_range": {
+            "min": 296,
+            "max": 668
+        },
+        "profile_read_errors": 0
+    },
+    "config": {
+        "phash_threshold": 5,
+        "ssim_threshold": 0.85,
+        "export_pairs": false,
+        "pair_limit": 200
+    },
+    "total_pipeline_time_ms": {
+        "raw": [
+            697.88,
+            692.06,
+            688.49,
+            711.85,
+            692.22,
+            693.44,
+            703.77,
+            691.89,
+            681.52,
+            694.82
+        ],
+        "mean": 694.8,
+        "std_dev": 8.31
+    },
+    "total_pipeline_peak_ram_mb": 11.96,
+    "detections": {
+        "stage1_exact_duplicate_groups": 10,
+        "stage1_redundant_files": 10,
+        "stage2_candidate_pairs": 52,
+        "stage3_verified_pairs": 48
+    }
+}

@@ -28,14 +28,14 @@ A multi-stage, cascading image deduplication pipeline designed to identify exact
 │   └── utils/
 │       ├── __init__.py          # Python package marker file
 │       ├── dedupe_exact.py      # Stage 1: Cryptographic byte-level verification
-│       └── dedupe_perceptual.py # Stage 2: Perceptual structural matching
+│       ├── dedupe_perceptual.py # Stage 2: Perceptual structural matching
 │       └── dedupe_ssim.py       # Stage 3: Fine Structural Similarity (SSIM) verification
 └── dedupe_test/                 # Evaluation testing dataset
 ```
 
 ## Setup
 
-1. Initialise and Active Virtual Environment
+1. Initialise and Activate Virtual Environment
 
 ```bash
 # Create the virtual environment (run once)
@@ -117,21 +117,96 @@ To execute the full test suite, run from the repository root:
 The project includes an empirical benchmarking module to profile execution timing and peak memory usage across all three deduplication stages.
 
 ### Run Benchmarks
-To run the performance benchmark and generate a metric report:
 
-* Execute script: `python -m benchmarks.benchmark_pipeline`
+From repository root:
+
+```bash
+# Default dataset + default output
+python -m benchmarks.benchmark_pipeline
+
+# Custom dataset directory + custom output JSON
+python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output benchmarks/eval-100.json
+
+# Export sample duplicate/candidate/verified pair details
+python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output benchmarks/eval-100.json --export-pairs
+
+# Increase export cap per pair section
+python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output benchmarks/eval-100.json --export-pairs --pair-limit 300
+
+# Disable timestamped snapshot
+python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output benchmarks/eval-100.json --no-timestamp
+```
+
+### Why Stage 3 Can Be `0.0 ms`
+
+If Stage 2 returns zero candidate pairs, Stage 3 has no work to perform and may report `0.0 ms` and `0.0 MB`.  
+This is expected behaviour, not a failure.
+
+Use **Detection Counts** in the output to interpret this:
+- `stage2_candidate_pairs = 0` ⇒ Stage 3 verification loop is skipped.
+
+### Benchmark Example (`dedupe_test_100`)
+
+> Note: Benchmark values are hardware-, dataset-, and run-condition-dependent.
+
+| Stage | Algorithm | Execution Time (mean ± sd) | Peak Memory (mean ± sd) | Output |
+| :--- | :--- | :---: | :---: | :--- |
+| **Stage 1** | SHA-256 Hashing | 10.06 ± 0.89 ms | 1.65 ± 0.00 MB | Exact duplicate groups / redundant files |
+| **Stage 2** | Perceptual Hash (pHash) | 192.11 ± 3.95 ms | 0.20 ± 0.00 MB | Candidate near-duplicate pairs |
+| **Stage 3** | SSIM Verification | 0.00 ± 0.00 ms | 0.00 ± 0.00 MB | Verified near-duplicate pairs |
+| **Total** | **Cascading Pipeline** | **202.16 ± 3.93 ms** | **Peak: 1.65 MB** | Full pipeline |
+
+**Dataset profile (example run):**
+- Total images: 100
+- Total size: 12.97 MB (13,596,493 bytes)
+- Formats: `{'.jpeg': 100}`
+- Resolution range: `120x90 -> 900x1000`
 
 ### Output Metrics
-Results are automatically exported to `benchmarks/results.json` containing:
-* Execution duration (in milliseconds) per stage.
-* Peak memory allocation (in MB) tracked via `tracemalloc`.
-* Total cascading pipeline elapsed time.
 
-### Benchmark Baseline (`dedupe_test`)
+Benchmark results are exported to:
+- Canonical latest file: `benchmarks/results.json` (or custom `--output`)
+- Timestamped snapshot: `benchmarks/<name>-YYYYMMDD-HHMMSS.json` (unless `--no-timestamp` is used)
 
-| Stage | Algorithm | Execution Time | Peak Memory | Output |
-| :--- | :--- | :---: | :---: | :---: |
-| **Stage 1** | SHA-256 Hashing | 2.22 ms | 1.75 MB | Filtered exact copies |
-| **Stage 2** | Perceptual Hash (pHash) | 103.18 ms | 1.49 MB | 4 candidate pairs |
-| **Stage 3** | SSIM Verification | 83.16 ms | 11.86 MB | 2 verified duplicates |
-| **Total** | **Cascading Pipeline** | **188.56 ms** | — | — |
+Each report now includes:
+
+- **Timing metrics** (ms): raw per-iteration values, mean, standard deviation
+- **Peak RAM metrics** (MB): raw per-iteration values, mean, standard deviation
+- **Detection counts**:
+  - Stage 1 exact duplicate groups
+  - Stage 1 redundant files
+  - Stage 2 candidate pairs
+  - Stage 3 verified pairs
+- **Dataset profile**:
+  - total file count
+  - total size (bytes/MB)
+  - format distribution
+  - width/height min/max
+  - resolution range
+  - profiling read warning count
+- **Environment metadata**:
+  - OS
+  - Python version
+  - processor/machine
+  - total RAM
+- **Benchmark config**:
+  - pHash threshold
+  - SSIM threshold
+  - pair export enabled/disabled
+  - pair export limit
+
+When `--export-pairs` is enabled, JSON also includes `pair_details` samples:
+- Stage 1 exact duplicate groups (with file lists)
+- Stage 2 candidate pairs (`file_a`, `file_b`, `phash_distance`)
+- Stage 3 verified pairs (`file_a`, `file_b`, `ssim_score`)
+
+### Historical Baseline (`dedupe_test`)
+
+> Note: Benchmark values are hardware-, dataset-, and run-condition-dependent.
+
+Earlier small-set baseline run (for continuity with prior commits):
+
+- Stage 1: 2.22 ms
+- Stage 2: 103.18 ms
+- Stage 3: 83.16 ms
+- Total: 188.56 ms

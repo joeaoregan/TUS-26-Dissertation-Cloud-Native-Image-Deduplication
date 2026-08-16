@@ -22,9 +22,9 @@ from core_engine.utils.dedupe_ssim import calculate_ssim
 
 init(autoreset=True)
 
-
 WARMUP_RUNS = 1
 MEASURED_RUNS = 10
+DEFAULT_PAIR_LIMIT = 200
 
 
 def measure_once(func, *args, **kwargs):
@@ -94,6 +94,7 @@ def build_dataset_profile(images: list[Path]) -> dict:
             "resolution_range": None,
             "width_range": None,
             "height_range": None,
+            "profile_read_errors": 0,
         }
 
     format_counts = Counter(p.suffix.lower() for p in images)
@@ -101,7 +102,6 @@ def build_dataset_profile(images: list[Path]) -> dict:
     total_size_bytes = 0
     widths = []
     heights = []
-
     resolution_read_errors = 0
 
     for p in images:
@@ -139,10 +139,54 @@ def build_dataset_profile(images: list[Path]) -> dict:
     return profile
 
 
+def _export_stage1_groups(stage1_result: dict, limit: int) -> list[dict]:
+    groups = []
+    for digest, paths in stage1_result.items():
+        if len(paths) > 1:
+            groups.append(
+                {
+                    "sha256": digest,
+                    "files": [str(p) for p in paths],
+                    "group_size": len(paths),
+                    "redundant_files": len(paths) - 1,
+                }
+            )
+    groups.sort(key=lambda g: g["group_size"], reverse=True)
+    return groups[:limit]
+
+
+def _export_stage2_candidates(candidates: list[tuple], limit: int) -> list[dict]:
+    out = []
+    for p1, p2, distance in candidates[:limit]:
+        out.append(
+            {
+                "file_a": str(p1),
+                "file_b": str(p2),
+                "phash_distance": int(distance),
+            }
+        )
+    return out
+
+
+def _export_stage3_verified(verified: list[tuple], limit: int) -> list[dict]:
+    out = []
+    for p1, p2, score in verified[:limit]:
+        out.append(
+            {
+                "file_a": str(p1),
+                "file_b": str(p2),
+                "ssim_score": round(float(score), 6),
+            }
+        )
+    return out
+
+
 def run_benchmark(
     dataset_dir: Path,
     output_json: Path = Path("benchmarks/results.json"),
     timestamp_output: bool = True,
+    export_pairs: bool = False,
+    pair_limit: int = DEFAULT_PAIR_LIMIT,
 ):
     print(
         f"\n{Fore.GREEN}--- Running Benchmark on: {Fore.CYAN}{dataset_dir}{Fore.GREEN} ---"
@@ -173,12 +217,12 @@ def run_benchmark(
         f"{Fore.YELLOW}Dataset size: {Fore.CYAN}{dataset_profile['total_size_mb']} MB "
         f"({dataset_profile['total_size_bytes']} bytes)"
     )
-
     print(f"{Fore.YELLOW}Formats: {Fore.CYAN}{dataset_profile['format_counts']}")
     if dataset_profile["resolution_range"]:
         print(
             f"{Fore.YELLOW}Resolution range: {Fore.CYAN}"
-            f"{dataset_profile['resolution_range']['min']} -> {dataset_profile['resolution_range']['max']}"
+            f"{dataset_profile['resolution_range']['min']} -> "
+            f"{dataset_profile['resolution_range']['max']}"
         )
 
     metrics = {
@@ -194,6 +238,12 @@ def run_benchmark(
             "total_ram_gb": round(psutil.virtual_memory().total / (1024**3), 2),
         },
         "dataset_profile": dataset_profile,
+        "config": {
+            "phash_threshold": 5,
+            "ssim_threshold": 0.85,
+            "export_pairs": export_pairs,
+            "pair_limit": pair_limit,
+        },
     }
 
     # Stage 1
@@ -241,12 +291,13 @@ def run_benchmark(
         "verified_pairs": len(verified),
     }
 
-    # Total pipeline timing estimate from per-iteration sums
+    # Totals
     total_times = [a + b + c for a, b, c in zip(s1_times, s2_times, s3_times)]
     metrics["total_pipeline_time_ms"] = {
         "raw": [round(x, 2) for x in total_times],
         **summarise(total_times),
     }
+
     pipeline_peak_mb = max(
         metrics["stages"]["stage1_sha256"]["peak_ram_mb"]["mean"],
         metrics["stages"]["stage2_phash"]["peak_ram_mb"]["mean"],
@@ -261,6 +312,28 @@ def run_benchmark(
         len(paths) - 1 for paths in stage1_result.values() if len(paths) > 1
     )
 
+    metrics["detections"] = {
+        "stage1_exact_duplicate_groups": exact_duplicate_groups,
+        "stage1_redundant_files": exact_redundant_files,
+        "stage2_candidate_pairs": len(candidates),
+        "stage3_verified_pairs": len(verified),
+    }
+
+    if export_pairs:
+        metrics["pair_details"] = {
+            "sample_limit": pair_limit,
+            "stage1_exact_groups_sample": _export_stage1_groups(
+                stage1_result, pair_limit
+            ),
+            "stage2_candidates_sample": _export_stage2_candidates(
+                candidates, pair_limit
+            ),
+            "stage3_verified_sample": _export_stage3_verified(verified, pair_limit),
+            "stage1_exact_groups_total": exact_duplicate_groups,
+            "stage2_candidates_total": len(candidates),
+            "stage3_verified_total": len(verified),
+        }
+
     print(f"{Fore.GREEN}\n--- Detection Counts ---")
     print(
         f"{Fore.YELLOW}Stage 1 exact duplicate groups: {Fore.CYAN}{exact_duplicate_groups}"
@@ -271,40 +344,54 @@ def run_benchmark(
     print(f"{Fore.YELLOW}Stage 2 candidate pairs:        {Fore.CYAN}{len(candidates)}")
     print(f"{Fore.YELLOW}Stage 3 verified pairs:         {Fore.CYAN}{len(verified)}")
 
-    metrics["detections"] = {
-        "stage1_exact_duplicate_groups": exact_duplicate_groups,
-        "stage1_redundant_files": exact_redundant_files,
-        "stage2_candidate_pairs": len(candidates),
-        "stage3_verified_pairs": len(verified),
-    }
-
     print(f"\n{Fore.GREEN}--- Summary (mean ± std dev, ms) ---")
     print(
-        f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}{metrics['stages']['stage1_sha256']['time_ms']['mean']} ± {metrics['stages']['stage1_sha256']['time_ms']['std_dev']}"
+        f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}"
+        f"{metrics['stages']['stage1_sha256']['time_ms']['mean']} ± "
+        f"{metrics['stages']['stage1_sha256']['time_ms']['std_dev']}"
     )
     print(
-        f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}{metrics['stages']['stage2_phash']['time_ms']['mean']} ± {metrics['stages']['stage2_phash']['time_ms']['std_dev']}"
+        f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}"
+        f"{metrics['stages']['stage2_phash']['time_ms']['mean']} ± "
+        f"{metrics['stages']['stage2_phash']['time_ms']['std_dev']}"
     )
     print(
-        f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}{metrics['stages']['stage3_ssim']['time_ms']['mean']} ± {metrics['stages']['stage3_ssim']['time_ms']['std_dev']}"
+        f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}"
+        f"{metrics['stages']['stage3_ssim']['time_ms']['mean']} ± "
+        f"{metrics['stages']['stage3_ssim']['time_ms']['std_dev']}"
     )
     print(
-        f"{Fore.MAGENTA}Total Pipeline:    {Fore.CYAN}{metrics['total_pipeline_time_ms']['mean']} ± {metrics['total_pipeline_time_ms']['std_dev']}"
+        f"{Fore.MAGENTA}Total Pipeline:    {Fore.CYAN}"
+        f"{metrics['total_pipeline_time_ms']['mean']} ± "
+        f"{metrics['total_pipeline_time_ms']['std_dev']}"
     )
 
     print(f"\n{Fore.GREEN}--- Peak RAM (MB, mean ± std dev) ---")
     print(
-        f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}{metrics['stages']['stage1_sha256']['peak_ram_mb']['mean']} ± {metrics['stages']['stage1_sha256']['peak_ram_mb']['std_dev']}"
+        f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}"
+        f"{metrics['stages']['stage1_sha256']['peak_ram_mb']['mean']} ± "
+        f"{metrics['stages']['stage1_sha256']['peak_ram_mb']['std_dev']}"
     )
     print(
-        f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}{metrics['stages']['stage2_phash']['peak_ram_mb']['mean']} ± {metrics['stages']['stage2_phash']['peak_ram_mb']['std_dev']}"
+        f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}"
+        f"{metrics['stages']['stage2_phash']['peak_ram_mb']['mean']} ± "
+        f"{metrics['stages']['stage2_phash']['peak_ram_mb']['std_dev']}"
     )
     print(
-        f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}{metrics['stages']['stage3_ssim']['peak_ram_mb']['mean']} ± {metrics['stages']['stage3_ssim']['peak_ram_mb']['std_dev']}"
+        f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}"
+        f"{metrics['stages']['stage3_ssim']['peak_ram_mb']['mean']} ± "
+        f"{metrics['stages']['stage3_ssim']['peak_ram_mb']['std_dev']}"
     )
     print(
-        f"{Fore.MAGENTA}Pipeline Peak RAM: {Fore.CYAN}{metrics['total_pipeline_peak_ram_mb']} MB"
+        f"{Fore.MAGENTA}Pipeline Peak RAM: {Fore.CYAN}"
+        f"{metrics['total_pipeline_peak_ram_mb']} MB"
     )
+
+    if export_pairs:
+        print(
+            f"{Fore.GREEN}Pair export enabled: {Fore.CYAN}"
+            f"up to {pair_limit} entries per section in 'pair_details'"
+        )
 
     output_json.parent.mkdir(parents=True, exist_ok=True)
 
@@ -347,14 +434,31 @@ if __name__ == "__main__":
         action="store_true",
         help="Disable timestamped snapshot output",
     )
+    parser.add_argument(
+        "--export-pairs",
+        action="store_true",
+        help="Include sample duplicate/candidate pair details in JSON output",
+    )
+    parser.add_argument(
+        "--pair-limit",
+        type=int,
+        default=DEFAULT_PAIR_LIMIT,
+        help=f"Max entries per pair_details section (default: {DEFAULT_PAIR_LIMIT})",
+    )
 
     args = parser.parse_args()
+
+    if args.pair_limit < 1:
+        print("Error: --pair-limit must be >= 1")
+        raise SystemExit(2)
 
     if args.dataset_dir.exists() and args.dataset_dir.is_dir():
         run_benchmark(
             dataset_dir=args.dataset_dir,
             output_json=args.output_json,
             timestamp_output=not args.no_timestamp,
+            export_pairs=args.export_pairs,
+            pair_limit=args.pair_limit,
         )
     else:
         print(f"Directory '{args.dataset_dir}' not found or is not a folder.")
