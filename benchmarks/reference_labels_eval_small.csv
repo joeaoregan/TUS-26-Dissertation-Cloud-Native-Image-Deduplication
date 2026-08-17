@@ -1,0 +1,6 @@
+img_a,img_b,label,type,notes
+dedupe_test_100/ILSVRC2012_val_00000101.JPEG,dedupe_test_100/ILSVRC2012_val_00000101 - Copy.JPEG,1,exact,byte-identical copy
+dedupe_test_100/ILSVRC2012_val_00000149.JPEG,dedupe_test_100/ILSVRC2012_val_00000149_quality_80.jpg,1,near,jpeg recompression
+dedupe_test_100/ILSVRC2012_val_00000109.JPEG,dedupe_test_100/ILSVRC2012_val_00000109_90.jpg,1,near,resized variant
+dedupe_test_100/ILSVRC2012_val_00000104.JPEG,dedupe_test_100/ILSVRC2012_val_00000104.png,1,near,format conversion
+dedupe_test_100/ILSVRC2012_val_00000107.JPEG,dedupe_test_100/ILSVRC2012_val_00000108.JPEG,0,non,different scene
