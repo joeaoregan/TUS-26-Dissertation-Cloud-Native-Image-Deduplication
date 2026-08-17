@@ -22,15 +22,34 @@ A multi-stage, cascading image deduplication pipeline designed to identify exact
 ## Structure
 
 ```text
+├── benchmarks/                          # Benchmark runner and analysis helpers
+│   ├── benchmark_pipeline.py            # Runs staged benchmark, timings/memory, and JSON output
+│   ├── constants.py                     # Shared benchmark defaults (runs, thresholds, pair limits)
+│   ├── exports.py                       # Formats stage outputs (groups/candidates/verified) for JSON export
+│   ├── measurement.py                   # Timing + peak-memory measurement utilities (warmup/measured runs)
+│   ├── profile.py                       # Dataset profiling (file counts, size, formats, resolution ranges)
+│   └── tools/                           # Evaluation and review workflow scripts
+│       ├── build_review_html.py         # Builds side-by-side HTML reviewer from exported benchmark pairs
+│       ├── evaluate_predictions.py      # Computes TP/FP/FN/TN and Precision/Recall/F1/Accuracy from labels vs predictions
+│       ├── export_predictions.py        # Exports stage pair predictions from benchmark JSON to CSV
+│       └── validate_reference_labels.py # Validates reference label CSV schema, label values, and duplicate/invalid rows
 ├── core_engine/
-│   ├── pipeline.py              # Cascading Hybrid Entry Point
-│   ├── requirements.txt         # Python dependencies (Pillow, ImageHash, colorama)
+│   ├── pipeline.py                      # Cascading Hybrid Entry Point
+│   ├── requirements.txt                 # Python dependencies (Pillow, ImageHash, colorama)
 │   └── utils/
-│       ├── __init__.py          # Python package marker file
-│       ├── dedupe_exact.py      # Stage 1: Cryptographic byte-level verification
-│       ├── dedupe_perceptual.py # Stage 2: Perceptual structural matching
-│       └── dedupe_ssim.py       # Stage 3: Fine Structural Similarity (SSIM) verification
-└── dedupe_test/                 # Evaluation testing dataset
+│       ├── __init__.py                  # Python package marker file
+│       ├── dedupe_exact.py              # Stage 1: Cryptographic byte-level verification
+│       ├── dedupe_perceptual.py         # Stage 2: Perceptual structural matching
+│       └── dedupe_ssim.py               # Stage 3: Fine Structural Similarity (SSIM) verification
+├── data/
+│       ├── dedupe_test/                 # Evaluation testing dataset small
+│       ├── dedupe_test_100/             # Evaluation testing dataset 100 images
+│       ├── dedupe_test_100_clean/       # Evaluation testing dataset 100 unique, unaltered images
+│       ├── labels/                      # Reference label CSV files
+│       ├── predictions/                 # Prediction stages 2 & 3 CSV files
+│       └── reviews/                     # Side by side comparison HTML file
+├── tests/                               # Test files
+└── logs/                                # JSON log files
 ```
 
 ## Setup
@@ -217,15 +236,16 @@ To evaluate detection quality (not just performance), this project uses manually
 
 #### Files
 - `benchmarks/reference_labels_eval_v1.csv` — labelled image pairs (`label=1` duplicate, `label=0` non-duplicate)
-- `benchmarks/validate_reference_labels.py` — validates CSV schema, paths, labels, and duplicate pairs
-- `benchmarks/export_predictions.py` — exports predicted pairs from benchmark JSON
-- `benchmarks/evaluate_predictions.py` — computes TP/FP/FN/TN, Precision, Recall, F1, Accuracy
-- `benchmarks/build_review_html.py` — optional side-by-side HTML reviewer for pair adjudication
+- `benchmarks/tools/validate_reference_labels.py` — validates CSV schema, paths, labels, and duplicate pairs
+- `benchmarks/tools/export_predictions.py` — exports predicted pairs from benchmark JSON
+- `benchmarks/tools/evaluate_predictions.py` — computes TP/FP/FN/TN, Precision, Recall, F1, Accuracy
+- `benchmarks/tools/build_review_html.py` — optional side-by-side HTML reviewer for pair adjudication
 
 #### Workflow
+
 ```bash
-python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output benchmarks/eval-100.json --export-pairs --pair-limit 500
-python -m benchmarks.validate_reference_labels --csv benchmarks/reference_labels_eval_v1.csv
-python -m benchmarks.export_predictions --input benchmarks/eval-100.json --output benchmarks/pred_stage3_eval100.csv --source stage3
-python -m benchmarks.evaluate_predictions --reference-labels benchmarks/reference_labels_eval_v1.csv --predictions benchmarks/pred_stage3_eval100.csv
+python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/eval-100-YYYYMMDD-HHMMSS.json --export-pairs --pair-limit 500
+python -m benchmarks.tools.validate_reference_labels --csv data/labels/reference_labels_eval_v1.csv
+python -m benchmarks.tools.export_predictions --input logs/eval-100-YYYYMMDD-HHMMSS.json --output data/predictions/pred_stage3_eval100.csv --source stage3
+python -m benchmarks.tools.evaluate_predictions --reference-labels data/labels/reference_labels_eval_v1.csv --predictions data/predictions/pred_stage3_eval100.csv
 ```
