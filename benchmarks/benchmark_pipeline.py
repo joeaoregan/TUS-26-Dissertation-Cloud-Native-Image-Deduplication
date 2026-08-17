@@ -9,16 +9,6 @@ import psutil
 from colorama import Fore, init
 from PIL import Image
 
-from core_engine.utils.dedupe_exact import file_hash
-from core_engine.utils.dedupe_perceptual import (
-    IMAGE_EXTENSIONS,
-    compare_perceptual_hashes,
-)
-from core_engine.utils.dedupe_ssim import calculate_ssim
-
-init(autoreset=True)
-
-
 from benchmarks.constants import (
     DEFAULT_PAIR_LIMIT,
     MEASURED_RUNS,
@@ -33,6 +23,14 @@ from benchmarks.exports import (
 )
 from benchmarks.measurement import run_repeated, summarise
 from benchmarks.profile import build_dataset_profile
+from core_engine.utils.dedupe_exact import file_hash
+from core_engine.utils.dedupe_perceptual import (
+    IMAGE_EXTENSIONS,
+    compare_perceptual_hashes,
+)
+from core_engine.utils.dedupe_ssim import calculate_ssim
+
+init(autoreset=True)
 
 
 def run_benchmark(
@@ -41,6 +39,9 @@ def run_benchmark(
     timestamp_output: bool = True,
     export_pairs: bool = False,
     pair_limit: int = DEFAULT_PAIR_LIMIT,
+    phash_threshold: int = PHASH_THRESHOLD,
+    ssim_threshold: float = SSIM_THRESHOLD,
+    run_tag: str = "",
 ):
     print(
         f"\n{Fore.GREEN}--- Running Benchmark on: {Fore.CYAN}{dataset_dir}{Fore.GREEN} ---"
@@ -93,10 +94,11 @@ def run_benchmark(
         },
         "dataset_profile": dataset_profile,
         "config": {
-            "phash_threshold": 5,
-            "ssim_threshold": 0.85,
+            "phash_threshold": phash_threshold,
+            "ssim_threshold": ssim_threshold,
             "export_pairs": export_pairs,
             "pair_limit": pair_limit,
+            "run_tag": run_tag,
         },
     }
 
@@ -120,7 +122,7 @@ def run_benchmark(
         for img in images:
             with Image.open(img) as im:
                 phash_dict[img] = imagehash.phash(im)
-        return compare_perceptual_hashes(phash_dict, threshold=PHASH_THRESHOLD)
+        return compare_perceptual_hashes(phash_dict, threshold=phash_threshold)
 
     candidates, s2_times, s2_peaks = run_repeated(stage2_work)
     metrics["stages"]["stage2_phash"] = {
@@ -134,7 +136,7 @@ def run_benchmark(
         ssim_results = []
         for p1, p2, _ in candidates:
             score = calculate_ssim(p1, p2)
-            if score >= SSIM_THRESHOLD:
+            if score >= ssim_threshold:
                 ssim_results.append((p1, p2, score))
         return ssim_results
 
@@ -299,11 +301,37 @@ if __name__ == "__main__":
         default=DEFAULT_PAIR_LIMIT,
         help=f"Max entries per pair_details section (default: {DEFAULT_PAIR_LIMIT})",
     )
+    parser.add_argument(
+        "--phash-threshold",
+        type=int,
+        default=PHASH_THRESHOLD,
+        help=f"Stage 2 pHash Hamming distance threshold (default: {PHASH_THRESHOLD})",
+    )
+    parser.add_argument(
+        "--ssim-threshold",
+        type=float,
+        default=SSIM_THRESHOLD,
+        help=f"Stage 3 SSIM acceptance threshold (default: {SSIM_THRESHOLD})",
+    )
+    parser.add_argument(
+        "--run-tag",
+        type=str,
+        default="",
+        help="Optional run tag to store in output JSON config",
+    )
 
     args = parser.parse_args()
 
     if args.pair_limit < 1:
         print("Error: --pair-limit must be >= 1")
+        raise SystemExit(2)
+
+    if args.phash_threshold < 0:
+        print("Error: --phash-threshold must be >= 0")
+        raise SystemExit(2)
+
+    if not (0.0 <= args.ssim_threshold <= 1.0):
+        print("Error: --ssim-threshold must be between 0.0 and 1.0")
         raise SystemExit(2)
 
     if args.dataset_dir.exists() and args.dataset_dir.is_dir():
@@ -313,6 +341,9 @@ if __name__ == "__main__":
             timestamp_output=not args.no_timestamp,
             export_pairs=args.export_pairs,
             pair_limit=args.pair_limit,
+            phash_threshold=args.phash_threshold,
+            ssim_threshold=args.ssim_threshold,
+            run_tag=args.run_tag,
         )
     else:
         print(f"Directory '{args.dataset_dir}' not found or is not a folder.")
