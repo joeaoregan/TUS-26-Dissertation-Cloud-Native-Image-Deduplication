@@ -249,3 +249,29 @@ python -m benchmarks.tools.validate_reference_labels --csv data/labels/reference
 python -m benchmarks.tools.export_predictions --input logs/eval-100-YYYYMMDD-HHMMSS.json --output data/predictions/pred_stage3_eval100.csv --source stage3
 python -m benchmarks.tools.evaluate_predictions --reference-labels data/labels/reference_labels_eval_v1.csv --predictions data/predictions/pred_stage3_eval100.csv
 ```
+
+## Threshold Tuning
+
+| Run tag                             | pHash | SSIM | Stage2 candidates | Stage3 verified | TP | FP | FN | TN | Precision | Recall | F1     | Accuracy |
+|-------------------------------------|------:|-----:|------------------:|----------------:|---:|---:|---:|---:|----------:|-------:|-------:|---------:|
+| threshold-tuning-baseline-phash5-ssim085 | 5 | 0.85 | 53 | 49 | 48 | 0 | 3 | 8 | 1.0000 | 0.9412 | 0.9697 | 0.9492 |
+| threshold-tuning-phash4-ssim085     | 4 | 0.85 | 53 | 49 | 48 | 0 | 3 | 8 | 1.0000 | 0.9412 | 0.9697 | 0.9492 |
+| threshold-tuning-phash4-ssim090     | 4 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
+| threshold-tuning-phash5-ssim090     | 5 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
+| threshold-tuning-phash6-ssim085     | 6 | 0.85 | 53 | 49 | 48 | 0 | 3 | 8 | 1.0000 | 0.9412 | 0.9697 | 0.9492 |
+| threshold-tuning-phash6-ssim090     | 6 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
+| threshold-tuning-phash7-ssim090     | 7 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
+
+**Selected operating point:** `pHash=5`, `SSIM=0.85`.
+
+Across tested values, changing pHash from 4 to 7 did not change outcomes on this dataset.  
+Increasing SSIM from 0.85 to 0.90 reduced recall (0.9412 → 0.9216) with no precision gain (remained 1.0000).  
+Therefore, SSIM=0.85 was retained as the better precision/recall balance.
+
+### Threats to Validity
+
+- **Dataset size/composition:** These results come from a controlled 100-image test set; performance may change on larger, more varied real-world image datasets.
+- **Label coverage:** One predicted pair was not present in the reference labels and was excluded from confusion-matrix scoring, which may slightly understate/overstate final metrics.
+- **Transformation scope:** The benchmark emphasises specific transformations (copy, format conversion, brightness/colour edits, compression). Performance may differ for other distortions (crop, heavy blur, perspective changes).
+- **Threshold generalisability:** The chosen thresholds (`pHash=5`, `SSIM=0.85`) are empirically suitable for this dataset; re-tuning may be required for different domains.
+- **Environment dependence:** Timing and memory figures are machine-dependent (Windows 11, Python 3.13, local hardware) and are not directly comparable across systems.
