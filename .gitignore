@@ -31,9 +31,9 @@ Desktop.ini
 htmlcov/
 coverage/
 
-dedupe_test/
-dedupe_test_100/
-dedupe_test_100_clean/
+data/dedupe_test/
+data/dedupe_test_100/
+data/dedupe_test_100_clean/
 
 # Local data or benchmark image dumps (to prevent uploading raw media)
 core-engine/utils/__pycache__/

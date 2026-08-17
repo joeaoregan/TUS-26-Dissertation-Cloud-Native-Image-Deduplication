@@ -210,3 +210,22 @@ Earlier small-set baseline run (for continuity with prior commits):
 - Stage 2: 103.18 ms
 - Stage 3: 83.16 ms
 - Total: 188.56 ms
+
+### Correctness Evaluation with Reference Labels
+
+To evaluate detection quality (not just performance), this project uses manually verified **Reference Labels**.
+
+#### Files
+- `benchmarks/reference_labels_eval_v1.csv` — labelled image pairs (`label=1` duplicate, `label=0` non-duplicate)
+- `benchmarks/validate_reference_labels.py` — validates CSV schema, paths, labels, and duplicate pairs
+- `benchmarks/export_predictions.py` — exports predicted pairs from benchmark JSON
+- `benchmarks/evaluate_predictions.py` — computes TP/FP/FN/TN, Precision, Recall, F1, Accuracy
+- `benchmarks/build_review_html.py` — optional side-by-side HTML reviewer for pair adjudication
+
+#### Workflow
+```bash
+python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output benchmarks/eval-100.json --export-pairs --pair-limit 500
+python -m benchmarks.validate_reference_labels --csv benchmarks/reference_labels_eval_v1.csv
+python -m benchmarks.export_predictions --input benchmarks/eval-100.json --output benchmarks/pred_stage3_eval100.csv --source stage3
+python -m benchmarks.evaluate_predictions --reference-labels benchmarks/reference_labels_eval_v1.csv --predictions benchmarks/pred_stage3_eval100.csv
+```
