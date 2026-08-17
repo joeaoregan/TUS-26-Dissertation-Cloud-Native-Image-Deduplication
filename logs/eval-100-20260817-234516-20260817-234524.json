@@ -1,0 +1,785 @@
+{
+    "dataset": "data\\dedupe_test_100",
+    "total_images": 100,
+    "runs": {
+        "warmup_discarded": 1,
+        "measured_iterations": 10
+    },
+    "stages": {
+        "stage1_sha256": {
+            "time_ms": {
+                "raw": [
+                    8.47,
+                    10.01,
+                    8.38,
+                    8.29,
+                    9.32,
+                    8.16,
+                    8.42,
+                    8.33,
+                    8.4,
+                    8.39
+                ],
+                "mean": 8.62,
+                "std_dev": 0.58
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    1.5205,
+                    1.5224,
+                    1.5205,
+                    1.5205,
+                    1.5205,
+                    1.5205,
+                    1.5205,
+                    1.5205,
+                    1.5205,
+                    1.5205
+                ],
+                "mean": 1.52,
+                "std_dev": 0.0
+            }
+        },
+        "stage2_phash": {
+            "time_ms": {
+                "raw": [
+                    194.0,
+                    180.76,
+                    180.29,
+                    183.84,
+                    175.06,
+                    180.63,
+                    179.56,
+                    180.88,
+                    177.6,
+                    182.69
+                ],
+                "mean": 181.53,
+                "std_dev": 5.02
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    0.1838,
+                    0.1844,
+                    0.1827,
+                    0.182,
+                    0.1818,
+                    0.1822,
+                    0.1817,
+                    0.1817,
+                    0.1818,
+                    0.1816
+                ],
+                "mean": 0.18,
+                "std_dev": 0.0
+            },
+            "candidate_pairs": 53
+        },
+        "stage3_ssim": {
+            "time_ms": {
+                "raw": [
+                    506.99,
+                    506.89,
+                    513.19,
+                    497.32,
+                    500.94,
+                    501.92,
+                    497.51,
+                    487.04,
+                    496.55,
+                    491.68
+                ],
+                "mean": 500.0,
+                "std_dev": 7.73
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    11.9567,
+                    11.9577,
+                    11.9563,
+                    11.9563,
+                    11.9566,
+                    11.9568,
+                    11.9569,
+                    11.9565,
+                    11.9565,
+                    11.9564
+                ],
+                "mean": 11.96,
+                "std_dev": 0.0
+            },
+            "verified_pairs": 49
+        }
+    },
+    "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python_version": "3.13.14",
+        "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+        "machine": "AMD64",
+        "total_ram_gb": 63.71
+    },
+    "dataset_profile": {
+        "total_files": 100,
+        "total_size_bytes": 10871851,
+        "total_size_mb": 10.37,
+        "format_counts": {
+            ".jpeg": 59,
+            ".jpg": 31,
+            ".png": 10
+        },
+        "resolution_range": {
+            "min": "334x296",
+            "max": "1061x668"
+        },
+        "width_range": {
+            "min": 334,
+            "max": 1061
+        },
+        "height_range": {
+            "min": 296,
+            "max": 668
+        },
+        "profile_read_errors": 0
+    },
+    "config": {
+        "phash_threshold": 5,
+        "ssim_threshold": 0.85,
+        "export_pairs": true,
+        "pair_limit": 500
+    },
+    "total_pipeline_time_ms": {
+        "raw": [
+            709.47,
+            697.66,
+            701.86,
+            689.45,
+            685.32,
+            690.71,
+            685.49,
+            676.25,
+            682.54,
+            682.75
+        ],
+        "mean": 690.15,
+        "std_dev": 10.1
+    },
+    "total_pipeline_peak_ram_mb": 11.96,
+    "detections": {
+        "stage1_exact_duplicate_groups": 10,
+        "stage1_redundant_files": 10,
+        "stage2_candidate_pairs": 53,
+        "stage3_verified_pairs": 49
+    },
+    "pair_details": {
+        "sample_limit": 500,
+        "stage1_exact_groups_sample": [
+            {
+                "sha256": "9e6ee69247a3e829a9b8e1169a22a34c66afc691f598c1a1d1f46017a03e1c4e",
+                "files": [
+                    "dedupe_test_100/ILSVRC2012_val_00000101 - Copy.JPEG",
+                    "dedupe_test_100/ILSVRC2012_val_00000101.JPEG"
+                ],
+                "group_size": 2,
+                "redundant_files": 1
+            },
+            {
+                "sha256": "1a772491ad6c64dff9ff6d43a85cf79601089b6929d1bcce0245b401990cf182",
+                "files": [
+                    "dedupe_test_100/ILSVRC2012_val_00000105 - Copy.JPEG",
+                    "dedupe_test_100/ILSVRC2012_val_00000105.JPEG"
+                ],
+                "group_size": 2,
+                "redundant_files": 1
+            },
+            {
+                "sha256": "a71b4109e942e8574df40b535da6deb32816de65c5ddeef6383b182ce3477292",
+                "files": [
+                    "dedupe_test_100/ILSVRC2012_val_00000110 - Copy.JPEG",
+                    "dedupe_test_100/ILSVRC2012_val_00000110.JPEG"
+                ],
+                "group_size": 2,
+                "redundant_files": 1
+            },
+            {
+                "sha256": "8e90f76f05a8c1284d0efb3abe66f56dce393f4d23461286491e46b6ba4f4082",
+                "files": [
+                    "dedupe_test_100/ILSVRC2012_val_00000117 - Copy.JPEG",
+                    "dedupe_test_100/ILSVRC2012_val_00000117.JPEG"
+                ],
+                "group_size": 2,
+                "redundant_files": 1
+            },
+            {
+                "sha256": "7d8619e1c5fd8a5812bad2576a7c8fa9f5a58f1f4c54fb445f4c38d203ad4f12",
+                "files": [
+                    "dedupe_test_100/ILSVRC2012_val_00000121 - Copy.JPEG",
+                    "dedupe_test_100/ILSVRC2012_val_00000121.JPEG"
+                ],
+                "group_size": 2,
+                "redundant_files": 1
+            },
+            {
+                "sha256": "e19a06631b154879dcde8b4827b699919a8b8aaf112e606827ee04bde0dbe325",
+                "files": [
+                    "dedupe_test_100/ILSVRC2012_val_00000127 - Copy.JPEG",
+                    "dedupe_test_100/ILSVRC2012_val_00000127.JPEG"
+                ],
+                "group_size": 2,
+                "redundant_files": 1
+            },
+            {
+                "sha256": "e3e1182b2edca36c9cf0471fb25cb1b01cce3247d030a0ba91b5107c0737fdbf",
+                "files": [
+                    "dedupe_test_100/ILSVRC2012_val_00000135 - Copy.JPEG",
+                    "dedupe_test_100/ILSVRC2012_val_00000135.JPEG"
+                ],
+                "group_size": 2,
+                "redundant_files": 1
+            },
+            {
+                "sha256": "c2942f2f996e37bd590ed49195b82abf3b04bbda54d1c96656007ab5c77581ee",
+                "files": [
+                    "dedupe_test_100/ILSVRC2012_val_00000140 - Copy.JPEG",
+                    "dedupe_test_100/ILSVRC2012_val_00000140.JPEG"
+                ],
+                "group_size": 2,
+                "redundant_files": 1
+            },
+            {
+                "sha256": "44050c761682084a4f59f79b924949fc78400e91072d9fbcc74692d65dd3645d",
+                "files": [
+                    "dedupe_test_100/ILSVRC2012_val_00000145 - Copy.JPEG",
+                    "dedupe_test_100/ILSVRC2012_val_00000145.JPEG"
+                ],
+                "group_size": 2,
+                "redundant_files": 1
+            },
+            {
+                "sha256": "4a2d3acdad166896988656452fbc6e608e758b221e9afd8a18873186e066f093",
+                "files": [
+                    "dedupe_test_100/ILSVRC2012_val_00000148 - Copy.JPEG",
+                    "dedupe_test_100/ILSVRC2012_val_00000148.JPEG"
+                ],
+                "group_size": 2,
+                "redundant_files": 1
+            }
+        ],
+        "stage2_candidates_sample": [
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000101 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000101.JPEG",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000102.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000102_90.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000103.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000103_90.jpg",
+                "phash_distance": 2
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000104.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000104.png",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000105 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000105.JPEG",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000106.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000106_90.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000107.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000107_90.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000108.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000108.png",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000109.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000109_90.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000110 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000110.JPEG",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000111.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000111_110.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000112.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000112.png",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000113.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000113_110.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000114.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000114_110.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000115.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000115_110.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000116.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000116.png",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000117 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000117.JPEG",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000118.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000118_110.jpg",
+                "phash_distance": 2
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000119.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000119_blue.jpg",
+                "phash_distance": 2
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000120.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000120.png",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000121 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000121.JPEG",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000122.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000122_red.jpg",
+                "phash_distance": 2
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000123.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000123_green.jpg",
+                "phash_distance": 2
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000124.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000124.png",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000125.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000125_blue.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000126.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000126_green.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000127 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000127.JPEG",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000128.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000128.png",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000129.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000129_red.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000130.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000130_blue.jpg",
+                "phash_distance": 2
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000131.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000131_green.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000132.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000132.png",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000133.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000133_red.jpg",
+                "phash_distance": 2
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000134.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000134_blue.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000135 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000135.JPEG",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000136.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000136.png",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000137.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000137_brightness_down.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000137.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000137_brightness_up.jpg",
+                "phash_distance": 2
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000137_brightness_down.jpg",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000137_brightness_up.jpg",
+                "phash_distance": 2
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000138.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000138_brightness_up.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000139.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000139_brightness_up.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000140 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000140.JPEG",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000140 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000140.png",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000140.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000140.png",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000141.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000141_brightness_up.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000142.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000142_brightness_up.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000143.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000143_brightness_down.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000144.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000144_brightness_down.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000145 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000145.JPEG",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000146.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000146_brightness_down.jpg",
+                "phash_distance": 2
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000147.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000147_brightness_down.jpg",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000148 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000148.JPEG",
+                "phash_distance": 0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000149.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000149_quality_80.jpg",
+                "phash_distance": 0
+            }
+        ],
+        "stage3_verified_sample": [
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000101 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000101.JPEG",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000102.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000102_90.jpg",
+                "ssim_score": 0.953309
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000103.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000103_90.jpg",
+                "ssim_score": 0.967766
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000104.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000104.png",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000105 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000105.JPEG",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000106.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000106_90.jpg",
+                "ssim_score": 0.979142
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000107.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000107_90.jpg",
+                "ssim_score": 0.948016
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000108.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000108.png",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000109.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000109_90.jpg",
+                "ssim_score": 0.931117
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000110 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000110.JPEG",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000111.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000111_110.jpg",
+                "ssim_score": 0.990525
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000112.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000112.png",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000113.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000113_110.jpg",
+                "ssim_score": 0.985495
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000114.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000114_110.jpg",
+                "ssim_score": 0.988432
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000115.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000115_110.jpg",
+                "ssim_score": 0.984241
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000116.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000116.png",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000117 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000117.JPEG",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000118.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000118_110.jpg",
+                "ssim_score": 0.998013
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000119.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000119_blue.jpg",
+                "ssim_score": 0.979531
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000120.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000120.png",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000121 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000121.JPEG",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000122.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000122_red.jpg",
+                "ssim_score": 0.96597
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000123.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000123_green.jpg",
+                "ssim_score": 0.975637
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000124.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000124.png",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000125.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000125_blue.jpg",
+                "ssim_score": 0.987149
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000127 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000127.JPEG",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000128.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000128.png",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000129.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000129_red.jpg",
+                "ssim_score": 0.963009
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000130.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000130_blue.jpg",
+                "ssim_score": 0.99181
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000131.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000131_green.jpg",
+                "ssim_score": 0.940878
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000132.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000132.png",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000133.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000133_red.jpg",
+                "ssim_score": 0.984906
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000134.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000134_blue.jpg",
+                "ssim_score": 0.986898
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000135 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000135.JPEG",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000136.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000136.png",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000137.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000137_brightness_down.jpg",
+                "ssim_score": 0.945339
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000137.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000137_brightness_up.jpg",
+                "ssim_score": 0.857709
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000138.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000138_brightness_up.jpg",
+                "ssim_score": 0.949908
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000140 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000140.JPEG",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000140 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000140.png",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000140.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000140.png",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000142.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000142_brightness_up.jpg",
+                "ssim_score": 0.943047
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000143.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000143_brightness_down.jpg",
+                "ssim_score": 0.967581
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000144.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000144_brightness_down.jpg",
+                "ssim_score": 0.952541
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000145 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000145.JPEG",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000146.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000146_brightness_down.jpg",
+                "ssim_score": 0.955171
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000147.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000147_brightness_down.jpg",
+                "ssim_score": 0.948482
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000148 - Copy.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000148.JPEG",
+                "ssim_score": 1.0
+            },
+            {
+                "file_a": "dedupe_test_100/ILSVRC2012_val_00000149.JPEG",
+                "file_b": "dedupe_test_100/ILSVRC2012_val_00000149_quality_80.jpg",
+                "ssim_score": 0.997229
+            }
+        ],
+        "stage1_exact_groups_total": 10,
+        "stage2_candidates_total": 53,
+        "stage3_verified_total": 49
+    }
+}

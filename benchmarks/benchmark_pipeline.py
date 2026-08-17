@@ -1,12 +1,8 @@
 import argparse
 import json
 import platform
-import time
-import tracemalloc
-from collections import Counter
 from datetime import datetime
 from pathlib import Path
-from statistics import mean, stdev
 
 import imagehash
 import psutil
@@ -22,163 +18,21 @@ from core_engine.utils.dedupe_ssim import calculate_ssim
 
 init(autoreset=True)
 
-WARMUP_RUNS = 1
-MEASURED_RUNS = 10
-DEFAULT_PAIR_LIMIT = 200
 
-
-def measure_once(func, *args, **kwargs):
-    """Measure execution time (ms) and peak memory (MB) for one function call."""
-    tracemalloc.start()
-    start_time = time.perf_counter()
-
-    result = func(*args, **kwargs)
-
-    elapsed_ms = (time.perf_counter() - start_time) * 1000
-    _, peak_mem = tracemalloc.get_traced_memory()
-    tracemalloc.stop()
-
-    peak_mem_mb = peak_mem / (1024 * 1024)
-    return result, elapsed_ms, peak_mem_mb
-
-
-def run_repeated(
-    func, warmup_runs=WARMUP_RUNS, measured_runs=MEASURED_RUNS, *args, **kwargs
-):
-    """
-    Execute warm-up runs (discarded), then measured runs.
-    Returns:
-      - last_result
-      - list of execution times (ms)
-      - list of peak memory values (MB)
-    """
-    # Warm-up (discard)
-    for _ in range(warmup_runs):
-        func(*args, **kwargs)
-
-    times_ms = []
-    peaks_mb = []
-    last_result = None
-
-    # Measured runs
-    for _ in range(measured_runs):
-        last_result, t_ms, p_mb = measure_once(func, *args, **kwargs)
-        times_ms.append(t_ms)
-        peaks_mb.append(p_mb)
-
-    return last_result, times_ms, peaks_mb
-
-
-def summarise(values):
-    """Return mean and std-dev (0.0 std if only one sample)."""
-    if not values:
-        return {"mean": 0.0, "std_dev": 0.0}
-    if len(values) == 1:
-        return {"mean": round(values[0], 2), "std_dev": 0.0}
-    return {"mean": round(mean(values), 2), "std_dev": round(stdev(values), 2)}
-
-
-def build_dataset_profile(images: list[Path]) -> dict:
-    """
-    Build reproducible dataset metadata:
-    - total size (bytes/MB)
-    - format counts by file extension
-    - resolution min/max (width x height)
-    """
-    if not images:
-        return {
-            "total_files": 0,
-            "total_size_bytes": 0,
-            "total_size_mb": 0.0,
-            "format_counts": {},
-            "resolution_range": None,
-            "width_range": None,
-            "height_range": None,
-            "profile_read_errors": 0,
-        }
-
-    format_counts = Counter(p.suffix.lower() for p in images)
-
-    total_size_bytes = 0
-    widths = []
-    heights = []
-    resolution_read_errors = 0
-
-    for p in images:
-        total_size_bytes += p.stat().st_size
-        try:
-            with Image.open(p) as im:
-                w, h = im.size
-                widths.append(w)
-                heights.append(h)
-        except Exception as e:
-            resolution_read_errors += 1
-            print(f"{Fore.RED}Warning: could not read resolution for {p}: {e}")
-
-    total_size_mb = round(total_size_bytes / (1024 * 1024), 2)
-
-    profile = {
-        "total_files": len(images),
-        "total_size_bytes": total_size_bytes,
-        "total_size_mb": total_size_mb,
-        "format_counts": dict(sorted(format_counts.items())),
-        "resolution_range": None,
-        "width_range": None,
-        "height_range": None,
-        "profile_read_errors": resolution_read_errors,
-    }
-
-    if widths and heights:
-        profile["width_range"] = {"min": min(widths), "max": max(widths)}
-        profile["height_range"] = {"min": min(heights), "max": max(heights)}
-        profile["resolution_range"] = {
-            "min": f"{min(widths)}x{min(heights)}",
-            "max": f"{max(widths)}x{max(heights)}",
-        }
-
-    return profile
-
-
-def _export_stage1_groups(stage1_result: dict, limit: int) -> list[dict]:
-    groups = []
-    for digest, paths in stage1_result.items():
-        if len(paths) > 1:
-            groups.append(
-                {
-                    "sha256": digest,
-                    "files": [str(p) for p in paths],
-                    "group_size": len(paths),
-                    "redundant_files": len(paths) - 1,
-                }
-            )
-    groups.sort(key=lambda g: g["group_size"], reverse=True)
-    return groups[:limit]
-
-
-def _export_stage2_candidates(candidates: list[tuple], limit: int) -> list[dict]:
-    out = []
-    for p1, p2, distance in candidates[:limit]:
-        out.append(
-            {
-                "file_a": str(p1),
-                "file_b": str(p2),
-                "phash_distance": int(distance),
-            }
-        )
-    return out
-
-
-def _export_stage3_verified(verified: list[tuple], limit: int) -> list[dict]:
-    out = []
-    for p1, p2, score in verified[:limit]:
-        out.append(
-            {
-                "file_a": str(p1),
-                "file_b": str(p2),
-                "ssim_score": round(float(score), 6),
-            }
-        )
-    return out
+from benchmarks.constants import (
+    DEFAULT_PAIR_LIMIT,
+    MEASURED_RUNS,
+    PHASH_THRESHOLD,
+    SSIM_THRESHOLD,
+    WARMUP_RUNS,
+)
+from benchmarks.exports import (
+    export_stage1_groups,
+    export_stage2_candidates,
+    export_stage3_verified,
+)
+from benchmarks.measurement import run_repeated, summarise
+from benchmarks.profile import build_dataset_profile
 
 
 def run_benchmark(
@@ -266,7 +120,7 @@ def run_benchmark(
         for img in images:
             with Image.open(img) as im:
                 phash_dict[img] = imagehash.phash(im)
-        return compare_perceptual_hashes(phash_dict, threshold=5)
+        return compare_perceptual_hashes(phash_dict, threshold=PHASH_THRESHOLD)
 
     candidates, s2_times, s2_peaks = run_repeated(stage2_work)
     metrics["stages"]["stage2_phash"] = {
@@ -280,7 +134,7 @@ def run_benchmark(
         ssim_results = []
         for p1, p2, _ in candidates:
             score = calculate_ssim(p1, p2)
-            if score >= 0.85:
+            if score >= SSIM_THRESHOLD:
                 ssim_results.append((p1, p2, score))
         return ssim_results
 
@@ -322,13 +176,13 @@ def run_benchmark(
     if export_pairs:
         metrics["pair_details"] = {
             "sample_limit": pair_limit,
-            "stage1_exact_groups_sample": _export_stage1_groups(
+            "stage1_exact_groups_sample": export_stage1_groups(
                 stage1_result, pair_limit
             ),
-            "stage2_candidates_sample": _export_stage2_candidates(
+            "stage2_candidates_sample": export_stage2_candidates(
                 candidates, pair_limit
             ),
-            "stage3_verified_sample": _export_stage3_verified(verified, pair_limit),
+            "stage3_verified_sample": export_stage3_verified(verified, pair_limit),
             "stage1_exact_groups_total": exact_duplicate_groups,
             "stage2_candidates_total": len(candidates),
             "stage3_verified_total": len(verified),
@@ -419,8 +273,8 @@ if __name__ == "__main__":
         "--dir",
         dest="dataset_dir",
         type=Path,
-        default=Path("dedupe_test"),
-        help="Dataset directory to benchmark (default: dedupe_test)",
+        default=Path("data/dedupe_test"),
+        help="Dataset directory to benchmark (default: data/dedupe_test)",
     )
     parser.add_argument(
         "--output",
