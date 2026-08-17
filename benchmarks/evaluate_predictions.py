@@ -93,6 +93,16 @@ def main():
     print(f"{Fore.YELLOW}F1 Score:  {Fore.CYAN}{f1:.4f}")
     print(f"{Fore.YELLOW}Accuracy:  {Fore.CYAN}{accuracy:.4f}")
 
+    fn_pairs = [
+        pair
+        for pair, true_label in labels.items()
+        if true_label == 1 and pair not in preds
+    ]
+    if fn_pairs:
+        print(f"\n{Fore.RED}False Negatives (label=1 but not predicted):")
+        for a, b in fn_pairs:
+            print(f"- {a}  <->  {b}")
+
     # Helpful diagnostics
     extra_preds = [p for p in preds if p not in labels]
     if extra_preds:
