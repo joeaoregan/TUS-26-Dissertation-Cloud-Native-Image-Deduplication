@@ -275,3 +275,18 @@ Therefore, SSIM=0.85 was retained as the better precision/recall balance.
 - **Transformation scope:** The benchmark emphasises specific transformations (copy, format conversion, brightness/colour edits, compression). Performance may differ for other distortions (crop, heavy blur, perspective changes).
 - **Threshold generalisability:** The chosen thresholds (`pHash=5`, `SSIM=0.85`) are empirically suitable for this dataset; re-tuning may be required for different domains.
 - **Environment dependence:** Timing and memory figures are machine-dependent (Windows 11, Python 3.13, local hardware) and are not directly comparable across systems.
+
+
+## Final Baseline
+
+- **Config:** pHash=5, SSIM=0.85
+- **Metrics:** Precision 1.0000, Recall 0.9412, F1 0.9697, Accuracy 0.9492
+- **Known Misses:** `ILSVRC2012_val_00000139` (brightness_up), `ILSVRC2012_val_00000141` (brightness_up), and `ILSVRC2012_val_00000126` (green variant).
+- **Observation:** Missed pairs tend to have low-colour or near-grayscale content with subtle brightness/colour shifts, which can reduce SSIM enough to fall below the threshold.
+
+```bash
+# Reproducibility
+python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/final-baseline-phash5-ssim085.json --export-pairs --pair-limit 500 --phash-threshold 5 --ssim-threshold 0.85 --run-tag final-baseline
+python -m benchmarks.tools.export_predictions --input logs/final-baseline-phash5-ssim085.json --output data/predictions/final-baseline-phash5-ssim085-stage3.csv --source stage3
+python -m benchmarks.tools.evaluate_predictions --reference-labels data/labels/reference_labels_eval_v1.csv --predictions data/predictions/final-baseline-phash5-ssim085-stage3.csv
+```
