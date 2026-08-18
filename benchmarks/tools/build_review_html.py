@@ -23,7 +23,8 @@ def load_reference_labels(path: Path | None) -> dict:
         return labels
 
     allowed_input_base = (Path.cwd() / "data" / "reviews").resolve()
-    safe_path = resolve_within(allowed_input_base, str(path))
+    candidate = path.expanduser()
+    safe_path = resolve_within(allowed_input_base, str(candidate))
 
     if not safe_path.exists():
         return labels
@@ -48,7 +49,7 @@ def parse_args() -> argparse.Namespace:
         "--input",
         required=True,
         type=Path,
-        help="Benchmark JSON with pair_details",
+        help="Benchmark JSON with pair_details (path relative to ./benchmarks)",
     )
     parser.add_argument(
         "--output",
@@ -65,18 +66,35 @@ def resolve_safe_paths(args: argparse.Namespace) -> tuple[Path, Path]:
     allowed_input_base = (Path.cwd() / "benchmarks").resolve()
     allowed_output_base = (Path.cwd() / "data" / "reviews").resolve()
 
+    input_candidate = args.input.expanduser()
+    output_candidate = args.output.expanduser()
+
     try:
-        safe_input = resolve_within(allowed_input_base, str(args.input))
-        safe_output = resolve_within(allowed_output_base, str(args.output))
+        safe_input = resolve_within(allowed_input_base, str(input_candidate))
+        safe_output = resolve_within(allowed_output_base, str(output_candidate))
     except ValueError as e:
         print(f"{Fore.RED}ERROR: {Fore.RESET}{e}")
         raise SystemExit(2) from e
+
+    if safe_input.suffix.lower() != ".json":
+        print(f"{Fore.RED}ERROR: --input must be a .json file: {safe_input}")
+        raise SystemExit(2)
+
+    if safe_output.suffix.lower() not in {".html", ".htm"}:
+        print(f"{Fore.RED}ERROR: --output must be .html or .htm: {safe_output}")
+        raise SystemExit(2)
+
+    if not safe_input.exists() or not safe_input.is_file():
+        print(f"{Fore.RED}ERROR: Input JSON not found: {safe_input}")
+        raise SystemExit(2)
 
     return safe_input, safe_output
 
 
 def load_pairs_from_benchmark(input_json: Path, source: str) -> list[dict]:
-    data = json.loads(input_json.read_text(encoding="utf-8"))
+    with input_json.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+
     pair_details = data.get("pair_details", {})
     pairs = (
         pair_details.get("stage3_verified_sample", [])
@@ -207,11 +225,10 @@ function exportCsv() {{
 """
 
 
-def write_html_output(output_path: Path, html: str) -> None:
-    allowed_output_base = (Path.cwd() / "data" / "reviews").resolve()
-    safe_output = resolve_within(allowed_output_base, str(output_path))
+def write_html_output(safe_output: Path, html: str) -> None:
     safe_output.parent.mkdir(parents=True, exist_ok=True)
-    safe_output.write_text(html, encoding="utf-8")
+    with safe_output.open("w", encoding="utf-8", newline="") as f:
+        f.write(html)
     print(f"{Fore.YELLOW}Review HTML written to: {Fore.CYAN}{safe_output}")
 
 
