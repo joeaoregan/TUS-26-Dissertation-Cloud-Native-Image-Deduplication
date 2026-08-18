@@ -107,7 +107,7 @@ python -m core_engine.utils.dedupe_ssim "dedupe_test/me.jpg" "dedupe_test/me - C
 
 ## Running the Hybrid Cascading Pipeline
 
-The unified hybrid execution combines all three modules to optimize compute performance. It runs SHA-256 byte-matching first, evaluates pHash visual candidates on unique media, and applies an SSIM verification gate to confirm high-confidence visual matches.
+The unified hybrid execution combines all three modules to optimise compute performance. It runs SHA-256 byte-matching first, evaluates pHash visual candidates on unique media, and applies an SSIM verification pass to reduce false positives.
 
 You can execute the entire pipeline directly from your main project root directory:
 
@@ -144,16 +144,16 @@ From repository root:
 python -m benchmarks.benchmark_pipeline
 
 # Custom dataset directory + custom output JSON
-python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output benchmarks/eval-100.json
+python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/eval-100.json
 
 # Export sample duplicate/candidate/verified pair details
-python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output benchmarks/eval-100.json --export-pairs
+python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/eval-100.json --export-pairs
 
 # Increase export cap per pair section
-python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output benchmarks/eval-100.json --export-pairs --pair-limit 300
+python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/eval-100.json --export-pairs --pair-limit 300
 
 # Disable timestamped snapshot
-python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output benchmarks/eval-100.json --no-timestamp
+python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/eval-100.json --no-timestamp
 ```
 
 ### Why Stage 3 Can Be `0.0 ms`
@@ -181,11 +181,11 @@ Use **Detection Counts** in the output to interpret this:
 - Formats: `{'.jpeg': 100}`
 - Resolution range: `120x90 -> 900x1000`
 
-### Output Metrics
+### ### Output Metrics
 
 Benchmark results are exported to:
-- Canonical latest file: `benchmarks/results.json` (or custom `--output`)
-- Timestamped snapshot: `benchmarks/<name>-YYYYMMDD-HHMMSS.json` (unless `--no-timestamp` is used)
+- Canonical latest file: `logs/results.json` (or custom `--output`)
+- Timestamped snapshot: `logs/<name>-YYYYMMDD-HHMMSS.json` (unless `--no-timestamp` is used)
 
 Each report now includes:
 
@@ -235,7 +235,7 @@ Earlier small-set baseline run (for continuity with prior commits):
 To evaluate detection quality (not just performance), this project uses manually verified **Reference Labels**.
 
 #### Files
-- `benchmarks/reference_labels_eval_v1.csv` — labelled image pairs (`label=1` duplicate, `label=0` non-duplicate)
+- `data/labels/reference_labels_eval_v1.csv` — labelled image pairs (`label=1` duplicate, `label=0` non-duplicate)
 - `benchmarks/tools/validate_reference_labels.py` — validates CSV schema, paths, labels, and duplicate pairs
 - `benchmarks/tools/export_predictions.py` — exports predicted pairs from benchmark JSON
 - `benchmarks/tools/evaluate_predictions.py` — computes TP/FP/FN/TN, Precision, Recall, F1, Accuracy
@@ -275,7 +275,6 @@ Therefore, SSIM=0.85 was retained as the better precision/recall balance.
 - **Transformation scope:** The benchmark emphasises specific transformations (copy, format conversion, brightness/colour edits, compression). Performance may differ for other distortions (crop, heavy blur, perspective changes).
 - **Threshold generalisability:** The chosen thresholds (`pHash=5`, `SSIM=0.85`) are empirically suitable for this dataset; re-tuning may be required for different domains.
 - **Environment dependence:** Timing and memory figures are machine-dependent (Windows 11, Python 3.13, local hardware) and are not directly comparable across systems.
-
 
 ## Final Baseline
 
