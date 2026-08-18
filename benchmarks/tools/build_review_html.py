@@ -40,7 +40,7 @@ def load_reference_labels(path: Path | None) -> dict:
     return labels
 
 
-def main():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Build side-by-side HTML pair reviewer"
     )
@@ -58,8 +58,10 @@ def main():
     )
     parser.add_argument("--source", choices=["stage2", "stage3"], default="stage3")
     parser.add_argument("--reference-labels", type=Path, default=None)
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+def resolve_safe_paths(args: argparse.Namespace) -> tuple[Path, Path]:
     allowed_input_base = (Path.cwd() / "benchmarks").resolve()
     allowed_output_base = (Path.cwd() / "data" / "reviews").resolve()
 
@@ -68,13 +70,17 @@ def main():
         safe_output = resolve_within(allowed_output_base, str(args.output))
     except ValueError as e:
         print(f"{Fore.RED}ERROR: {Fore.RESET}{e}")
-        raise SystemExit(2)
+        raise SystemExit(2) from e
 
-    data = json.loads(safe_input.read_text(encoding="utf-8"))
+    return safe_input, safe_output
+
+
+def load_pairs_from_benchmark(input_json: Path, source: str) -> list[dict]:
+    data = json.loads(input_json.read_text(encoding="utf-8"))
     pair_details = data.get("pair_details", {})
     pairs = (
         pair_details.get("stage3_verified_sample", [])
-        if args.source == "stage3"
+        if source == "stage3"
         else pair_details.get("stage2_candidates_sample", [])
     )
 
@@ -84,9 +90,12 @@ def main():
         )
         raise SystemExit(1)
 
-    ref = load_reference_labels(args.reference_labels)
+    return pairs
 
+
+def build_rows_html(pairs: list[dict], ref: dict) -> list[str]:
     rows_html = []
+
     for i, p in enumerate(pairs, start=1):
         a = str(p["file_a"]).replace("\\", "/")
         b = str(p["file_b"]).replace("\\", "/")
@@ -123,11 +132,15 @@ def main():
 """
         )
 
-    html = f"""<!doctype html>
+    return rows_html
+
+
+def build_html(source: str, rows_html: list[str]) -> str:
+    return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Pair Reviewer ({args.source})</title>
+<title>Pair Reviewer ({source})</title>
 <style>
 body {{ font-family: Arial, sans-serif; margin: 16px; }}
 table {{ border-collapse: collapse; width: 100%; }}
@@ -152,7 +165,7 @@ button {{ margin-right: 8px; }}
 </style>
 </head>
 <body>
-<h2>Side-by-side Pair Reviewer ({escape(args.source)})</h2>
+<h2>Side-by-side Pair Reviewer ({escape(source)})</h2>
 <p>Tip: after reviewing labels, click "Export CSV" and save output as <code>benchmarks/reference_labels_eval_v2.csv</code>.</p>
 <button onclick="exportCsv()">Export CSV (from table)</button>
 <label for="out" class="sr-only">CSV output</label>
@@ -190,6 +203,16 @@ function exportCsv() {{
 </body>
 </html>
 """
+
+
+def main():
+    args = parse_args()
+    safe_input, safe_output = resolve_safe_paths(args)
+    pairs = load_pairs_from_benchmark(safe_input, args.source)
+    ref = load_reference_labels(args.reference_labels)
+
+    rows_html = build_rows_html(pairs, ref)
+    html = build_html(args.source, rows_html)
 
     safe_output.parent.mkdir(parents=True, exist_ok=True)
     safe_output.write_text(html, encoding="utf-8")
