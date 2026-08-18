@@ -205,6 +205,14 @@ function exportCsv() {{
 """
 
 
+def write_html_output(output_path: Path, html: str) -> None:
+    allowed_output_base = (Path.cwd() / "data" / "reviews").resolve()
+    safe_output = resolve_within(allowed_output_base, str(output_path))
+    safe_output.parent.mkdir(parents=True, exist_ok=True)
+    safe_output.write_text(html, encoding="utf-8")
+    print(f"{Fore.YELLOW}Review HTML written to: {Fore.CYAN}{safe_output}")
+
+
 def main():
     args = parse_args()
     safe_input, safe_output = resolve_safe_paths(args)
@@ -214,9 +222,7 @@ def main():
     rows_html = build_rows_html(pairs, ref)
     html = build_html(args.source, rows_html)
 
-    safe_output.parent.mkdir(parents=True, exist_ok=True)
-    safe_output.write_text(html, encoding="utf-8")
-    print(f"{Fore.YELLOW}Review HTML written to: {Fore.CYAN}{safe_output}")
+    write_html_output(safe_output, html)
 
 
 if __name__ == "__main__":
