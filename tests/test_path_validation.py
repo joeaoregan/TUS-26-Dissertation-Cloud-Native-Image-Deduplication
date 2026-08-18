@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from benchmarks.benchmark_pipeline import resolve_within
+from benchmarks.tools.path_safety import resolve_within
 
 
 def test_resolve_within_allows_relative_path(tmp_path: Path):
@@ -23,11 +23,15 @@ def test_resolve_within_blocks_parent_traversal(tmp_path: Path):
 
 
 def test_resolve_within_blocks_absolute_path_outside_base(tmp_path: Path):
-    outside = Path("/tmp/evil.json") if Path("/").exists() else Path("C:/evil.json")
-    # Force definitely outside on current platform:
+    if Path("/").exists():
+        outside = Path("/tmp/evil.json")
+    else:
+        outside = Path("C:/evil.json")
+
     outside = outside.resolve()
     if outside == tmp_path.resolve() or tmp_path.resolve() in outside.parents:
         pytest.skip("Could not construct an outside path on this platform")
+
     with pytest.raises(ValueError, match="Path escapes allowed directory"):
         resolve_within(tmp_path, str(outside))
 

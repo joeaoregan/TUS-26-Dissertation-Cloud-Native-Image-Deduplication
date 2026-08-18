@@ -6,6 +6,8 @@ from pathlib import Path
 
 from colorama import Fore, init
 
+from benchmarks.tools.path_safety import resolve_within
+
 init(autoreset=True)
 
 
@@ -15,37 +17,27 @@ def norm_pair(a: str, b: str) -> tuple[str, str]:
     return tuple(sorted((a, b)))
 
 
-def load_reference_labels(path: Path):
+def load_reference_labels(path: Path | None) -> dict:
     labels = {}
-    if not path or not path.exists():
+    if not path:
         return labels
-    allowed_input_base = (
-        Path.cwd() / "data" / "reviews"
-    ).resolve()  # choose strict base
+
+    allowed_input_base = (Path.cwd() / "data" / "reviews").resolve()
     safe_path = resolve_within(allowed_input_base, str(path))
 
+    if not safe_path.exists():
+        return labels
+
     with safe_path.open("r", encoding="utf-8", newline="") as f:
-        r = csv.DictReader(f)
-        for row in r:
+        reader = csv.DictReader(f)
+        for row in reader:
             k = norm_pair(row["img_a"], row["img_b"])
             labels[k] = {
-                "label": row["label"].strip(),
-                "type": row["type"].strip(),
-                "notes": row["notes"].strip(),
+                "label": row.get("label", "").strip(),
+                "type": row.get("type", "").strip(),
+                "notes": row.get("notes", "").strip(),
             }
     return labels
-
-
-def resolve_within(base_dir: Path, user_input: str) -> Path:
-    base = base_dir.resolve()
-    target = Path(user_input)
-    if not target.is_absolute():
-        target = (base / target).resolve()
-    else:
-        target = target.resolve()
-    if target != base and base not in target.parents:
-        raise ValueError(f"Path escapes allowed directory: {user_input}")
-    return target
 
 
 def main():
@@ -53,23 +45,33 @@ def main():
         description="Build side-by-side HTML pair reviewer"
     )
     parser.add_argument(
-        "--input", required=True, type=Path, help="Benchmark JSON with pair_details"
+        "--input",
+        required=True,
+        type=Path,
+        help="Benchmark JSON with pair_details",
     )
     parser.add_argument(
-        "--output", default=Path("benchmarks/review_pairs.html"), type=Path
+        "--output",
+        default=Path("review_pairs.html"),
+        type=Path,
+        help="Output HTML filename/path under data/reviews",
     )
     parser.add_argument("--source", choices=["stage2", "stage3"], default="stage3")
     parser.add_argument("--reference-labels", type=Path, default=None)
     args = parser.parse_args()
-    allowed_input_base = (Path.cwd() / "benchmarks").resolve()  # adjust if needed
+
+    allowed_input_base = (Path.cwd() / "benchmarks").resolve()
+    allowed_output_base = (Path.cwd() / "data" / "reviews").resolve()
+
     safe_input = resolve_within(allowed_input_base, str(args.input))
+    safe_output = resolve_within(allowed_output_base, str(args.output))
 
     data = json.loads(safe_input.read_text(encoding="utf-8"))
-    pd = data.get("pair_details", {})
+    pair_details = data.get("pair_details", {})
     pairs = (
-        pd.get("stage3_verified_sample", [])
+        pair_details.get("stage3_verified_sample", [])
         if args.source == "stage3"
-        else pd.get("stage2_candidates_sample", [])
+        else pair_details.get("stage2_candidates_sample", [])
     )
 
     if not pairs:
@@ -132,6 +134,17 @@ img {{ max-width: 320px; max-height: 220px; display: block; border: 1px solid #c
 .small {{ font-size: 12px; color: #666; margin-top: 6px; }}
 input[type=text] {{ width: 96%; margin-top: 6px; }}
 button {{ margin-right: 8px; }}
+.sr-only {{
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}}
 </style>
 </head>
 <body>
@@ -174,13 +187,9 @@ function exportCsv() {{
 </html>
 """
 
-    allowed_output_base = (
-        Path.cwd() / "data" / "reviews"
-    ).resolve()  # choose strict base
-    safe_output = resolve_within(allowed_output_base, str(args.output))
     safe_output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(html, encoding="utf-8")
-    print(f"{Fore.YELLOW}Review HTML written to: {Fore.CYAN}{args.output}")
+    safe_output.write_text(html, encoding="utf-8")
+    print(f"{Fore.YELLOW}Review HTML written to: {Fore.CYAN}{safe_output}")
 
 
 if __name__ == "__main__":

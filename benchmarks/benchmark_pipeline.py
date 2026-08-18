@@ -24,6 +24,7 @@ from benchmarks.exports import (
 from benchmarks.measurement import run_repeated, summarise
 from benchmarks.profile import build_dataset_profile
 from benchmarks.runtime_config import load_runtime_config
+from benchmarks.tools.path_safety import resolve_within
 from core_engine.utils.dedupe_exact import file_hash
 from core_engine.utils.dedupe_perceptual import (
     IMAGE_EXTENSIONS,
@@ -32,19 +33,6 @@ from core_engine.utils.dedupe_perceptual import (
 from core_engine.utils.dedupe_ssim import calculate_ssim
 
 init(autoreset=True)
-
-
-def resolve_within(base_dir: Path, user_input: str) -> Path:
-    base = base_dir.resolve()
-    target = Path(user_input)
-    if not target.is_absolute():
-        target = (base / target).resolve()
-    else:
-        target = target.resolve()
-
-    if target != base and base not in target.parents:
-        raise ValueError(f"Path escapes allowed directory: {user_input}")
-    return target
 
 
 def print_benchmark_summary(
@@ -123,14 +111,14 @@ def write_benchmark_outputs(
 ) -> None:
     output_json.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(output_json, "w", encoding="utf-8") as f:
+    with output_json.open("w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=4)
     print(f"\n{Fore.GREEN}Benchmark report exported to: {Fore.CYAN}{output_json}")
 
     if timestamp_output:
         ts = datetime.now().strftime("%Y%m%d-%H%M%S")
         stamped = output_json.with_name(f"{output_json.stem}-{ts}{output_json.suffix}")
-        with open(stamped, "w", encoding="utf-8") as f:
+        with stamped.open("w", encoding="utf-8") as f:
             json.dump(metrics, f, indent=4)
         print(f"{Fore.GREEN}Timestamped snapshot exported to: {Fore.CYAN}{stamped}")
 
@@ -204,7 +192,6 @@ def run_benchmark(
         },
     }
 
-    # Stage 1
     def stage1_work():
         hashes = {}
         for img in images:
@@ -218,7 +205,6 @@ def run_benchmark(
         "peak_ram_mb": {"raw": [round(x, 4) for x in s1_peaks], **summarise(s1_peaks)},
     }
 
-    # Stage 2
     def stage2_work():
         phash_dict = {}
         for img in images:
@@ -233,7 +219,6 @@ def run_benchmark(
         "candidate_pairs": len(candidates),
     }
 
-    # Stage 3
     def stage3_work():
         ssim_results = []
         for p1, p2, _ in candidates:
@@ -249,7 +234,6 @@ def run_benchmark(
         "verified_pairs": len(verified),
     }
 
-    # Totals
     total_times = [a + b + c for a, b, c in zip(s1_times, s2_times, s3_times)]
     metrics["total_pipeline_time_ms"] = {
         "raw": [round(x, 2) for x in total_times],
@@ -370,7 +354,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # CLI flag wins, but env can enable by default when flag is absent
     effective_export_pairs = args.export_pairs or runtime_cfg["export_pairs"]
 
     if args.pair_limit < 1:

@@ -5,6 +5,8 @@ from pathlib import Path
 
 from colorama import Fore, init
 
+from benchmarks.tools.path_safety import resolve_within
+
 init(autoreset=True)
 
 
@@ -31,7 +33,10 @@ def main():
     )
     args = parser.parse_args()
 
-    data = json.loads(args.input.read_text(encoding="utf-8"))
+    allowed_input_base = (Path.cwd() / "benchmarks").resolve()
+    safe_input = resolve_within(allowed_input_base, str(args.input))
+
+    data = json.loads(safe_input.read_text(encoding="utf-8"))
     pair_details = data.get("pair_details")
     if not pair_details:
         print(
@@ -55,14 +60,17 @@ def main():
         seen.add(k)
         rows.append({"img_a": k[0], "img_b": k[1], "predicted_label": 1})
 
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    with args.output.open("w", encoding="utf-8", newline="") as f:
+    allowed_output_base = (Path.cwd() / "data" / "reviews").resolve()
+    safe_output = resolve_within(allowed_output_base, str(args.output))
+
+    safe_output.parent.mkdir(parents=True, exist_ok=True)
+    with safe_output.open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["img_a", "img_b", "predicted_label"])
         w.writeheader()
         w.writerows(rows)
 
     print(
-        f"{Fore.YELLOW}Exported {len(rows)} predicted pairs to {args.output} (source={args.source})"
+        f"{Fore.YELLOW}Exported {len(rows)} predicted pairs to {safe_output} (source={args.source})"
     )
 
 
