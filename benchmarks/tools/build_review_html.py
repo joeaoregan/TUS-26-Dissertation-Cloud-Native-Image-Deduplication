@@ -141,11 +141,11 @@ def build_rows_html(pairs: list[dict], ref: dict) -> list[str]:
   <td>{i}</td>
   <td>
     <div class="path">{a_esc}</div>
-    <img src="../{a_esc}" alt="Image A for pair {i}: {a_esc}" loading="lazy">
+    <img src="../{a_esc}" alt="A for pair comparison {i}: {a_esc}" loading="lazy">
   </td>
   <td>
     <div class="path">{b_esc}</div>
-    <img src="../{b_esc}" alt="Image B for pair {i}: {b_esc}" loading="lazy">
+    <img src="../{b_esc}" alt="B for pair comparison {i}: {b_esc}" loading="lazy">
   </td>
   <td>{metric_esc}</td>
   <td>
