@@ -4,6 +4,8 @@ from pathlib import Path
 
 from colorama import Fore, init
 
+from benchmarks.tools.path_safety import resolve_within
+
 init(autoreset=True)
 
 
@@ -53,17 +55,29 @@ def main():
     parser.add_argument("--predictions", required=True, type=Path)
     args = parser.parse_args()
 
-    if not args.reference_labels.exists():
-        print(
-            f"{Fore.RED}ERROR: Missing reference labels file: {args.reference_labels}"
+    allowed_input_base = (Path.cwd() / "data" / "reviews").resolve()
+
+    try:
+        safe_reference_labels = resolve_within(
+            allowed_input_base, str(args.reference_labels)
         )
-        raise SystemExit(2)
-    if not args.predictions.exists():
-        print(f"{Fore.RED}ERROR: Missing predictions file: {args.predictions}")
+        safe_predictions = resolve_within(allowed_input_base, str(args.predictions))
+    except ValueError as e:
+        print(f"{Fore.RED}ERROR: {Fore.RESET}{e}")
         raise SystemExit(2)
 
-    labels = load_reference_labels(args.reference_labels)
-    preds = load_predictions(args.predictions)
+    if not safe_reference_labels.exists():
+        print(
+            f"{Fore.RED}ERROR: Missing reference labels file: {safe_reference_labels}"
+        )
+        raise SystemExit(2)
+
+    if not safe_predictions.exists():
+        print(f"{Fore.RED}ERROR: Missing predictions file: {safe_predictions}")
+        raise SystemExit(2)
+
+    labels = load_reference_labels(safe_reference_labels)
+    preds = load_predictions(safe_predictions)
 
     tp = fp = fn = tn = 0
 
@@ -103,7 +117,6 @@ def main():
         for a, b in fn_pairs:
             print(f"- {a}  <->  {b}")
 
-    # Helpful diagnostics
     extra_preds = [p for p in preds if p not in labels]
     if extra_preds:
         print(
