@@ -4,6 +4,8 @@ from pathlib import Path
 
 from colorama import Fore, init
 
+from benchmarks.tools.path_safety import resolve_within
+
 VALID_LABELS = {"0", "1"}
 VALID_TYPES = {"exact", "near", "non"}
 
@@ -21,8 +23,16 @@ def main():
     parser.add_argument("--csv", required=True, type=Path)
     args = parser.parse_args()
 
-    if not args.csv.exists():
-        print(f"{Fore.RED}ERROR: CSV not found: {args.csv}")
+    allowed_input_base = (Path.cwd() / "data" / "reviews").resolve()
+
+    try:
+        safe_csv = resolve_within(allowed_input_base, str(args.csv))
+    except ValueError as e:
+        print(f"{Fore.RED}ERROR: {Fore.RESET}{e}")
+        raise SystemExit(2)
+
+    if not safe_csv.exists():
+        print(f"{Fore.RED}ERROR: CSV not found: {safe_csv}")
         raise SystemExit(2)
 
     required = {"img_a", "img_b", "label", "type", "notes"}
@@ -30,7 +40,7 @@ def main():
     errors = 0
     rows = 0
 
-    with args.csv.open("r", encoding="utf-8", newline="") as f:
+    with safe_csv.open("r", encoding="utf-8", newline="") as f:
         reader = csv.DictReader(f)
         if set(reader.fieldnames or []) != required:
             print(f"{Fore.RED}ERROR: headers must be exactly: {sorted(required)}")

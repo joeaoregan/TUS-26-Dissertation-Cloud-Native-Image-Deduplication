@@ -63,8 +63,12 @@ def main():
     allowed_input_base = (Path.cwd() / "benchmarks").resolve()
     allowed_output_base = (Path.cwd() / "data" / "reviews").resolve()
 
-    safe_input = resolve_within(allowed_input_base, str(args.input))
-    safe_output = resolve_within(allowed_output_base, str(args.output))
+    try:
+        safe_input = resolve_within(allowed_input_base, str(args.input))
+        safe_output = resolve_within(allowed_output_base, str(args.output))
+    except ValueError as e:
+        print(f"{Fore.RED}ERROR: {Fore.RESET}{e}")
+        raise SystemExit(2)
 
     data = json.loads(safe_input.read_text(encoding="utf-8"))
     pair_details = data.get("pair_details", {})
