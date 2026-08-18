@@ -119,6 +119,7 @@ button {{ margin-right: 8px; }}
 <h2>Side-by-side Pair Reviewer ({escape(args.source)})</h2>
 <p>Tip: after reviewing labels, click "Export CSV" and save output as <code>benchmarks/reference_labels_eval_v2.csv</code>.</p>
 <button onclick="exportCsv()">Export CSV (from table)</button>
+<label for="out" class="sr-only">CSV output</label>
 <textarea id="out" rows="10" style="width:100%;margin-top:10px;" placeholder="CSV output appears here..."></textarea>
 <table>
 <thead>
