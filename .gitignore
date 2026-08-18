@@ -42,3 +42,6 @@ core-engine/utils/__pycache__/
 temp/
 
 *.zip
+
+# mkdocs
+site/
