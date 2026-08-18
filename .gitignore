@@ -40,3 +40,5 @@ core-engine/utils/__pycache__/
 
 # temporary and test files
 temp/
+
+*.zip
