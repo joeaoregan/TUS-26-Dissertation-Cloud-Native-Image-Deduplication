@@ -20,6 +20,8 @@ This phase focuses on:
 - [x] Runtime config module (env var driven)
 - [x] Updated CLI/API entrypoint using external config
 - [x] Documentation for local container run commands
+- [x] Test path stabilisation for consistent local execution
+- [x] SonarCloud quality baseline validation
 
 ## Configuration Variables Implemented
 
@@ -37,6 +39,9 @@ This phase focuses on:
 - [x] Pipeline runs in container and writes output artifact(s)
 - [x] Threshold values can be overridden at runtime without code changes
 - [x] Baseline metrics remain consistent with local execution (within expected variance)
+- [x] Full test suite passes locally after path corrections (`16 passed`)
+- [x] SonarCloud Quality Gate and project badges operational
+- [x] SonarCloud duplication metric reduced to `0.0%` after excluding generated review HTML artifacts
 
 ## Evidence
 
@@ -89,6 +94,17 @@ MSYS_NO_PATHCONV=1 docker run --rm \
 - Stage 3 verified pairs: **49**
 - Detection parity with host execution: **maintained**
 - Runtime differs between host and container: **expected** (container overhead and environment variance)
+- Test suite status: **16 passed**
+- SonarCloud status: **badges active, duplication 0.0%, warnings cleared**
+
+### SonarCloud Configuration Notes
+
+To prevent non-source generated artifacts from distorting quality metrics, the following exclusions are applied:
+
+```properties
+sonar.cpd.exclusions=**/data/reviews/review_pairs_stage*.html,**/submission/data/reviews/review_pairs_stage*.html
+sonar.exclusions=**/data/reviews/review_pairs_stage*.html,**/submission/data/reviews/review_pairs_stage*.html
+```
 
 ### Docker Hub (Versioned Image)
 
@@ -111,3 +127,9 @@ docker push joe0regan/tus26-image-dedupe:phase04
 - Python wheel/runtime differences can affect timings across environments.
 - Git Bash path conversion on Windows can corrupt `-v` mounts unless handled (used `MSYS_NO_PATHCONV=1` where needed).
 - Memory/CPU scheduling differences between host and container affect absolute timings but not detection outcomes.
+- Generated review HTML can inflate duplication metrics if not excluded from static analysis scope.
+
+## Exit Status
+
+**Phase 04 Complete** — containerisation, runtime externalisation, baseline parity, and quality controls are validated.  
+Next phase: **Phase 05 – Async Job Orchestration and Worker Model**.

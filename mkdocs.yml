@@ -46,6 +46,8 @@ nav:
       - 07 - Cloud Deployment and Scale Validation: phase-notes/07-cloud-deployment-and-scale-validation.md
   - Features:
       - Overview: features/index.md
+  - Testing:
+      - Overview: testing/index.md
 markdown_extensions:
   - admonition
   - toc:
