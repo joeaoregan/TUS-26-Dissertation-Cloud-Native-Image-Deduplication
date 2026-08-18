@@ -576,6 +576,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01 - Local Pipeline Foundation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -592,6 +610,80 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implemented-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implemented Components
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#design-rationale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Rationale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Result
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -793,6 +885,69 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implemented-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implemented Components
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#design-rationale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Rationale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Result
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -818,6 +973,30 @@
 
 
 <h1 id="phase-01-local-pipeline-foundation">Phase 01: Local Pipeline Foundation<a class="headerlink" href="#phase-01-local-pipeline-foundation" title="Permanent link">&para;</a></h1>
+<h2 id="objective">Objective<a class="headerlink" href="#objective" title="Permanent link">&para;</a></h2>
+<p>Build a working local image deduplication engine capable of detecting both exact and near-duplicate images.</p>
+<h2 id="implemented-components">Implemented Components<a class="headerlink" href="#implemented-components" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Stage 1:</strong> SHA-256 exact duplicate detection</li>
+<li><strong>Stage 2:</strong> Perceptual hash (pHash) candidate generation</li>
+<li><strong>Stage 3:</strong> SSIM verification for candidate confirmation</li>
+<li><strong>Cascading pipeline entry point:</strong> <code>core_engine/pipeline.py</code></li>
+</ul>
+<h2 id="design-rationale">Design Rationale<a class="headerlink" href="#design-rationale" title="Permanent link">&para;</a></h2>
+<p>A staged cascade reduces unnecessary compute:</p>
+<ol>
+<li>Use fast exact hashing first.</li>
+<li>Apply perceptual matching only to non-exact files.</li>
+<li>Use SSIM as a final verifier to reduce false positives.</li>
+</ol>
+<h2 id="outputs">Outputs<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Exact duplicate groups and redundant file counts</li>
+<li>Candidate near-duplicate pairs</li>
+<li>Verified near-duplicate pairs</li>
+</ul>
+<h2 id="result">Result<a class="headerlink" href="#result" title="Permanent link">&para;</a></h2>
+<p>A functional local pipeline was established as the foundation for benchmarking and later cloud-native integration.</p>
 
 
 
