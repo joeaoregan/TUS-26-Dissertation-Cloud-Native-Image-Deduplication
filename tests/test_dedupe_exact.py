@@ -1,8 +1,11 @@
 from pathlib import Path
+
 import pytest
+
 from core_engine.utils.dedupe_exact import file_hash
 
-TEST_DIR = Path("dedupe_test")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+TEST_DIR = PROJECT_ROOT / "data" / "dedupe_test"
 
 
 @pytest.fixture

@@ -4,7 +4,8 @@ import pytest
 
 from core_engine.utils.dedupe_ssim import calculate_ssim
 
-TEST_DIR = Path("dedupe_test")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+TEST_DIR = PROJECT_ROOT / "data" / "dedupe_test"
 
 
 @pytest.fixture

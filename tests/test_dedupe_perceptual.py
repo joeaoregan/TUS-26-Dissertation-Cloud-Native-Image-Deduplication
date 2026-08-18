@@ -9,7 +9,8 @@ from core_engine.utils.dedupe_perceptual import (
     compare_perceptual_hashes,
 )
 
-TEST_DIR = Path("dedupe_test")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+TEST_DIR = PROJECT_ROOT / "data" / "dedupe_test"
 
 
 @pytest.fixture

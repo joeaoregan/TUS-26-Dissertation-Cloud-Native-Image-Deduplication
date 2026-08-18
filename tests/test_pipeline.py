@@ -2,7 +2,8 @@ from pathlib import Path
 
 from core_engine.pipeline import run_pipeline
 
-TEST_DIR = Path("dedupe_test")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+TEST_DIR = PROJECT_ROOT / "data" / "dedupe_test"
 
 
 def test_pipeline_execution():
