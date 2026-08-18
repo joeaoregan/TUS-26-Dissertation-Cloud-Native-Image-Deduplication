@@ -250,6 +250,9 @@ def run_benchmark(
             f"up to {pair_limit} entries per section in 'pair_details'"
         )
 
+    allowed_base = Path.cwd()
+    # allowed_base = (Path.cwd() / "data").resolve() # stricter control if needed
+    output_json = resolve_within(allowed_base, str(output_json))
     output_json.parent.mkdir(parents=True, exist_ok=True)
 
     # Always write/update canonical latest file
@@ -266,6 +269,22 @@ def run_benchmark(
         print(f"{Fore.GREEN}Timestamped snapshot exported to: {Fore.CYAN}{stamped}")
 
     return metrics
+
+
+from pathlib import Path
+
+
+def resolve_within(base_dir: Path, user_input: str) -> Path:
+    base = base_dir.resolve()
+    target = Path(user_input)
+    if not target.is_absolute():
+        target = (base / target).resolve()
+    else:
+        target = target.resolve()
+
+    if target != base and base not in target.parents:
+        raise ValueError(f"Path escapes allowed directory: {user_input}")
+    return target
 
 
 if __name__ == "__main__":
@@ -342,10 +361,19 @@ if __name__ == "__main__":
         print("Error: --ssim-threshold must be between 0.0 and 1.0")
         raise SystemExit(2)
 
-    if args.dataset_dir.exists() and args.dataset_dir.is_dir():
+    repo_root = Path.cwd().resolve()
+
+    try:
+        safe_dataset_dir = resolve_within(repo_root, str(args.dataset_dir))
+        safe_output_json = resolve_within(repo_root, str(args.output_json))
+    except ValueError as e:
+        print(f"Error: {e}")
+        raise SystemExit(2)
+
+    if safe_dataset_dir.exists() and safe_dataset_dir.is_dir():
         run_benchmark(
-            dataset_dir=args.dataset_dir,
-            output_json=args.output_json,
+            dataset_dir=safe_dataset_dir,
+            output_json=safe_output_json,
             timestamp_output=not args.no_timestamp,
             export_pairs=effective_export_pairs,
             pair_limit=args.pair_limit,
@@ -354,4 +382,4 @@ if __name__ == "__main__":
             run_tag=args.run_tag,
         )
     else:
-        print(f"Directory '{args.dataset_dir}' not found or is not a folder.")
+        print(f"Directory '{safe_dataset_dir}' not found or is not a folder.")
