@@ -13,6 +13,17 @@ img { max-width: 320px; max-height: 220px; display: block; border: 1px solid #cc
 .small { font-size: 12px; color: #666; margin-top: 6px; }
 input[type=text] { width: 96%; margin-top: 6px; }
 button { margin-right: 8px; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 </style>
 </head>
 <body>
@@ -29,834 +40,501 @@ button { margin-right: 8px; }
 
 <tr>
   <td>1</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000101 - Copy.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000101 - Copy.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000101.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000101.JPEG" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
   <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: exact</div>
-    <input type="text" value="byte-identical copy" placeholder="notes...">
+    <div class="path">dedupe_test/crop_blur.jpg</div>
+    <img src="../dedupe_test/crop_blur.jpg" alt="A for pair comparison 1: dedupe_test/crop_blur.jpg" loading="lazy">
   </td>
-</tr>
-
-<tr>
-  <td>2</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000102.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000102.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000102_90.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000102_90.jpg" loading="lazy"></td>
-  <td>SSIM: 0.953309</td>
   <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="resized variant" placeholder="notes...">
+    <div class="path">dedupe_test/crop_blur.png</div>
+    <img src="../dedupe_test/crop_blur.png" alt="B for pair comparison 1: dedupe_test/crop_blur.png" loading="lazy">
   </td>
-</tr>
-
-<tr>
-  <td>3</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000103.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000103.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000103_90.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000103_90.jpg" loading="lazy"></td>
-  <td>SSIM: 0.967766</td>
+  <td>SSIM: 0.997247</td>
   <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="resized variant" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>4</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000104.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000104.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000104.png</div><img src="../dedupe_test_100/ILSVRC2012_val_00000104.png" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="format conversion" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>5</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000105 - Copy.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000105 - Copy.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000105.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000105.JPEG" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: exact</div>
-    <input type="text" value="byte-identical copy" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>6</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000106.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000106.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000106_90.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000106_90.jpg" loading="lazy"></td>
-  <td>SSIM: 0.979142</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="resized variant" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>7</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000107.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000107.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000107_90.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000107_90.jpg" loading="lazy"></td>
-  <td>SSIM: 0.948016</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="resized variant" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>8</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000108.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000108.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000108.png</div><img src="../dedupe_test_100/ILSVRC2012_val_00000108.png" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="format conversion" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>9</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000109.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000109.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000109_90.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000109_90.jpg" loading="lazy"></td>
-  <td>SSIM: 0.931117</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="resized variant" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>10</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000110 - Copy.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000110 - Copy.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000110.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000110.JPEG" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: exact</div>
-    <input type="text" value="byte-identical copy" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>11</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000111.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000111.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000111_110.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000111_110.jpg" loading="lazy"></td>
-  <td>SSIM: 0.990525</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="resized variant" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>12</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000112.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000112.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000112.png</div><img src="../dedupe_test_100/ILSVRC2012_val_00000112.png" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="format conversion" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>13</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000113.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000113.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000113_110.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000113_110.jpg" loading="lazy"></td>
-  <td>SSIM: 0.985495</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="resized variant" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>14</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000114.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000114.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000114_110.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000114_110.jpg" loading="lazy"></td>
-  <td>SSIM: 0.988432</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="resized variant" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>15</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000115.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000115.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000115_110.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000115_110.jpg" loading="lazy"></td>
-  <td>SSIM: 0.984241</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="resized variant" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>16</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000116.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000116.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000116.png</div><img src="../dedupe_test_100/ILSVRC2012_val_00000116.png" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="format conversion" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>17</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000117 - Copy.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000117 - Copy.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000117.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000117.JPEG" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: exact</div>
-    <input type="text" value="byte-identical copy" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>18</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000118.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000118.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000118_110.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000118_110.jpg" loading="lazy"></td>
-  <td>SSIM: 0.998013</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="resized variant" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>19</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000119.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000119.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000119_blue.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000119_blue.jpg" loading="lazy"></td>
-  <td>SSIM: 0.979531</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="colour correction" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>20</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000120.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000120.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000120.png</div><img src="../dedupe_test_100/ILSVRC2012_val_00000120.png" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="format conversion" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>21</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000121 - Copy.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000121 - Copy.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000121.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000121.JPEG" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: exact</div>
-    <input type="text" value="byte-identical copy" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>22</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000122.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000122.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000122_red.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000122_red.jpg" loading="lazy"></td>
-  <td>SSIM: 0.96597</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="colour correction" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>23</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000123.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000123.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000123_green.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000123_green.jpg" loading="lazy"></td>
-  <td>SSIM: 0.975637</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="colour correction" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>24</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000124.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000124.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000124.png</div><img src="../dedupe_test_100/ILSVRC2012_val_00000124.png" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="format conversion" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>25</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000125.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000125.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000125_blue.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000125_blue.jpg" loading="lazy"></td>
-  <td>SSIM: 0.987149</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="colour correction" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>26</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000127 - Copy.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000127 - Copy.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000127.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000127.JPEG" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: exact</div>
-    <input type="text" value="byte-identical copy" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>27</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000128.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000128.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000128.png</div><img src="../dedupe_test_100/ILSVRC2012_val_00000128.png" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="format conversion" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>28</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000129.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000129.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000129_red.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000129_red.jpg" loading="lazy"></td>
-  <td>SSIM: 0.963009</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="colour correction" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>29</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000130.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000130.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000130_blue.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000130_blue.jpg" loading="lazy"></td>
-  <td>SSIM: 0.99181</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="colour correction" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>30</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000131.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000131.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000131_green.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000131_green.jpg" loading="lazy"></td>
-  <td>SSIM: 0.940878</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="colour correction" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>31</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000132.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000132.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000132.png</div><img src="../dedupe_test_100/ILSVRC2012_val_00000132.png" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="format conversion" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>32</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000133.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000133.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000133_red.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000133_red.jpg" loading="lazy"></td>
-  <td>SSIM: 0.984906</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="colour correction" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>33</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000134.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000134.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000134_blue.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000134_blue.jpg" loading="lazy"></td>
-  <td>SSIM: 0.986898</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="colour correction" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>34</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000135 - Copy.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000135 - Copy.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000135.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000135.JPEG" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: exact</div>
-    <input type="text" value="byte-identical copy" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>35</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000136.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000136.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000136.png</div><img src="../dedupe_test_100/ILSVRC2012_val_00000136.png" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="format conversion" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>36</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000137.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000137.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000137_brightness_down.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000137_brightness_down.jpg" loading="lazy"></td>
-  <td>SSIM: 0.945339</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="brightness adjustment" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>37</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000137.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000137.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000137_brightness_up.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000137_brightness_up.jpg" loading="lazy"></td>
-  <td>SSIM: 0.857709</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="brightness adjustment" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>38</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000138.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000138.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000138_brightness_up.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000138_brightness_up.jpg" loading="lazy"></td>
-  <td>SSIM: 0.949908</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="brightness adjustment" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>39</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000140 - Copy.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000140 - Copy.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000140.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000140.JPEG" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: exact</div>
-    <input type="text" value="byte-identical copy" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>40</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000140 - Copy.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000140 - Copy.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000140.png</div><img src="../dedupe_test_100/ILSVRC2012_val_00000140.png" loading="lazy"></td>
-  <td>SSIM: 1.0</td>
-  <td>
-    <select>
+    <label for="label_1" class="sr-only">Review label for pair 1</label>
+    <select id="label_1">
       <option value="">-- choose --</option>
       <option value="1" >duplicate (1)</option>
       <option value="0" >non-duplicate (0)</option>
       <option value="u">unsure</option>
     </select>
     <div class="small">type: </div>
-    <input type="text" value="" placeholder="notes...">
+    <label for="notes_1" class="sr-only">Notes for pair 1</label>
+    <input id="notes_1" type="text" value="" placeholder="notes...">
   </td>
 </tr>
 
 <tr>
-  <td>41</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000140.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000140.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000140.png</div><img src="../dedupe_test_100/ILSVRC2012_val_00000140.png" loading="lazy"></td>
+  <td>2</td>
+  <td>
+    <div class="path">dedupe_test/me - Copy.jpg</div>
+    <img src="../dedupe_test/me - Copy.jpg" alt="A for pair comparison 2: dedupe_test/me - Copy.jpg" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test/me.jpg</div>
+    <img src="../dedupe_test/me.jpg" alt="B for pair comparison 2: dedupe_test/me.jpg" loading="lazy">
+  </td>
   <td>SSIM: 1.0</td>
   <td>
-    <select>
+    <label for="label_2" class="sr-only">Review label for pair 2</label>
+    <select id="label_2">
       <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
+      <option value="1" >duplicate (1)</option>
       <option value="0" >non-duplicate (0)</option>
       <option value="u">unsure</option>
     </select>
-    <div class="small">type: near</div>
-    <input type="text" value="format conversion" placeholder="notes...">
+    <div class="small">type: </div>
+    <label for="notes_2" class="sr-only">Notes for pair 2</label>
+    <input id="notes_2" type="text" value="" placeholder="notes...">
   </td>
 </tr>
 
 <tr>
-  <td>42</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000142.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000142.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000142_brightness_up.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000142_brightness_up.jpg" loading="lazy"></td>
-  <td>SSIM: 0.943047</td>
+  <td>3</td>
   <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="brightness adjustment" placeholder="notes...">
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000101 - Copy.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000101 - Copy.JPEG" alt="A for pair comparison 3: dedupe_test_100/ILSVRC2012_val_00000101 - Copy.JPEG" loading="lazy">
   </td>
-</tr>
-
-<tr>
-  <td>43</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000143.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000143.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000143_brightness_down.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000143_brightness_down.jpg" loading="lazy"></td>
-  <td>SSIM: 0.967581</td>
   <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="brightness adjustment" placeholder="notes...">
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000101.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000101.JPEG" alt="B for pair comparison 3: dedupe_test_100/ILSVRC2012_val_00000101.JPEG" loading="lazy">
   </td>
-</tr>
-
-<tr>
-  <td>44</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000144.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000144.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000144_brightness_down.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000144_brightness_down.jpg" loading="lazy"></td>
-  <td>SSIM: 0.952541</td>
-  <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="brightness adjustment" placeholder="notes...">
-  </td>
-</tr>
-
-<tr>
-  <td>45</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000145 - Copy.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000145 - Copy.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000145.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000145.JPEG" loading="lazy"></td>
   <td>SSIM: 1.0</td>
   <td>
-    <select>
+    <label for="label_3" class="sr-only">Review label for pair 3</label>
+    <select id="label_3">
       <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
+      <option value="1" >duplicate (1)</option>
       <option value="0" >non-duplicate (0)</option>
       <option value="u">unsure</option>
     </select>
-    <div class="small">type: exact</div>
-    <input type="text" value="byte-identical copy" placeholder="notes...">
+    <div class="small">type: </div>
+    <label for="notes_3" class="sr-only">Notes for pair 3</label>
+    <input id="notes_3" type="text" value="" placeholder="notes...">
   </td>
 </tr>
 
 <tr>
-  <td>46</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000146.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000146.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000146_brightness_down.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000146_brightness_down.jpg" loading="lazy"></td>
-  <td>SSIM: 0.955171</td>
+  <td>4</td>
   <td>
-    <select>
-      <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
-      <option value="0" >non-duplicate (0)</option>
-      <option value="u">unsure</option>
-    </select>
-    <div class="small">type: near</div>
-    <input type="text" value="brightness adjustment" placeholder="notes...">
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000102.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000102.JPEG" alt="A for pair comparison 4: dedupe_test_100/ILSVRC2012_val_00000102.JPEG" loading="lazy">
   </td>
-</tr>
-
-<tr>
-  <td>47</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000147.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000147.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000147_brightness_down.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000147_brightness_down.jpg" loading="lazy"></td>
-  <td>SSIM: 0.948482</td>
   <td>
-    <select>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000102_90.jpg</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000102_90.jpg" alt="B for pair comparison 4: dedupe_test_100/ILSVRC2012_val_00000102_90.jpg" loading="lazy">
+  </td>
+  <td>SSIM: 0.953309</td>
+  <td>
+    <label for="label_4" class="sr-only">Review label for pair 4</label>
+    <select id="label_4">
       <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
+      <option value="1" >duplicate (1)</option>
       <option value="0" >non-duplicate (0)</option>
       <option value="u">unsure</option>
     </select>
-    <div class="small">type: near</div>
-    <input type="text" value="brightness adjustment" placeholder="notes...">
+    <div class="small">type: </div>
+    <label for="notes_4" class="sr-only">Notes for pair 4</label>
+    <input id="notes_4" type="text" value="" placeholder="notes...">
   </td>
 </tr>
 
 <tr>
-  <td>48</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000148 - Copy.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000148 - Copy.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000148.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000148.JPEG" loading="lazy"></td>
+  <td>5</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000103.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000103.JPEG" alt="A for pair comparison 5: dedupe_test_100/ILSVRC2012_val_00000103.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000103_90.jpg</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000103_90.jpg" alt="B for pair comparison 5: dedupe_test_100/ILSVRC2012_val_00000103_90.jpg" loading="lazy">
+  </td>
+  <td>SSIM: 0.967766</td>
+  <td>
+    <label for="label_5" class="sr-only">Review label for pair 5</label>
+    <select id="label_5">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_5" class="sr-only">Notes for pair 5</label>
+    <input id="notes_5" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>6</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000104.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000104.JPEG" alt="A for pair comparison 6: dedupe_test_100/ILSVRC2012_val_00000104.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000104.png</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000104.png" alt="B for pair comparison 6: dedupe_test_100/ILSVRC2012_val_00000104.png" loading="lazy">
+  </td>
   <td>SSIM: 1.0</td>
   <td>
-    <select>
+    <label for="label_6" class="sr-only">Review label for pair 6</label>
+    <select id="label_6">
       <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
+      <option value="1" >duplicate (1)</option>
       <option value="0" >non-duplicate (0)</option>
       <option value="u">unsure</option>
     </select>
-    <div class="small">type: exact</div>
-    <input type="text" value="byte-identical copy" placeholder="notes...">
+    <div class="small">type: </div>
+    <label for="notes_6" class="sr-only">Notes for pair 6</label>
+    <input id="notes_6" type="text" value="" placeholder="notes...">
   </td>
 </tr>
 
 <tr>
-  <td>49</td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000149.JPEG</div><img src="../dedupe_test_100/ILSVRC2012_val_00000149.JPEG" loading="lazy"></td>
-  <td><div class="path">dedupe_test_100/ILSVRC2012_val_00000149_quality_80.jpg</div><img src="../dedupe_test_100/ILSVRC2012_val_00000149_quality_80.jpg" loading="lazy"></td>
-  <td>SSIM: 0.997229</td>
+  <td>7</td>
   <td>
-    <select>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000105 - Copy.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000105 - Copy.JPEG" alt="A for pair comparison 7: dedupe_test_100/ILSVRC2012_val_00000105 - Copy.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000105.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000105.JPEG" alt="B for pair comparison 7: dedupe_test_100/ILSVRC2012_val_00000105.JPEG" loading="lazy">
+  </td>
+  <td>SSIM: 1.0</td>
+  <td>
+    <label for="label_7" class="sr-only">Review label for pair 7</label>
+    <select id="label_7">
       <option value="">-- choose --</option>
-      <option value="1" selected>duplicate (1)</option>
+      <option value="1" >duplicate (1)</option>
       <option value="0" >non-duplicate (0)</option>
       <option value="u">unsure</option>
     </select>
-    <div class="small">type: near</div>
-    <input type="text" value="jpeg recompression" placeholder="notes...">
+    <div class="small">type: </div>
+    <label for="notes_7" class="sr-only">Notes for pair 7</label>
+    <input id="notes_7" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>8</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000106.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000106.JPEG" alt="A for pair comparison 8: dedupe_test_100/ILSVRC2012_val_00000106.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000106_90.jpg</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000106_90.jpg" alt="B for pair comparison 8: dedupe_test_100/ILSVRC2012_val_00000106_90.jpg" loading="lazy">
+  </td>
+  <td>SSIM: 0.979142</td>
+  <td>
+    <label for="label_8" class="sr-only">Review label for pair 8</label>
+    <select id="label_8">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_8" class="sr-only">Notes for pair 8</label>
+    <input id="notes_8" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>9</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000107.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000107.JPEG" alt="A for pair comparison 9: dedupe_test_100/ILSVRC2012_val_00000107.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000107_90.jpg</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000107_90.jpg" alt="B for pair comparison 9: dedupe_test_100/ILSVRC2012_val_00000107_90.jpg" loading="lazy">
+  </td>
+  <td>SSIM: 0.948016</td>
+  <td>
+    <label for="label_9" class="sr-only">Review label for pair 9</label>
+    <select id="label_9">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_9" class="sr-only">Notes for pair 9</label>
+    <input id="notes_9" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>10</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000108.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000108.JPEG" alt="A for pair comparison 10: dedupe_test_100/ILSVRC2012_val_00000108.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000108.png</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000108.png" alt="B for pair comparison 10: dedupe_test_100/ILSVRC2012_val_00000108.png" loading="lazy">
+  </td>
+  <td>SSIM: 1.0</td>
+  <td>
+    <label for="label_10" class="sr-only">Review label for pair 10</label>
+    <select id="label_10">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_10" class="sr-only">Notes for pair 10</label>
+    <input id="notes_10" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>11</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000109.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000109.JPEG" alt="A for pair comparison 11: dedupe_test_100/ILSVRC2012_val_00000109.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000109_90.jpg</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000109_90.jpg" alt="B for pair comparison 11: dedupe_test_100/ILSVRC2012_val_00000109_90.jpg" loading="lazy">
+  </td>
+  <td>SSIM: 0.931117</td>
+  <td>
+    <label for="label_11" class="sr-only">Review label for pair 11</label>
+    <select id="label_11">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_11" class="sr-only">Notes for pair 11</label>
+    <input id="notes_11" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>12</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000110 - Copy.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000110 - Copy.JPEG" alt="A for pair comparison 12: dedupe_test_100/ILSVRC2012_val_00000110 - Copy.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000110.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000110.JPEG" alt="B for pair comparison 12: dedupe_test_100/ILSVRC2012_val_00000110.JPEG" loading="lazy">
+  </td>
+  <td>SSIM: 1.0</td>
+  <td>
+    <label for="label_12" class="sr-only">Review label for pair 12</label>
+    <select id="label_12">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_12" class="sr-only">Notes for pair 12</label>
+    <input id="notes_12" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>13</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000111.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000111.JPEG" alt="A for pair comparison 13: dedupe_test_100/ILSVRC2012_val_00000111.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000111_110.jpg</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000111_110.jpg" alt="B for pair comparison 13: dedupe_test_100/ILSVRC2012_val_00000111_110.jpg" loading="lazy">
+  </td>
+  <td>SSIM: 0.990525</td>
+  <td>
+    <label for="label_13" class="sr-only">Review label for pair 13</label>
+    <select id="label_13">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_13" class="sr-only">Notes for pair 13</label>
+    <input id="notes_13" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>14</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000112.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000112.JPEG" alt="A for pair comparison 14: dedupe_test_100/ILSVRC2012_val_00000112.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000112.png</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000112.png" alt="B for pair comparison 14: dedupe_test_100/ILSVRC2012_val_00000112.png" loading="lazy">
+  </td>
+  <td>SSIM: 1.0</td>
+  <td>
+    <label for="label_14" class="sr-only">Review label for pair 14</label>
+    <select id="label_14">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_14" class="sr-only">Notes for pair 14</label>
+    <input id="notes_14" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>15</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000113.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000113.JPEG" alt="A for pair comparison 15: dedupe_test_100/ILSVRC2012_val_00000113.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000113_110.jpg</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000113_110.jpg" alt="B for pair comparison 15: dedupe_test_100/ILSVRC2012_val_00000113_110.jpg" loading="lazy">
+  </td>
+  <td>SSIM: 0.985495</td>
+  <td>
+    <label for="label_15" class="sr-only">Review label for pair 15</label>
+    <select id="label_15">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_15" class="sr-only">Notes for pair 15</label>
+    <input id="notes_15" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>16</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000114.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000114.JPEG" alt="A for pair comparison 16: dedupe_test_100/ILSVRC2012_val_00000114.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000114_110.jpg</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000114_110.jpg" alt="B for pair comparison 16: dedupe_test_100/ILSVRC2012_val_00000114_110.jpg" loading="lazy">
+  </td>
+  <td>SSIM: 0.988432</td>
+  <td>
+    <label for="label_16" class="sr-only">Review label for pair 16</label>
+    <select id="label_16">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_16" class="sr-only">Notes for pair 16</label>
+    <input id="notes_16" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>17</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000115.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000115.JPEG" alt="A for pair comparison 17: dedupe_test_100/ILSVRC2012_val_00000115.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000115_110.jpg</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000115_110.jpg" alt="B for pair comparison 17: dedupe_test_100/ILSVRC2012_val_00000115_110.jpg" loading="lazy">
+  </td>
+  <td>SSIM: 0.984241</td>
+  <td>
+    <label for="label_17" class="sr-only">Review label for pair 17</label>
+    <select id="label_17">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_17" class="sr-only">Notes for pair 17</label>
+    <input id="notes_17" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>18</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000116.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000116.JPEG" alt="A for pair comparison 18: dedupe_test_100/ILSVRC2012_val_00000116.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000116.png</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000116.png" alt="B for pair comparison 18: dedupe_test_100/ILSVRC2012_val_00000116.png" loading="lazy">
+  </td>
+  <td>SSIM: 1.0</td>
+  <td>
+    <label for="label_18" class="sr-only">Review label for pair 18</label>
+    <select id="label_18">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_18" class="sr-only">Notes for pair 18</label>
+    <input id="notes_18" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>19</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000117 - Copy.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000117 - Copy.JPEG" alt="A for pair comparison 19: dedupe_test_100/ILSVRC2012_val_00000117 - Copy.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000117.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000117.JPEG" alt="B for pair comparison 19: dedupe_test_100/ILSVRC2012_val_00000117.JPEG" loading="lazy">
+  </td>
+  <td>SSIM: 1.0</td>
+  <td>
+    <label for="label_19" class="sr-only">Review label for pair 19</label>
+    <select id="label_19">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_19" class="sr-only">Notes for pair 19</label>
+    <input id="notes_19" type="text" value="" placeholder="notes...">
+  </td>
+</tr>
+
+<tr>
+  <td>20</td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000118.JPEG</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000118.JPEG" alt="A for pair comparison 20: dedupe_test_100/ILSVRC2012_val_00000118.JPEG" loading="lazy">
+  </td>
+  <td>
+    <div class="path">dedupe_test_100/ILSVRC2012_val_00000118_110.jpg</div>
+    <img src="../dedupe_test_100/ILSVRC2012_val_00000118_110.jpg" alt="B for pair comparison 20: dedupe_test_100/ILSVRC2012_val_00000118_110.jpg" loading="lazy">
+  </td>
+  <td>SSIM: 0.998013</td>
+  <td>
+    <label for="label_20" class="sr-only">Review label for pair 20</label>
+    <select id="label_20">
+      <option value="">-- choose --</option>
+      <option value="1" >duplicate (1)</option>
+      <option value="0" >non-duplicate (0)</option>
+      <option value="u">unsure</option>
+    </select>
+    <div class="small">type: </div>
+    <label for="notes_20" class="sr-only">Notes for pair 20</label>
+    <input id="notes_20" type="text" value="" placeholder="notes...">
   </td>
 </tr>
 
