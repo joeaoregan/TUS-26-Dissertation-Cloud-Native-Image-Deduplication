@@ -8,7 +8,6 @@ __pycache__/
 *.pyo
 *.pyd
 .pytest_cache/
-.venv/
 venv/
 
 # Build/test artifacts
@@ -20,8 +19,11 @@ htmlcov/
 
 # Project runtime outputs
 logs/
-data/predictions/
-data/reviews/
+data/*
+
+docs/
+tests/
+submission/
 
 # OS/editor
 .DS_Store
@@ -34,3 +36,9 @@ Thumbs.db
 
 # mkdocs
 site/
+
+*.md
+
+*.log
+.env
+.env.*
