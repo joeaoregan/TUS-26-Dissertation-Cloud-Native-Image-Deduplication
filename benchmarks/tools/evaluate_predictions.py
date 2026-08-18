@@ -47,16 +47,17 @@ def safe_div(num: float, den: float) -> float:
     return num / den if den else 0.0
 
 
-def main():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Evaluate predictions against reference labels"
     )
     parser.add_argument("--reference-labels", required=True, type=Path)
     parser.add_argument("--predictions", required=True, type=Path)
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+def resolve_input_paths(args: argparse.Namespace) -> tuple[Path, Path]:
     allowed_input_base = (Path.cwd() / "data" / "reviews").resolve()
-
     try:
         safe_reference_labels = resolve_within(
             allowed_input_base, str(args.reference_labels)
@@ -64,7 +65,7 @@ def main():
         safe_predictions = resolve_within(allowed_input_base, str(args.predictions))
     except ValueError as e:
         print(f"{Fore.RED}ERROR: {Fore.RESET}{e}")
-        raise SystemExit(2)
+        raise SystemExit(2) from e
 
     if not safe_reference_labels.exists():
         print(
@@ -76,11 +77,14 @@ def main():
         print(f"{Fore.RED}ERROR: Missing predictions file: {safe_predictions}")
         raise SystemExit(2)
 
-    labels = load_reference_labels(safe_reference_labels)
-    preds = load_predictions(safe_predictions)
+    return safe_reference_labels, safe_predictions
 
+
+def compute_confusion_counts(
+    labels: dict[tuple[str, str], int],
+    preds: set[tuple[str, str]],
+) -> tuple[int, int, int, int]:
     tp = fp = fn = tn = 0
-
     for pair, true_label in labels.items():
         predicted = 1 if pair in preds else 0
         if true_label == 1 and predicted == 1:
@@ -91,14 +95,19 @@ def main():
             fn += 1
         else:
             tn += 1
+    return tp, fp, fn, tn
 
+
+def print_metrics(
+    labels_count: int, tp: int, fp: int, fn: int, tn: int
+) -> tuple[float, float, float, float]:
     precision = safe_div(tp, tp + fp)
     recall = safe_div(tp, tp + fn)
     f1 = safe_div(2 * precision * recall, precision + recall)
     accuracy = safe_div(tp + tn, tp + tn + fp + fn)
 
     print(f"\n{Fore.GREEN}--- Evaluation (Reference Labels) ---")
-    print(f"{Fore.YELLOW}Pairs evaluated: {Fore.CYAN}{len(labels)}")
+    print(f"{Fore.YELLOW}Pairs evaluated: {Fore.CYAN}{labels_count}")
     print(
         f"{Fore.YELLOW}TP={Fore.CYAN}{tp}  {Fore.YELLOW}FP={Fore.CYAN}{fp}  {Fore.YELLOW}FN={Fore.CYAN}{fn}  {Fore.YELLOW}TN={Fore.CYAN}{tn}"
     )
@@ -107,6 +116,13 @@ def main():
     print(f"{Fore.YELLOW}F1 Score:  {Fore.CYAN}{f1:.4f}")
     print(f"{Fore.YELLOW}Accuracy:  {Fore.CYAN}{accuracy:.4f}")
 
+    return precision, recall, f1, accuracy
+
+
+def print_diagnostics(
+    labels: dict[tuple[str, str], int],
+    preds: set[tuple[str, str]],
+) -> None:
     fn_pairs = [
         pair
         for pair, true_label in labels.items()
@@ -124,6 +140,18 @@ def main():
         )
         print("They were ignored for confusion-matrix scoring.")
         print("Tip: add them to reference labels for full coverage.")
+
+
+def main():
+    args = parse_args()
+    safe_reference_labels, safe_predictions = resolve_input_paths(args)
+
+    labels = load_reference_labels(safe_reference_labels)
+    preds = load_predictions(safe_predictions)
+
+    tp, fp, fn, tn = compute_confusion_counts(labels, preds)
+    print_metrics(len(labels), tp, fp, fn, tn)
+    print_diagnostics(labels, preds)
 
 
 if __name__ == "__main__":
