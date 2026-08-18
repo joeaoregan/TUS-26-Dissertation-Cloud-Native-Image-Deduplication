@@ -6,7 +6,6 @@
 
 ![testing](https://img.shields.io/badge/testing-pytest-blue?style=flat-square&logo=pytest)
 ![benchmarks](https://img.shields.io/badge/benchmarks-included-blue?style=flat-square&logo=speedtest)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=joeaoregan_TUS-26-Dissertation-Cloud-Native-Image-Deduplication&metric=alert_status)](https://sonarcloud.io/project/overview?id=joeaoregan_TUS-26-Dissertation-Cloud-Native-Image-Deduplication)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=joeaoregan_TUS-26-Dissertation-Cloud-Native-Image-Deduplication&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=joeaoregan_TUS-26-Dissertation-Cloud-Native-Image-Deduplication)
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=joeaoregan_TUS-26-Dissertation-Cloud-Native-Image-Deduplication&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=joeaoregan_TUS-26-Dissertation-Cloud-Native-Image-Deduplication)
 
