@@ -44,6 +44,8 @@ nav:
       - 05 - Async Job Orchestration and Worker Model: phase-notes/05-async-job-orchestration-and-worker-model.md
       - 06 - Observability and Resilience Hardening: phase-notes/06-observability-and-resilience-hardening.md
       - 07 - Cloud Deployment and Scale Validation: phase-notes/07-cloud-deployment-and-scale-validation.md
+  - Features:
+      - Overview: features/index.md
 markdown_extensions:
   - admonition
   - toc:

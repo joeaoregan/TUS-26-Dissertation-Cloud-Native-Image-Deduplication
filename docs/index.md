@@ -15,6 +15,7 @@ This documentation tracks the project evolution from a local three-stage image d
 ## Quick Links
 
 - [Phase Notes Overview](phase-notes/index.md)
+- [Feature Checklist](features/index.md)
 - [Repository README](https://github.com/joeaoregan/TUS-26-Dissertation-Cloud-Native-Image-Deduplication/blob/main/README.md)
 - [Submission Pack](https://github.com/joeaoregan/TUS-26-Dissertation-Cloud-Native-Image-Deduplication/blob/main/submission/README_SUBMISSION.md)
 
