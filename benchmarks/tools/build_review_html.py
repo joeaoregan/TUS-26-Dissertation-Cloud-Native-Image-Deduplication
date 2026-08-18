@@ -119,14 +119,16 @@ def build_rows_html(pairs: list[dict], ref: dict) -> list[str]:
   <td><div class="path">{escape(b)}</div><img src="../{escape(b)}" loading="lazy"></td>
   <td>{escape(metric)}</td>
   <td>
-    <select>
+    <label for="label_{i}" class="sr-only">Review label for pair {i}</label>
+    <select id="label_{i}">
       <option value="">-- choose --</option>
       <option value="1" {"selected" if ref_label == "1" else ""}>duplicate (1)</option>
       <option value="0" {"selected" if ref_label == "0" else ""}>non-duplicate (0)</option>
       <option value="u">unsure</option>
     </select>
     <div class="small">type: {escape(ref_type)}</div>
-    <input type="text" value="{escape(ref_notes)}" placeholder="notes...">
+    <label for="notes_{i}" class="sr-only">Notes for pair {i}</label>
+    <input id="notes_{i}" type="text" value="{escape(ref_notes)}" placeholder="notes...">
   </td>
 </tr>
 """
