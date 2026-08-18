@@ -19,7 +19,12 @@ def load_reference_labels(path: Path):
     labels = {}
     if not path or not path.exists():
         return labels
-    with path.open("r", encoding="utf-8", newline="") as f:
+    allowed_input_base = (
+        Path.cwd() / "data" / "reviews"
+    ).resolve()  # choose strict base
+    safe_path = resolve_within(allowed_input_base, str(path))
+
+    with safe_path.open("r", encoding="utf-8", newline="") as f:
         r = csv.DictReader(f)
         for row in r:
             k = norm_pair(row["img_a"], row["img_b"])
@@ -29,6 +34,18 @@ def load_reference_labels(path: Path):
                 "notes": row["notes"].strip(),
             }
     return labels
+
+
+def resolve_within(base_dir: Path, user_input: str) -> Path:
+    base = base_dir.resolve()
+    target = Path(user_input)
+    if not target.is_absolute():
+        target = (base / target).resolve()
+    else:
+        target = target.resolve()
+    if target != base and base not in target.parents:
+        raise ValueError(f"Path escapes allowed directory: {user_input}")
+    return target
 
 
 def main():
@@ -44,8 +61,10 @@ def main():
     parser.add_argument("--source", choices=["stage2", "stage3"], default="stage3")
     parser.add_argument("--reference-labels", type=Path, default=None)
     args = parser.parse_args()
+    allowed_input_base = (Path.cwd() / "benchmarks").resolve()  # adjust if needed
+    safe_input = resolve_within(allowed_input_base, str(args.input))
 
-    data = json.loads(args.input.read_text(encoding="utf-8"))
+    data = json.loads(safe_input.read_text(encoding="utf-8"))
     pd = data.get("pair_details", {})
     pairs = (
         pd.get("stage3_verified_sample", [])
@@ -155,7 +174,11 @@ function exportCsv() {{
 </html>
 """
 
-    args.output.parent.mkdir(parents=True, exist_ok=True)
+    allowed_output_base = (
+        Path.cwd() / "data" / "reviews"
+    ).resolve()  # choose strict base
+    safe_output = resolve_within(allowed_output_base, str(args.output))
+    safe_output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(html, encoding="utf-8")
     print(f"{Fore.YELLOW}Review HTML written to: {Fore.CYAN}{args.output}")
 
