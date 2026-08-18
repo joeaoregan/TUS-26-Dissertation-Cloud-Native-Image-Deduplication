@@ -54,8 +54,8 @@ Legend:
 
 ## Cloud-Native Readiness (Planned / In Progress)
 
-- [ ] Container image for pipeline service (Dockerfile)
-- [ ] Externalised runtime configuration via environment variables
+- [x] Container image for pipeline service (Dockerfile)
+- [x] Externalised runtime configuration via environment variables
 - [ ] Minimal API wrapper for job submission
 - [ ] Async queue-based processing flow (API -> queue -> worker)
 - [ ] Worker job status tracking (pending/running/completed/failed)
@@ -77,4 +77,4 @@ Legend:
 - [x] Threats to validity documented
 - [x] Submission README and runbook
 - [x] Phase notes (completed phases documented)
-- [ ] Phase notes (cloud-native phases completed and evidenced)
+- [x] Phase notes (cloud-native phases completed and evidenced)

@@ -1,0 +1,44 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+venv/
+
+# Build/test artifacts
+dist/
+build/
+*.egg-info/
+htmlcov/
+.coverage
+
+# Project runtime outputs
+logs/
+data/*
+
+docs/
+tests/
+submission/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Zip
+*.zip
+
+# mkdocs
+site/
+
+*.md
+
+*.log
+.env
+.env.*
