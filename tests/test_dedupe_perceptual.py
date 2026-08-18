@@ -1,8 +1,13 @@
 from pathlib import Path
-import pytest
+
 import imagehash
+import pytest
 from PIL import Image
-from core_engine.utils.dedupe_perceptual import IMAGE_EXTENSIONS, compare_perceptual_hashes
+
+from core_engine.utils.dedupe_perceptual import (
+    IMAGE_EXTENSIONS,
+    compare_perceptual_hashes,
+)
 
 TEST_DIR = Path("dedupe_test")
 
@@ -39,7 +44,8 @@ def test_phash_generation_valid_image(image_paths):
 def test_phash_identical_visuals(image_paths):
     """Verify identical/copied images yield a Hamming distance of 0."""
     me_original, me_copy, _ = image_paths
-    assert me_original.exists() and me_copy.exists()
+    assert me_original.exists(), f"Missing test file: {me_original}"
+    assert me_copy.exists(), f"Missing test file: {me_copy}"
 
     with Image.open(me_original) as img1, Image.open(me_copy) as img2:
         hash1 = imagehash.phash(img1)

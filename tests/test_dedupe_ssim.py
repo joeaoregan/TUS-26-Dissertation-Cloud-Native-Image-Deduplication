@@ -1,5 +1,7 @@
 from pathlib import Path
+
 import pytest
+
 from core_engine.utils.dedupe_ssim import calculate_ssim
 
 TEST_DIR = Path("dedupe_test")
@@ -30,7 +32,8 @@ def test_calculate_ssim_identical_images(ssim_image_assets):
 def test_calculate_ssim_format_shifted_candidates(ssim_image_assets):
     """Verify crop_blur.jpg vs crop_blur.png yields high SSIM score (>= 0.80)."""
     _, _, crop_blur_jpg, crop_blur_png = ssim_image_assets
-    assert crop_blur_jpg.exists() and crop_blur_png.exists()
+    assert crop_blur_jpg.exists(), f"Missing test file: {crop_blur_jpg}"
+    assert crop_blur_png.exists(), f"Missing test file: {crop_blur_png}"
 
     score = calculate_ssim(crop_blur_jpg, crop_blur_png)
 
