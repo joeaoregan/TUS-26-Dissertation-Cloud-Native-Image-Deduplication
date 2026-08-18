@@ -207,9 +207,8 @@ def run_benchmark(
             f"up to {pair_limit} entries per section in 'pair_details'"
         )
 
-    allowed_base = Path.cwd()
-    # allowed_base = (Path.cwd() / "data").resolve() # stricter control if needed
-    output_json = resolve_within(allowed_base, str(output_json))
+    allowed_output_base = (Path.cwd() / "benchmarks").resolve()
+    output_json = resolve_within(allowed_output_base, str(output_json))
     output_json.parent.mkdir(parents=True, exist_ok=True)
 
     # Always write/update canonical latest file
@@ -387,11 +386,12 @@ if __name__ == "__main__":
         print(f"{Fore.RED}Error: --ssim-threshold must be between 0.0 and 1.0")
         raise SystemExit(2)
 
-    repo_root = Path.cwd().resolve()
+    allowed_dataset_base = (Path.cwd() / "data").resolve()
+    allowed_output_base = (Path.cwd() / "benchmarks").resolve()
 
     try:
-        safe_dataset_dir = resolve_within(repo_root, str(args.dataset_dir))
-        safe_output_json = resolve_within(repo_root, str(args.output_json))
+        safe_dataset_dir = resolve_within(allowed_dataset_base, str(args.dataset_dir))
+        safe_output_json = resolve_within(allowed_output_base, str(args.output_json))
     except ValueError as e:
         print(f"{Fore.RED}Error: {Fore.RESET}{e}")
         raise SystemExit(2)
