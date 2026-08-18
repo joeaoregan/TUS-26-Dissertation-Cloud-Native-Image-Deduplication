@@ -21,7 +21,8 @@ def ssim_image_assets():
 def test_calculate_ssim_identical_images(ssim_image_assets):
     """Verify identical/copied images yield an SSIM score of 1.0 (or extremely close to 1.0)."""
     me_original, me_copy, _, _ = ssim_image_assets
-    assert me_original.exists() and me_copy.exists()
+    assert me_original.exists(), f"Missing test file: {me_original}"
+    assert me_copy.exists(), f"Missing test file: {me_copy}"
 
     score = calculate_ssim(me_original, me_copy)
 
