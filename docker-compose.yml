@@ -1,0 +1,42 @@
+services:
+  redis:
+    image: public.ecr.aws/docker/library/redis:7-alpine
+    container_name: dedupe-redis
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: ./services/dedupe-py
+      dockerfile: Dockerfile
+    container_name: dedupe-api
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      QUEUE_NAME: dedupe-jobs
+      JOB_DB_URL: sqlite:////app/logs/jobs.db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+
+  worker:
+    build:
+      context: ./services/dedupe-py
+      dockerfile: Dockerfile
+    container_name: dedupe-worker
+    command: python -m worker.worker
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      QUEUE_NAME: dedupe-jobs
+      JOB_DB_URL: sqlite:////app/logs/jobs.db
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - redis

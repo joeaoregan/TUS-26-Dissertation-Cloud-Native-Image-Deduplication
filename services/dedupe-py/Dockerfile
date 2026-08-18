@@ -14,6 +14,11 @@ RUN pip install --no-cache-dir --only-binary=:all: --require-hashes -r /app/core
 # Copy only required runtime code
 COPY core_engine /app/core_engine
 COPY benchmarks /app/benchmarks
+COPY api /app/api
+COPY jobs /app/jobs
+COPY worker /app/worker
+
+ENV PYTHONPATH=/app
 
 # Writable output directory
 RUN mkdir -p /app/logs && chown -R app:app /app

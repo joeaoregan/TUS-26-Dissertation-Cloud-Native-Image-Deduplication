@@ -1,35 +1,35 @@
 # Testing Guide
 
-This page documents the project testing strategy, execution commands, and evidence expectations for reproducibility and assessment.
+This page documents the project testing strategy, execution commands, and reproducibility expectations.
 
 ## Scope
 
 Testing currently covers:
 
 !!! info "Stage 1"
-
-    Exact duplicate logic (SHA-256)
+    Exact duplicate detection (SHA-256)
 
 !!! info "Stage 2"
-
     Perceptual hashing behaviour (pHash)
-    
+
 !!! info "Stage 3"
-
     Structural similarity scoring (SSIM)
-    
+
 !!! info "Pipeline"
-
     End-to-end pipeline execution
-    
 
+!!! info "Path Safety"
+    Safe path resolution and traversal protection
 
 ## Test Structure
 
-- `tests/test_dedupe_exact.py`
-- `tests/test_dedupe_perceptual.py`
-- `tests/test_dedupe_ssim.py`
-- `tests/test_pipeline.py`
+Primary service test modules:
+
+- `services/dedupe-py/tests/test_dedupe_exact.py`
+- `services/dedupe-py/tests/test_dedupe_perceptual.py`
+- `services/dedupe-py/tests/test_dedupe_ssim.py`
+- `services/dedupe-py/tests/test_pipeline.py`
+- `services/dedupe-py/tests/test_path_validation.py`
 
 Primary local dataset used by tests:
 
@@ -49,37 +49,71 @@ Primary local dataset used by tests:
 
 ## Run Tests
 
-Quick run:
+Quick run (entire suite):
 
 ```bash
 pytest -q
 ```
 
-### Verbose run:
+Verbose run:
 
-`pytest -v`
+```bash
+pytest -v
+```
 
-### Run a single test module:
+Run service tests only:
 
-`pytest -q tests/test_dedupe_ssim.py`
+```bash
+pytest -q services/dedupe-py/tests
+```
+
+Run a single module:
+
+```bash
+pytest -q services/dedupe-py/tests/test_dedupe_ssim.py
+```
+
+Fallback if `pytest` is not on PATH:
+
+```bash
+python -m pytest -q
+```
 
 ## Current Baseline Result
 
-- **Full suite:** 16 passed
-- **Commands:** pytest -q
+- **Full suite:** 17 passed
+- **Command:** `pytest -q`
 - **Status:** pass
+
+## Data Path Configuration
+
+Tests use shared path resolution with sensible defaults for portability.
+
+Default expected location:
+
+- `<repo-root>/data`
+
+Optional override (only when needed):
+
+- `TEST_DATA_DIR`
+
+Example override (Git Bash):
+
+```bash
+TEST_DATA_DIR="$(pwd)/data" pytest -q services/dedupe-py/tests
+```
 
 ## Quality Gate and Static Analysis
 
 SonarCloud is used for continuous static analysis and quality monitoring.
 
-Expected project quality baseline:
+Expected quality baseline:
 
-- Quality Gate: computed and passing
+- Quality Gate: passing
 - Duplicated Lines (%): 0.0%
 - Generated review HTML excluded from duplication scope
 
-Exclusion configuration used:
+Exclusion configuration:
 
 ```properties
 sonar.cpd.exclusions=**/data/reviews/review_pairs_stage*.html,**/submission/data/reviews/review_pairs_stage*.html
@@ -88,17 +122,14 @@ sonar.exclusions=**/data/reviews/review_pairs_stage*.html,**/submission/data/rev
 
 ## Troubleshooting
 
-!!! Failure "Missing test file / Test path does not exist"
+!!! failure "Missing test file / Test path does not exist"
+    **Cause:** incorrect dataset path assumptions.  
+    **Resolution:** ensure `data/dedupe_test` exists at repository root, or set `TEST_DATA_DIR` override.
 
-    **Cause**: incorrect dataset path assumptions.  
-    **Resolution**: ensure tests reference: `PROJECT_ROOT / "data" / "dedupe_test"`  
-    and verify folder contents exist locally.
-    
-!!! Failure "pytest: command not found"
+!!! failure "pytest: command not found"
+    Use module execution form:
+    `python -m pytest -q`
 
-    **Use module execution form:**: `python -m pytest -q`  
-    
-!!! Failure "SonarCloud badge shows Quality gate not computed"
-
-    - Ensure analysis has run on main branch after latest push.  
-    - Check SonarCloud Background Tasks for successful analysis completion.
+!!! failure "SonarCloud badge shows Quality Gate not computed"
+    - Ensure analysis has run on default branch after latest push.
+    - Check SonarCloud Background Tasks for successful completion.
