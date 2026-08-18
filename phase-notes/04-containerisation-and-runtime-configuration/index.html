@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -269,6 +269,26 @@
   
   
   Features
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../testing/" class="md-tabs__link">
+          
+  
+  
+  Testing
 
         </a>
       </li>
@@ -680,6 +700,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04 - Containerisation and Runtime Configuration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -696,6 +734,185 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#planned-deliverables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Planned Deliverables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-variables-implemented" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Variables Implemented
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acceptance-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance Criteria
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evidence
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Evidence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#build-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build Command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output Artifacts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Summary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonarcloud-configuration-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SonarCloud Configuration Notes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-hub-versioned-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker Hub (Versioned Image)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#risks-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risks / Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exit-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exit Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -880,6 +1097,93 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Testing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -899,6 +1203,174 @@
   
     
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#planned-deliverables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Planned Deliverables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-variables-implemented" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Variables Implemented
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acceptance-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance Criteria
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evidence
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Evidence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#build-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build Command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output Artifacts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Summary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonarcloud-configuration-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SonarCloud Configuration Notes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-hub-versioned-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker Hub (Versioned Image)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#risks-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risks / Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exit-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exit Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -925,6 +1397,113 @@
 
 
 <h1 id="phase-04-containerisation-and-runtime-configuration">Phase 04: Containerisation and Runtime Configuration<a class="headerlink" href="#phase-04-containerisation-and-runtime-configuration" title="Permanent link">&para;</a></h1>
+<h2 id="objective">Objective<a class="headerlink" href="#objective" title="Permanent link">&para;</a></h2>
+<p>Package the local deduplication pipeline as a portable service and externalise runtime configuration to support cloud-native execution patterns.</p>
+<h2 id="scope">Scope<a class="headerlink" href="#scope" title="Permanent link">&para;</a></h2>
+<p>This phase focuses on:</p>
+<ul>
+<li>Containerising the pipeline runtime</li>
+<li>Removing hard-coded runtime assumptions</li>
+<li>Supporting environment-based configuration</li>
+<li>Keeping algorithmic logic unchanged</li>
+</ul>
+<h2 id="planned-deliverables">Planned Deliverables<a class="headerlink" href="#planned-deliverables" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <code>Dockerfile</code> for pipeline service</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <code>.dockerignore</code> to minimise image size</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Runtime config module (env var driven)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Updated CLI/API entrypoint using external config</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Documentation for local container run commands</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Test path stabilisation for consistent local execution</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> SonarCloud quality baseline validation</li>
+</ul>
+<h2 id="configuration-variables-implemented">Configuration Variables Implemented<a class="headerlink" href="#configuration-variables-implemented" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>PHASH_THRESHOLD</code> (default: <code>5</code>)</li>
+<li><code>SSIM_THRESHOLD</code> (default: <code>0.85</code>)</li>
+<li><code>DATASET_DIR</code> (default: <code>data/dedupe_test_100</code>)</li>
+<li><code>OUTPUT_JSON</code> (default: <code>logs/results.json</code>)</li>
+<li><code>EXPORT_PAIRS</code> (default: <code>false</code>, overrideable)</li>
+<li><code>PAIR_LIMIT</code> (default: <code>500</code>)</li>
+<li><code>RUN_TAG</code> (default: empty string)</li>
+</ul>
+<h2 id="acceptance-criteria">Acceptance Criteria<a class="headerlink" href="#acceptance-criteria" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Container builds successfully on Windows 11 (Docker Desktop)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Pipeline runs in container and writes output artifact(s)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Threshold values can be overridden at runtime without code changes</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Baseline metrics remain consistent with local execution (within expected variance)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Full test suite passes locally after path corrections (<code>16 passed</code>)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> SonarCloud Quality Gate and project badges operational</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> SonarCloud duplication metric reduced to <code>0.0%</code> after excluding generated review HTML artifacts</li>
+</ul>
+<h2 id="evidence">Evidence<a class="headerlink" href="#evidence" title="Permanent link">&para;</a></h2>
+<h3 id="build-command">Build Command<a class="headerlink" href="#build-command" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>tus26-image-dedupe:v0.4.0<span class="w"> </span>.
+</code></pre></div>
+<h3 id="run-commands">Run Commands<a class="headerlink" href="#run-commands" title="Permanent link">&para;</a></h3>
+<p>PowerShell:</p>
+<div class="highlight"><pre><span></span><code><span class="p">.\</span><span class="n">scripts</span><span class="p">\</span><span class="n">run_docker_benchmark</span><span class="p">.</span><span class="n">ps1</span>
+</code></pre></div>
+<p>Git Bash:</p>
+<div class="highlight"><pre><span></span><code>bash<span class="w"> </span>scripts/run_docker_benchmark.sh
+</code></pre></div>
+<p>Manual container run (explicit CLI args):</p>
+<div class="highlight"><pre><span></span><code><span class="nv">MSYS_NO_PATHCONV</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">/data:/app/data&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">/logs:/app/logs&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>tus26-image-dedupe:v0.4.0<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>python<span class="w"> </span>-m<span class="w"> </span>benchmarks.benchmark_pipeline<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dir<span class="w"> </span>data/dedupe_test_100<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>/app/logs/results-docker-v0.4.0.json<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--export-pairs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--pair-limit<span class="w"> </span><span class="m">500</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--phash-threshold<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--ssim-threshold<span class="w"> </span><span class="m">0</span>.85<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--run-tag<span class="w"> </span>phase04-docker-v0.4.0
+</code></pre></div>
+<h3 id="output-artifacts">Output Artifacts<a class="headerlink" href="#output-artifacts" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>logs/results-docker-v0.4.0.json</code></li>
+<li><code>logs/results-docker-v0.4.0-&lt;timestamp&gt;.json</code></li>
+</ul>
+<h3 id="validation-summary">Validation Summary<a class="headerlink" href="#validation-summary" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Stage 1 exact duplicate groups: <strong>10</strong></li>
+<li>Stage 2 candidate pairs: <strong>53</strong></li>
+<li>Stage 3 verified pairs: <strong>49</strong></li>
+<li>Detection parity with host execution: <strong>maintained</strong></li>
+<li>Runtime differs between host and container: <strong>expected</strong> (container overhead and environment variance)</li>
+<li>Test suite status: <strong>16 passed</strong></li>
+<li>SonarCloud status: <strong>badges active, duplication 0.0%, warnings cleared</strong></li>
+</ul>
+<h3 id="sonarcloud-configuration-notes">SonarCloud Configuration Notes<a class="headerlink" href="#sonarcloud-configuration-notes" title="Permanent link">&para;</a></h3>
+<p>To prevent non-source generated artifacts from distorting quality metrics, the following exclusions are applied:</p>
+<div class="highlight"><pre><span></span><code><span class="na">sonar.cpd.exclusions</span><span class="o">=</span><span class="s">**/data/reviews/review_pairs_stage*.html,**/submission/data/reviews/review_pairs_stage*.html</span>
+<span class="na">sonar.exclusions</span><span class="o">=</span><span class="s">**/data/reviews/review_pairs_stage*.html,**/submission/data/reviews/review_pairs_stage*.html</span>
+</code></pre></div>
+<h3 id="docker-hub-versioned-image">Docker Hub (Versioned Image)<a class="headerlink" href="#docker-hub-versioned-image" title="Permanent link">&para;</a></h3>
+<p>Target repository:</p>
+<ul>
+<li><code>joe0regan/tus26-image-dedupe</code></li>
+</ul>
+<p>Tag/push commands used:</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>login
+docker<span class="w"> </span>tag<span class="w"> </span>tus26-image-dedupe:v0.4.0<span class="w"> </span>joe0regan/tus26-image-dedupe:v0.4.0
+docker<span class="w"> </span>tag<span class="w"> </span>tus26-image-dedupe:v0.4.0<span class="w"> </span>joe0regan/tus26-image-dedupe:phase04
+docker<span class="w"> </span>push<span class="w"> </span>joe0regan/tus26-image-dedupe:v0.4.0
+docker<span class="w"> </span>push<span class="w"> </span>joe0regan/tus26-image-dedupe:phase04
+</code></pre></div>
+<h2 id="risks-notes">Risks / Notes<a class="headerlink" href="#risks-notes" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Python wheel/runtime differences can affect timings across environments.</li>
+<li>Git Bash path conversion on Windows can corrupt <code>-v</code> mounts unless handled (used <code>MSYS_NO_PATHCONV=1</code> where needed).</li>
+<li>Memory/CPU scheduling differences between host and container affect absolute timings but not detection outcomes.</li>
+<li>Generated review HTML can inflate duplication metrics if not excluded from static analysis scope.</li>
+</ul>
+<h2 id="exit-status">Exit Status<a class="headerlink" href="#exit-status" title="Permanent link">&para;</a></h2>
+<p><strong>Phase 04 Complete</strong> — containerisation, runtime externalisation, baseline parity, and quality controls are validated.<br />
+Next phase: <strong>Phase 05 – Async Job Orchestration and Worker Model</strong>.</p>
 
 
 
@@ -1023,7 +1602,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "content.code.copy", "toc.follow", "navigation.footer", "navigation.instant.preview", "navigation.tracking", "navigation.path", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
