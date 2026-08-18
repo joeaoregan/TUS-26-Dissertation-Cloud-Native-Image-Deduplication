@@ -191,6 +191,52 @@ def run_benchmark(
             "stage3_verified_total": len(verified),
         }
 
+    print_benchmark_summary(
+        metrics=metrics,
+        exact_duplicate_groups=exact_duplicate_groups,
+        exact_redundant_files=exact_redundant_files,
+        candidates_count=len(candidates),
+        verified_count=len(verified),
+        export_pairs=export_pairs,
+        pair_limit=pair_limit,
+    )
+
+    if export_pairs:
+        print(
+            f"{Fore.GREEN}Pair export enabled: {Fore.CYAN}"
+            f"up to {pair_limit} entries per section in 'pair_details'"
+        )
+
+    allowed_base = Path.cwd()
+    # allowed_base = (Path.cwd() / "data").resolve() # stricter control if needed
+    output_json = resolve_within(allowed_base, str(output_json))
+    output_json.parent.mkdir(parents=True, exist_ok=True)
+
+    # Always write/update canonical latest file
+    with open(output_json, "w", encoding="utf-8") as f:
+        json.dump(metrics, f, indent=4)
+    print(f"\n{Fore.GREEN}Benchmark report exported to: {Fore.CYAN}{output_json}")
+
+    # Optionally write immutable timestamped snapshot
+    if timestamp_output:
+        ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+        stamped = output_json.with_name(f"{output_json.stem}-{ts}{output_json.suffix}")
+        with open(stamped, "w", encoding="utf-8") as f:
+            json.dump(metrics, f, indent=4)
+        print(f"{Fore.GREEN}Timestamped snapshot exported to: {Fore.CYAN}{stamped}")
+
+    return metrics
+
+
+def print_benchmark_summary(
+    metrics: dict,
+    exact_duplicate_groups: int,
+    exact_redundant_files: int,
+    candidates_count: int,
+    verified_count: int,
+    export_pairs: bool,
+    pair_limit: int,
+) -> None:
     print(f"{Fore.GREEN}\n--- Detection Counts ---")
     print(
         f"{Fore.YELLOW}Stage 1 exact duplicate groups: {Fore.CYAN}{exact_duplicate_groups}"
@@ -198,8 +244,8 @@ def run_benchmark(
     print(
         f"{Fore.YELLOW}Stage 1 redundant files:        {Fore.CYAN}{exact_redundant_files}"
     )
-    print(f"{Fore.YELLOW}Stage 2 candidate pairs:        {Fore.CYAN}{len(candidates)}")
-    print(f"{Fore.YELLOW}Stage 3 verified pairs:         {Fore.CYAN}{len(verified)}")
+    print(f"{Fore.YELLOW}Stage 2 candidate pairs:        {Fore.CYAN}{candidates_count}")
+    print(f"{Fore.YELLOW}Stage 3 verified pairs:         {Fore.CYAN}{verified_count}")
 
     print(f"\n{Fore.GREEN}--- Summary (mean ± std dev, ms) ---")
     print(
@@ -249,26 +295,6 @@ def run_benchmark(
             f"{Fore.GREEN}Pair export enabled: {Fore.CYAN}"
             f"up to {pair_limit} entries per section in 'pair_details'"
         )
-
-    allowed_base = Path.cwd()
-    # allowed_base = (Path.cwd() / "data").resolve() # stricter control if needed
-    output_json = resolve_within(allowed_base, str(output_json))
-    output_json.parent.mkdir(parents=True, exist_ok=True)
-
-    # Always write/update canonical latest file
-    with open(output_json, "w", encoding="utf-8") as f:
-        json.dump(metrics, f, indent=4)
-    print(f"\n{Fore.GREEN}Benchmark report exported to: {Fore.CYAN}{output_json}")
-
-    # Optionally write immutable timestamped snapshot
-    if timestamp_output:
-        ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-        stamped = output_json.with_name(f"{output_json.stem}-{ts}{output_json.suffix}")
-        with open(stamped, "w", encoding="utf-8") as f:
-            json.dump(metrics, f, indent=4)
-        print(f"{Fore.GREEN}Timestamped snapshot exported to: {Fore.CYAN}{stamped}")
-
-    return metrics
 
 
 from pathlib import Path
@@ -350,15 +376,15 @@ if __name__ == "__main__":
     effective_export_pairs = args.export_pairs or runtime_cfg["export_pairs"]
 
     if args.pair_limit < 1:
-        print("Error: --pair-limit must be >= 1")
+        print(f"{Fore.RED}Error: --pair-limit must be >= 1")
         raise SystemExit(2)
 
     if args.phash_threshold < 0:
-        print("Error: --phash-threshold must be >= 0")
+        print(f"{Fore.RED}Error: --phash-threshold must be >= 0")
         raise SystemExit(2)
 
     if not (0.0 <= args.ssim_threshold <= 1.0):
-        print("Error: --ssim-threshold must be between 0.0 and 1.0")
+        print(f"{Fore.RED}Error: --ssim-threshold must be between 0.0 and 1.0")
         raise SystemExit(2)
 
     repo_root = Path.cwd().resolve()
@@ -367,7 +393,7 @@ if __name__ == "__main__":
         safe_dataset_dir = resolve_within(repo_root, str(args.dataset_dir))
         safe_output_json = resolve_within(repo_root, str(args.output_json))
     except ValueError as e:
-        print(f"Error: {e}")
+        print(f"{Fore.RED}Error: {Fore.RESET}{e}")
         raise SystemExit(2)
 
     if safe_dataset_dir.exists() and safe_dataset_dir.is_dir():
@@ -382,4 +408,4 @@ if __name__ == "__main__":
             run_tag=args.run_tag,
         )
     else:
-        print(f"Directory '{safe_dataset_dir}' not found or is not a folder.")
+        print(f"{Fore.RED}Directory '{safe_dataset_dir}' not found or is not a folder.")

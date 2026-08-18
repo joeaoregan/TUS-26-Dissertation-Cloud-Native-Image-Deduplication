@@ -1,0 +1,174 @@
+{
+    "dataset": "C:\\git\\2025-TUS\\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\\data",
+    "total_images": 205,
+    "runs": {
+        "warmup_discarded": 1,
+        "measured_iterations": 10
+    },
+    "stages": {
+        "stage1_sha256": {
+            "time_ms": {
+                "raw": [
+                    19.12,
+                    19.13,
+                    22.64,
+                    20.73,
+                    21.11,
+                    20.37,
+                    19.72,
+                    20.88,
+                    20.41,
+                    20.82
+                ],
+                "mean": 20.49,
+                "std_dev": 1.03
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    1.754,
+                    1.7541,
+                    1.754,
+                    1.754,
+                    1.754,
+                    1.754,
+                    1.754,
+                    1.754,
+                    1.754,
+                    1.754
+                ],
+                "mean": 1.75,
+                "std_dev": 0.0
+            }
+        },
+        "stage2_phash": {
+            "time_ms": {
+                "raw": [
+                    461.16,
+                    471.26,
+                    459.23,
+                    458.41,
+                    453.52,
+                    447.74,
+                    450.43,
+                    460.74,
+                    452.67,
+                    460.58
+                ],
+                "mean": 457.57,
+                "std_dev": 6.76
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    0.2347,
+                    0.232,
+                    0.2331,
+                    0.2299,
+                    0.2313,
+                    0.2299,
+                    0.2294,
+                    0.2298,
+                    0.2299,
+                    0.2297
+                ],
+                "mean": 0.23,
+                "std_dev": 0.0
+            },
+            "candidate_pairs": 57
+        },
+        "stage3_ssim": {
+            "time_ms": {
+                "raw": [
+                    611.91,
+                    624.2,
+                    616.68,
+                    610.64,
+                    610.87,
+                    624.1,
+                    620.1,
+                    619.28,
+                    605.5,
+                    613.61
+                ],
+                "mean": 615.69,
+                "std_dev": 6.21
+            },
+            "peak_ram_mb": {
+                "raw": [
+                    11.9576,
+                    11.9582,
+                    11.957,
+                    11.9581,
+                    11.9576,
+                    11.9576,
+                    11.9576,
+                    11.957,
+                    11.9571,
+                    11.9576
+                ],
+                "mean": 11.96,
+                "std_dev": 0.0
+            },
+            "verified_pairs": 51
+        }
+    },
+    "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python_version": "3.13.14",
+        "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+        "machine": "AMD64",
+        "total_ram_gb": 63.71
+    },
+    "dataset_profile": {
+        "total_files": 205,
+        "total_size_bytes": 25777767,
+        "total_size_mb": 24.58,
+        "format_counts": {
+            ".jpeg": 159,
+            ".jpg": 35,
+            ".png": 11
+        },
+        "resolution_range": {
+            "min": "120x90",
+            "max": "1200x1600"
+        },
+        "width_range": {
+            "min": 120,
+            "max": 1200
+        },
+        "height_range": {
+            "min": 90,
+            "max": 1600
+        },
+        "profile_read_errors": 0
+    },
+    "config": {
+        "phash_threshold": 5,
+        "ssim_threshold": 0.85,
+        "export_pairs": false,
+        "pair_limit": 500,
+        "run_tag": ""
+    },
+    "total_pipeline_time_ms": {
+        "raw": [
+            1092.19,
+            1114.59,
+            1098.54,
+            1089.78,
+            1085.51,
+            1092.21,
+            1090.25,
+            1100.9,
+            1078.58,
+            1095.01
+        ],
+        "mean": 1093.76,
+        "std_dev": 9.67
+    },
+    "total_pipeline_peak_ram_mb": 11.96,
+    "detections": {
+        "stage1_exact_duplicate_groups": 11,
+        "stage1_redundant_files": 11,
+        "stage2_candidate_pairs": 57,
+        "stage3_verified_pairs": 51
+    }
+}
