@@ -129,13 +129,25 @@ def build_rows_html(pairs: list[dict], ref: dict) -> list[str]:
         elif "phash_distance" in p:
             metric = f"pHash distance: {p['phash_distance']}"
 
+        a_esc = escape(a)
+        b_esc = escape(b)
+        metric_esc = escape(metric)
+        ref_type_esc = escape(ref_type)
+        ref_notes_esc = escape(ref_notes)
+
         rows_html.append(
             f"""
 <tr>
   <td>{i}</td>
-  <td><div class="path">{escape(a)}</div><img src="../{escape(a)}" loading="lazy"></td>
-  <td><div class="path">{escape(b)}</div><img src="../{escape(b)}" loading="lazy"></td>
-  <td>{escape(metric)}</td>
+  <td>
+    <div class="path">{a_esc}</div>
+    <img src="../{a_esc}" alt="Image A for pair {i}: {a_esc}" loading="lazy">
+  </td>
+  <td>
+    <div class="path">{b_esc}</div>
+    <img src="../{b_esc}" alt="Image B for pair {i}: {b_esc}" loading="lazy">
+  </td>
+  <td>{metric_esc}</td>
   <td>
     <label for="label_{i}" class="sr-only">Review label for pair {i}</label>
     <select id="label_{i}">
@@ -144,9 +156,9 @@ def build_rows_html(pairs: list[dict], ref: dict) -> list[str]:
       <option value="0" {"selected" if ref_label == "0" else ""}>non-duplicate (0)</option>
       <option value="u">unsure</option>
     </select>
-    <div class="small">type: {escape(ref_type)}</div>
+    <div class="small">type: {ref_type_esc}</div>
     <label for="notes_{i}" class="sr-only">Notes for pair {i}</label>
-    <input id="notes_{i}" type="text" value="{escape(ref_notes)}" placeholder="notes...">
+    <input id="notes_{i}" type="text" value="{ref_notes_esc}" placeholder="notes...">
   </td>
 </tr>
 """
