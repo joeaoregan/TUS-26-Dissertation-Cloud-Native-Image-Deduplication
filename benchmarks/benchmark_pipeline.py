@@ -34,6 +34,107 @@ from core_engine.utils.dedupe_ssim import calculate_ssim
 init(autoreset=True)
 
 
+def resolve_within(base_dir: Path, user_input: str) -> Path:
+    base = base_dir.resolve()
+    target = Path(user_input)
+    if not target.is_absolute():
+        target = (base / target).resolve()
+    else:
+        target = target.resolve()
+
+    if target != base and base not in target.parents:
+        raise ValueError(f"Path escapes allowed directory: {user_input}")
+    return target
+
+
+def print_benchmark_summary(
+    metrics: dict,
+    exact_duplicate_groups: int,
+    exact_redundant_files: int,
+    candidates_count: int,
+    verified_count: int,
+    export_pairs: bool,
+    pair_limit: int,
+) -> None:
+    print(f"{Fore.GREEN}\n--- Detection Counts ---")
+    print(
+        f"{Fore.YELLOW}Stage 1 exact duplicate groups: {Fore.CYAN}{exact_duplicate_groups}"
+    )
+    print(
+        f"{Fore.YELLOW}Stage 1 redundant files:        {Fore.CYAN}{exact_redundant_files}"
+    )
+    print(f"{Fore.YELLOW}Stage 2 candidate pairs:        {Fore.CYAN}{candidates_count}")
+    print(f"{Fore.YELLOW}Stage 3 verified pairs:         {Fore.CYAN}{verified_count}")
+
+    print(f"\n{Fore.GREEN}--- Summary (mean ± std dev, ms) ---")
+    print(
+        f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}"
+        f"{metrics['stages']['stage1_sha256']['time_ms']['mean']} ± "
+        f"{metrics['stages']['stage1_sha256']['time_ms']['std_dev']}"
+    )
+    print(
+        f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}"
+        f"{metrics['stages']['stage2_phash']['time_ms']['mean']} ± "
+        f"{metrics['stages']['stage2_phash']['time_ms']['std_dev']}"
+    )
+    print(
+        f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}"
+        f"{metrics['stages']['stage3_ssim']['time_ms']['mean']} ± "
+        f"{metrics['stages']['stage3_ssim']['time_ms']['std_dev']}"
+    )
+    print(
+        f"{Fore.MAGENTA}Total Pipeline:    {Fore.CYAN}"
+        f"{metrics['total_pipeline_time_ms']['mean']} ± "
+        f"{metrics['total_pipeline_time_ms']['std_dev']}"
+    )
+
+    print(f"\n{Fore.GREEN}--- Peak RAM (MB, mean ± std dev) ---")
+    print(
+        f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}"
+        f"{metrics['stages']['stage1_sha256']['peak_ram_mb']['mean']} ± "
+        f"{metrics['stages']['stage1_sha256']['peak_ram_mb']['std_dev']}"
+    )
+    print(
+        f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}"
+        f"{metrics['stages']['stage2_phash']['peak_ram_mb']['mean']} ± "
+        f"{metrics['stages']['stage2_phash']['peak_ram_mb']['std_dev']}"
+    )
+    print(
+        f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}"
+        f"{metrics['stages']['stage3_ssim']['peak_ram_mb']['mean']} ± "
+        f"{metrics['stages']['stage3_ssim']['peak_ram_mb']['std_dev']}"
+    )
+    print(
+        f"{Fore.MAGENTA}Pipeline Peak RAM: {Fore.CYAN}"
+        f"{metrics['total_pipeline_peak_ram_mb']} MB"
+    )
+
+    if export_pairs:
+        print(
+            f"{Fore.GREEN}Pair export enabled: {Fore.CYAN}"
+            f"up to {pair_limit} entries per section in 'pair_details'"
+        )
+
+
+def write_benchmark_outputs(
+    metrics: dict,
+    output_json: Path,
+    timestamp_output: bool,
+) -> None:
+    output_json.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(output_json, "w", encoding="utf-8") as f:
+        json.dump(metrics, f, indent=4)
+    print(f"\n{Fore.GREEN}Benchmark report exported to: {Fore.CYAN}{output_json}")
+
+    if timestamp_output:
+        ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+        stamped = output_json.with_name(f"{output_json.stem}-{ts}{output_json.suffix}")
+        with open(stamped, "w", encoding="utf-8") as f:
+            json.dump(metrics, f, indent=4)
+        print(f"{Fore.GREEN}Timestamped snapshot exported to: {Fore.CYAN}{stamped}")
+
+
 def run_benchmark(
     dataset_dir: Path,
     output_json: Path = Path("benchmarks/results.json"),
@@ -201,115 +302,13 @@ def run_benchmark(
         pair_limit=pair_limit,
     )
 
-    if export_pairs:
-        print(
-            f"{Fore.GREEN}Pair export enabled: {Fore.CYAN}"
-            f"up to {pair_limit} entries per section in 'pair_details'"
-        )
-
-    allowed_output_base = (Path.cwd() / "benchmarks").resolve()
-    output_json = resolve_within(allowed_output_base, str(output_json))
-    output_json.parent.mkdir(parents=True, exist_ok=True)
-
-    # Always write/update canonical latest file
-    with open(output_json, "w", encoding="utf-8") as f:
-        json.dump(metrics, f, indent=4)
-    print(f"\n{Fore.GREEN}Benchmark report exported to: {Fore.CYAN}{output_json}")
-
-    # Optionally write immutable timestamped snapshot
-    if timestamp_output:
-        ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-        stamped = output_json.with_name(f"{output_json.stem}-{ts}{output_json.suffix}")
-        with open(stamped, "w", encoding="utf-8") as f:
-            json.dump(metrics, f, indent=4)
-        print(f"{Fore.GREEN}Timestamped snapshot exported to: {Fore.CYAN}{stamped}")
+    write_benchmark_outputs(
+        metrics=metrics,
+        output_json=output_json,
+        timestamp_output=timestamp_output,
+    )
 
     return metrics
-
-
-def print_benchmark_summary(
-    metrics: dict,
-    exact_duplicate_groups: int,
-    exact_redundant_files: int,
-    candidates_count: int,
-    verified_count: int,
-    export_pairs: bool,
-    pair_limit: int,
-) -> None:
-    print(f"{Fore.GREEN}\n--- Detection Counts ---")
-    print(
-        f"{Fore.YELLOW}Stage 1 exact duplicate groups: {Fore.CYAN}{exact_duplicate_groups}"
-    )
-    print(
-        f"{Fore.YELLOW}Stage 1 redundant files:        {Fore.CYAN}{exact_redundant_files}"
-    )
-    print(f"{Fore.YELLOW}Stage 2 candidate pairs:        {Fore.CYAN}{candidates_count}")
-    print(f"{Fore.YELLOW}Stage 3 verified pairs:         {Fore.CYAN}{verified_count}")
-
-    print(f"\n{Fore.GREEN}--- Summary (mean ± std dev, ms) ---")
-    print(
-        f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}"
-        f"{metrics['stages']['stage1_sha256']['time_ms']['mean']} ± "
-        f"{metrics['stages']['stage1_sha256']['time_ms']['std_dev']}"
-    )
-    print(
-        f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}"
-        f"{metrics['stages']['stage2_phash']['time_ms']['mean']} ± "
-        f"{metrics['stages']['stage2_phash']['time_ms']['std_dev']}"
-    )
-    print(
-        f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}"
-        f"{metrics['stages']['stage3_ssim']['time_ms']['mean']} ± "
-        f"{metrics['stages']['stage3_ssim']['time_ms']['std_dev']}"
-    )
-    print(
-        f"{Fore.MAGENTA}Total Pipeline:    {Fore.CYAN}"
-        f"{metrics['total_pipeline_time_ms']['mean']} ± "
-        f"{metrics['total_pipeline_time_ms']['std_dev']}"
-    )
-
-    print(f"\n{Fore.GREEN}--- Peak RAM (MB, mean ± std dev) ---")
-    print(
-        f"{Fore.YELLOW}Stage 1 (SHA-256): {Fore.CYAN}"
-        f"{metrics['stages']['stage1_sha256']['peak_ram_mb']['mean']} ± "
-        f"{metrics['stages']['stage1_sha256']['peak_ram_mb']['std_dev']}"
-    )
-    print(
-        f"{Fore.YELLOW}Stage 2 (pHash):   {Fore.CYAN}"
-        f"{metrics['stages']['stage2_phash']['peak_ram_mb']['mean']} ± "
-        f"{metrics['stages']['stage2_phash']['peak_ram_mb']['std_dev']}"
-    )
-    print(
-        f"{Fore.YELLOW}Stage 3 (SSIM):    {Fore.CYAN}"
-        f"{metrics['stages']['stage3_ssim']['peak_ram_mb']['mean']} ± "
-        f"{metrics['stages']['stage3_ssim']['peak_ram_mb']['std_dev']}"
-    )
-    print(
-        f"{Fore.MAGENTA}Pipeline Peak RAM: {Fore.CYAN}"
-        f"{metrics['total_pipeline_peak_ram_mb']} MB"
-    )
-
-    if export_pairs:
-        print(
-            f"{Fore.GREEN}Pair export enabled: {Fore.CYAN}"
-            f"up to {pair_limit} entries per section in 'pair_details'"
-        )
-
-
-from pathlib import Path
-
-
-def resolve_within(base_dir: Path, user_input: str) -> Path:
-    base = base_dir.resolve()
-    target = Path(user_input)
-    if not target.is_absolute():
-        target = (base / target).resolve()
-    else:
-        target = target.resolve()
-
-    if target != base and base not in target.parents:
-        raise ValueError(f"Path escapes allowed directory: {user_input}")
-    return target
 
 
 if __name__ == "__main__":
