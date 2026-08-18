@@ -23,6 +23,7 @@ from benchmarks.exports import (
 )
 from benchmarks.measurement import run_repeated, summarise
 from benchmarks.profile import build_dataset_profile
+from benchmarks.runtime_config import load_runtime_config
 from core_engine.utils.dedupe_exact import file_hash
 from core_engine.utils.dedupe_perceptual import (
     IMAGE_EXTENSIONS,
@@ -268,6 +269,8 @@ def run_benchmark(
 
 
 if __name__ == "__main__":
+    runtime_cfg = load_runtime_config()
+
     parser = argparse.ArgumentParser(
         description="Run cascading deduplication benchmark."
     )
@@ -275,15 +278,15 @@ if __name__ == "__main__":
         "--dir",
         dest="dataset_dir",
         type=Path,
-        default=Path("data/dedupe_test"),
-        help="Dataset directory to benchmark (default: data/dedupe_test)",
+        default=Path(runtime_cfg["dataset_dir"]),
+        help=f"Dataset directory to benchmark (default: {runtime_cfg['dataset_dir']})",
     )
     parser.add_argument(
         "--output",
         dest="output_json",
         type=Path,
-        default=Path("benchmarks/results.json"),
-        help="Output JSON path (default: benchmarks/results.json)",
+        default=Path(runtime_cfg["output_json"]),
+        help=f"Output JSON path (default: {runtime_cfg['output_json']})",
     )
     parser.add_argument(
         "--no-timestamp",
@@ -293,34 +296,39 @@ if __name__ == "__main__":
     parser.add_argument(
         "--export-pairs",
         action="store_true",
-        help="Include sample duplicate/candidate pair details in JSON output",
+        help="Include sample duplicate/candidate pair details in JSON output "
+        "(can also be enabled via EXPORT_PAIRS=true)",
     )
     parser.add_argument(
         "--pair-limit",
         type=int,
-        default=DEFAULT_PAIR_LIMIT,
-        help=f"Max entries per pair_details section (default: {DEFAULT_PAIR_LIMIT})",
+        default=runtime_cfg["pair_limit"],
+        help=f"Max entries per pair_details section (default: {runtime_cfg['pair_limit']})",
     )
     parser.add_argument(
         "--phash-threshold",
         type=int,
-        default=PHASH_THRESHOLD,
-        help=f"Stage 2 pHash Hamming distance threshold (default: {PHASH_THRESHOLD})",
+        default=runtime_cfg["phash_threshold"],
+        help="Stage 2 pHash Hamming distance threshold "
+        f"(default: {runtime_cfg['phash_threshold']})",
     )
     parser.add_argument(
         "--ssim-threshold",
         type=float,
-        default=SSIM_THRESHOLD,
-        help=f"Stage 3 SSIM acceptance threshold (default: {SSIM_THRESHOLD})",
+        default=runtime_cfg["ssim_threshold"],
+        help=f"Stage 3 SSIM acceptance threshold (default: {runtime_cfg['ssim_threshold']})",
     )
     parser.add_argument(
         "--run-tag",
         type=str,
-        default="",
+        default=runtime_cfg["run_tag"] or "",
         help="Optional run tag to store in output JSON config",
     )
 
     args = parser.parse_args()
+
+    # CLI flag wins, but env can enable by default when flag is absent
+    effective_export_pairs = args.export_pairs or runtime_cfg["export_pairs"]
 
     if args.pair_limit < 1:
         print("Error: --pair-limit must be >= 1")
@@ -339,7 +347,7 @@ if __name__ == "__main__":
             dataset_dir=args.dataset_dir,
             output_json=args.output_json,
             timestamp_output=not args.no_timestamp,
-            export_pairs=args.export_pairs,
+            export_pairs=effective_export_pairs,
             pair_limit=args.pair_limit,
             phash_threshold=args.phash_threshold,
             ssim_threshold=args.ssim_threshold,
