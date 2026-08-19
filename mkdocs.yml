@@ -48,6 +48,15 @@ nav:
       - Overview: features/index.md
   - Testing:
       - Overview: testing/index.md
+  - Deliverables:
+      - Overview: deliverables/index.md
+      - Project Proposal: deliverables/project-proposal.md
+      - Literature Review: deliverables/literature-review.md
+      - Interim Presentation: deliverables/interim-presentation.md
+      - Interim Results Report: deliverables/interim-results-report.md
+      - Final Results Report: deliverables/final-results-report.md
+      - Final Poster: deliverables/final-poster.md
+      - Full Academic Article: deliverables/full-academic-article.md
 markdown_extensions:
   - admonition
   - toc:
