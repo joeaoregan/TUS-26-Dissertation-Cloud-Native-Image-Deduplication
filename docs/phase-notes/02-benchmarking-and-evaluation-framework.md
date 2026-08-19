@@ -15,11 +15,19 @@ Add measurable performance and correctness evaluation to the local pipeline.
 - Detection counts by stage
 - Dataset profile (count, size, formats, resolution range)
 - Environment metadata
+- Run metadata timestamps (start/end UTC, run duration ms)
 
 ### Output
-- Canonical JSON output
-- Timestamped snapshot JSON
+- Canonical JSON output (e.g., `logs/smoke.json`)
+- Optional timestamped snapshot JSON (disabled with `--no-timestamp`)
 - Optional pair exports in JSON (`--export-pairs`, `--pair-limit`)
+
+### Path resolution notes
+- `--dir` is resolved under `<repo-root>/data`  
+  (use `dedupe_test_100`, not `data/dedupe_test_100`)
+- `--output` is resolved from `<repo-root>`  
+  (e.g., `logs/smoke.json`)
+- `benchmarks/tools/validate_reference_labels.py --csv` is constrained to `<repo-root>/data/labels`
 
 ## Implemented Correctness Evaluation
 
@@ -39,4 +47,4 @@ Add measurable performance and correctness evaluation to the local pipeline.
 
 ## Result
 
-The project moved from "works functionally" to "works and can be measured/reproduced with standard metrics.""
+The project moved from "works functionally" to "works and can be measured/reproduced with standard metrics."

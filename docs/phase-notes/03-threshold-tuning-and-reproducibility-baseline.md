@@ -50,6 +50,7 @@ Observed tendency:
 - `submission/README_SUBMISSION.md`
 - final baseline JSON/CSV artifacts
 - SHA-256 checksum manifest
+- Benchmark JSON includes internal UTC timestamps (`run_started_at_utc`, `run_completed_at_utc`) and `run_duration_ms`
 
 ## Result
 

@@ -73,7 +73,7 @@ MSYS_NO_PATHCONV=1 docker run --rm \
   -v "$PWD/logs:/app/logs" \
   tus26-image-dedupe:v0.4.0 \
   python -m benchmarks.benchmark_pipeline \
-    --dir data/dedupe_test_100 \
+    --dir dedupe_test_100 \
     --output /app/logs/results-docker-v0.4.0.json \
     --export-pairs \
     --pair-limit 500 \
@@ -128,6 +128,7 @@ docker push joe0regan/tus26-image-dedupe:phase04
 - Git Bash path conversion on Windows can corrupt `-v` mounts unless handled (used `MSYS_NO_PATHCONV=1` where needed).
 - Memory/CPU scheduling differences between host and container affect absolute timings but not detection outcomes.
 - Generated review HTML can inflate duplication metrics if not excluded from static analysis scope.
+- `logs/` is runtime-output only and is intentionally not committed by default.
 
 ## Exit Status
 

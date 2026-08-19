@@ -103,6 +103,12 @@ Example override (Git Bash):
 TEST_DATA_DIR="$(pwd)/data" pytest -q services/dedupe-py/tests
 ```
 
+## Benchmark Path Notes
+
+- `benchmarks.benchmark_pipeline --dir` is resolved under `<repo-root>/data`
+- Use dataset names/paths relative to that base (example: `dedupe_test_100`)
+- Avoid passing `data/dedupe_test_100` to `--dir` to prevent `data/data/...` resolution
+
 ## Quality Gate and Static Analysis
 
 SonarCloud is used for continuous static analysis and quality monitoring.
@@ -129,6 +135,9 @@ sonar.exclusions=**/data/reviews/review_pairs_stage*.html,**/submission/data/rev
 !!! failure "pytest: command not found"
     Use module execution form:
     `python -m pytest -q`
+
+!!! failure "Benchmark directory resolved incorrectly (data/data/...)"
+    Pass `--dir` as a path relative to the data root (example: `dedupe_test_100`).
 
 !!! failure "SonarCloud badge shows Quality Gate not computed"
     - Ensure analysis has run on default branch after latest push.
