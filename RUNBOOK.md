@@ -19,7 +19,7 @@ source venv/Scripts/activate
 
 ### Install dependencies
 ```bash
-pip install -r core_engine/requirements.txt
+pip install -r services/dedupe-py/core_engine/requirements.txt
 ```
 
 ---
@@ -29,7 +29,7 @@ pip install -r core_engine/requirements.txt
 Ensure these paths exist before running:
 - `data/dedupe_test_100`
 - `data/labels/reference_labels_eval_v1.csv`
-- `benchmarks/tools/`
+- `services/dedupe-py/benchmarks/tools/`
 
 ---
 
@@ -38,6 +38,7 @@ Ensure these paths exist before running:
 Run from repository root:
 
 ```bash
+export PYTHONPATH=services/dedupe-py
 python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/final-baseline-phash5-ssim085.json --export-pairs --pair-limit 500 --phash-threshold 5 --ssim-threshold 0.85 --run-tag final-baseline
 python -m benchmarks.tools.export_predictions --input logs/final-baseline-phash5-ssim085.json --output data/predictions/final-baseline-phash5-ssim085-stage3.csv --source stage3
 python -m benchmarks.tools.evaluate_predictions --reference-labels data/labels/reference_labels_eval_v1.csv --predictions data/predictions/final-baseline-phash5-ssim085-stage3.csv
@@ -45,7 +46,27 @@ python -m benchmarks.tools.evaluate_predictions --reference-labels data/labels/r
 
 ---
 
-## 4) Expected Final Metrics
+## 4) Docker Reproduction Commands
+
+Run from repository root:
+
+### PowerShell
+```powershell
+powershell -ExecutionPolicy Bypass -File .\services\dedupe-py\scripts\run_docker_benchmark.ps1
+```
+
+### Git Bash
+```bash
+bash services/dedupe-py/scripts/run_docker_benchmark.sh
+```
+
+Notes:
+- Dockerfile used: `services/dedupe-py/Dockerfile`
+- Output artifacts are written to repository root `logs/`
+
+---
+
+## 5) Expected Final Metrics
 
 From the final baseline run (`pHash=5`, `SSIM=0.85`), expected evaluation output is:
 
@@ -70,7 +91,7 @@ Note:
 
 ---
 
-## 5) Output Artifacts
+## 6) Output Artifacts
 
 Expected generated files:
 
@@ -83,7 +104,7 @@ Expected generated files:
 
 ---
 
-## 6) Troubleshooting
+## 7) Troubleshooting
 
 ### Python version mismatch
 If dependency install fails, confirm Python 3.13 is active:
@@ -101,10 +122,11 @@ If Stage 2 candidate pairs are zero, Stage 3 may report near-zero work; this is 
 
 ---
 
-## 7) Optional Validation Commands
+## 8) Optional Validation Commands
 
 Validate label file before evaluation:
 ```bash
+export PYTHONPATH=services/dedupe-py
 python -m benchmarks.tools.validate_reference_labels --csv data/labels/reference_labels_eval_v1.csv
 ```
 

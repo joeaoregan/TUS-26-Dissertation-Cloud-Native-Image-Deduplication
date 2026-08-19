@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pytest
-
 from benchmarks.tools.path_safety import resolve_within
 
 

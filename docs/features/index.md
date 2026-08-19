@@ -56,13 +56,14 @@ Legend:
 
 - [x] Container image for pipeline service (Dockerfile)
 - [x] Externalised runtime configuration via environment variables
+- [x] Health/readiness endpoints
+- [x] Docker Compose local orchestration
+- [x] Cross-shell benchmark automation (Powershell + Git Bash) verified
 - [ ] Minimal API wrapper for job submission
 - [ ] Async queue-based processing flow (API -> queue -> worker)
 - [ ] Worker job status tracking (pending/running/completed/failed)
 - [ ] Idempotent job handling and retry safety
 - [ ] Structured logging with correlation/job IDs
-- [ ] Health/readiness endpoints
-- [ ] Docker Compose local orchestration
 - [ ] Kubernetes deployment manifests
 - [ ] Object storage integration (cloud/local-compatible)
 - [ ] Persistent metadata/result storage integration

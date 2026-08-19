@@ -1,11 +1,9 @@
-from pathlib import Path
-
 import pytest
-
 from core_engine.utils.dedupe_ssim import calculate_ssim
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-TEST_DIR = PROJECT_ROOT / "data" / "dedupe_test"
+from .conftest import TEST_DATA_DIR
+
+TEST_DIR = TEST_DATA_DIR / "dedupe_test"
 
 
 @pytest.fixture

@@ -24,34 +24,46 @@ A multi-stage, cascading image deduplication pipeline designed to identify exact
 ## Structure
 
 ```text
-├── benchmarks/                          # Benchmark runner and analysis helpers
-│   ├── benchmark_pipeline.py            # Runs staged benchmark, timings/memory, and JSON output
-│   ├── constants.py                     # Shared benchmark defaults (runs, thresholds, pair limits)
-│   ├── exports.py                       # Formats stage outputs (groups/candidates/verified) for JSON export
-│   ├── measurement.py                   # Timing + peak-memory measurement utilities (warmup/measured runs)
-│   ├── profile.py                       # Dataset profiling (file counts, size, formats, resolution ranges)
-│   └── tools/                           # Evaluation and review workflow scripts
-│       ├── build_review_html.py         # Builds side-by-side HTML reviewer from exported benchmark pairs
-│       ├── evaluate_predictions.py      # Computes TP/FP/FN/TN and Precision/Recall/F1/Accuracy from labels vs predictions
-│       ├── export_predictions.py        # Exports stage pair predictions from benchmark JSON to CSV
-│       └── validate_reference_labels.py # Validates reference label CSV schema, label values, and duplicate/invalid rows
-├── core_engine/
-│   ├── pipeline.py                      # Cascading Hybrid Entry Point
-│   ├── requirements.txt                 # Python dependencies (Pillow, ImageHash, colorama)
-│   └── utils/
-│       ├── __init__.py                  # Python package marker file
-│       ├── dedupe_exact.py              # Stage 1: Cryptographic byte-level verification
-│       ├── dedupe_perceptual.py         # Stage 2: Perceptual structural matching
-│       └── dedupe_ssim.py               # Stage 3: Fine Structural Similarity (SSIM) verification
+## Structure
+
+```text
+├── services/
+│   └── dedupe-py/                       # Python deduplication service
+│       ├── benchmarks/                  # Benchmark runner and analysis helpers
+│       │   ├── benchmark_pipeline.py    # Runs staged benchmark, timings/memory, and JSON output
+│       │   ├── constants.py             # Shared benchmark defaults (runs, thresholds, pair limits)
+│       │   ├── exports.py               # Formats stage outputs (groups/candidates/verified) for JSON export
+│       │   ├── measurement.py           # Timing + peak-memory measurement utilities (warmup/measured runs)
+│       │   ├── profile.py               # Dataset profiling (file counts, size, formats, resolution ranges)
+│       │   └── tools/                   # Evaluation and review workflow scripts
+│       │       ├── build_review_html.py         # Builds side-by-side HTML reviewer from exported benchmark pairs
+│       │       ├── evaluate_predictions.py      # Computes TP/FP/FN/TN and Precision/Recall/F1/Accuracy from labels vs predictions
+│       │       ├── export_predictions.py        # Exports stage pair predictions from benchmark JSON to CSV
+│       │       └── validate_reference_labels.py # Validates reference label CSV schema, label values, and duplicate/invalid rows
+│       ├── core_engine/
+│       │   ├── pipeline.py              # Cascading Hybrid Entry Point
+│       │   ├── requirements.txt         # Python dependencies (Pillow, ImageHash, colorama)
+│       │   └── utils/
+│       │       ├── __init__.py          # Python package marker file
+│       │       ├── dedupe_exact.py      # Stage 1: Cryptographic byte-level verification
+│       │       ├── dedupe_perceptual.py # Stage 2: Perceptual structural matching
+│       │       └── dedupe_ssim.py       # Stage 3: Fine Structural Similarity (SSIM) verification
+│       ├── api/                         # API wrapper (cloud-native in-progress)
+│       ├── worker/                      # Background worker (cloud-native in-progress)
+│       ├── jobs/                        # Job model/state handling (cloud-native in-progress)
+│       └── scripts/                     # Utility scripts (docker benchmark helpers, etc.)
 ├── data/
-│       ├── dedupe_test/                 # Evaluation testing dataset small
-│       ├── dedupe_test_100/             # Evaluation testing dataset 100 images
-│       ├── dedupe_test_100_clean/       # Evaluation testing dataset 100 unique, unaltered images
-│       ├── labels/                      # Reference label CSV files
-│       ├── predictions/                 # Prediction stages 2 & 3 CSV files
-│       └── reviews/                     # Side by side comparison HTML file
-├── tests/                               # Test files
-└── logs/                                # JSON log files
+│   ├── dedupe_test/                     # Evaluation testing dataset (small)
+│   ├── dedupe_test_100/                 # Evaluation testing dataset (100 images)
+│   ├── dedupe_test_100_clean/           # Evaluation testing dataset (100 unique, unaltered images)
+│   ├── labels/                          # Reference label CSV files
+│   ├── predictions/                     # Prediction stage CSV outputs
+│   └── reviews/                         # Side-by-side comparison HTML review files
+├── tests/                               # Test files (unit + integration)
+├── logs/                                # JSON log / benchmark output files
+├── docker-compose.yml                   # Local container orchestration
+├── RUNBOOK.md                           # Reproducibility guide
+└── README.md                            # Project overview and usage
 ```
 
 ## Setup
@@ -59,18 +71,14 @@ A multi-stage, cascading image deduplication pipeline designed to identify exact
 1. Initialise and Activate Virtual Environment
 
 ```bash
-# Create the virtual environment (run once)
-python -m venv venv
-
-# Activate the environment (Windows Git Bash)
+py -3.13 -m venv venv
 source venv/Scripts/activate
 ```
 
-### Requirements
+2) Install dependencies
 
 ```bash
-# Install core dependencies (Pillow, ImageHash, and colorama)
-pip install -r core_engine/requirements.txt
+pip install -r services/dedupe-py/core_engine/requirements.txt
 ```
 ### Python Version
 
@@ -78,30 +86,28 @@ This project is tested with **Python 3.13.x** (benchmark runs validated on **3.1
 
 > Note: Python 3.14 may fail dependency installation (notably NumPy/scikit-image wheel compatibility) unless package versions are updated.
 
-
-```bash
-py -3.13 -m venv venv
-source venv/Scripts/activate
-pip install -r core_engine/requirements.txt
-```
-
 ## Run Stage Execution
 
-1. Exact Byte-Level Deduplication (SHA-256)
-This script performs rapid cryptographic verification at the binary level. It catches exact copies but misses modified file formats or compressed streams due to the avalanche effect.
+Run from repository root with PYTHONPATH set:
 
 ```bash
-python core_engine/utils/dedupe_exact.py dedupe_test
+export PYTHONPATH=services/dedupe-py
 ```
-2. Perceptual Image Hashing (pHash)
-This script calculates structural visual fingerprints to identify near-duplicates (e.g., format shifts, resizing, compression noise) by computing bitwise Hamming Distances.
 
+1. Exact Byte-Level Deduplication (SHA-256)  
+  This script performs rapid cryptographic verification at the binary level. It catches exact copies but misses modified file formats or compressed streams due to the avalanche effect.
 ```bash
-python core_engine/utils/dedupe_perceptual.py dedupe_test
+python -m core_engine.utils.dedupe_exact dedupe_test
 ```
 
-3. Structural Similarity Index Measure (SSIM) Verification
-This script performs fine-grained structural comparison between two candidate image paths to output a similarity score (-1.0 to 1.0).
+2. Perceptual Image Hashing (pHash)  
+  This script calculates structural visual fingerprints to identify near-duplicates (e.g., format shifts, resizing, compression noise) by computing bitwise Hamming distances.
+```bash
+python -m core_engine.utils.dedupe_perceptual dedupe_test
+```
+
+3. Structural Similarity Index Measure (SSIM) Verification  
+  This script performs fine-grained structural comparison between two candidate image paths to output a similarity score (-1.0 to 1.0).
 
 ```bash
 python -m core_engine.utils.dedupe_ssim "dedupe_test/me.jpg" "dedupe_test/me - Copy.jpg"
@@ -114,10 +120,23 @@ The unified hybrid execution combines all three modules to optimise compute perf
 You can execute the entire pipeline directly from your main project root directory:
 
 ```bash
+export PYTHONPATH=services/dedupe-py
 python -m core_engine.pipeline dedupe_test
 ```
 
 ## Testing
+
+Run from repository root:
+
+- pytest
+- pytest -v
+
+Test suite includes:
+
+- tests/test_dedupe_exact.py
+- tests/test_dedupe_perceptual.py
+- tests/test_dedupe_ssim.py
+- tests/test_pipeline.py
 
 The project includes a `pytest` unit and integration test suite covering all deduplication stages and edge cases.
 
@@ -143,6 +162,7 @@ From repository root:
 
 ```bash
 # Default dataset + default output
+export PYTHONPATH=services/dedupe-py
 python -m benchmarks.benchmark_pipeline
 
 # Custom dataset directory + custom output JSON
@@ -183,7 +203,7 @@ Use **Detection Counts** in the output to interpret this:
 - Formats: `{'.jpeg': 100}`
 - Resolution range: `120x90 -> 900x1000`
 
-### ### Output Metrics
+### Output Metrics
 
 Benchmark results are exported to:
 - Canonical latest file: `logs/results.json` (or custom `--output`)
@@ -232,7 +252,28 @@ Earlier small-set baseline run (for continuity with prior commits):
 - Stage 3: 83.16 ms
 - Total: 188.56 ms
 
-### Correctness Evaluation with Reference Labels
+## Docker Benchmark Reproduction (Verified)
+
+Both scripts validated successfully on **2026-08-18**.
+
+PowerShell (Windows):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\services\dedupe-py\scripts\run_docker_benchmark.ps1
+```
+
+Git Bash:
+
+```bash
+bash services/dedupe-py/scripts/run_docker_benchmark.sh
+```
+
+Notes:
+
+- Dockerfile: services/dedupe-py/Dockerfile
+- Output artifacts are written to repository root logs/
+
+## Correctness Evaluation with Reference Labels
 
 To evaluate detection quality (not just performance), this project uses manually verified **Reference Labels**.
 
@@ -246,6 +287,7 @@ To evaluate detection quality (not just performance), this project uses manually
 #### Workflow
 
 ```bash
+export PYTHONPATH=services/dedupe-py
 python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/eval-100-YYYYMMDD-HHMMSS.json --export-pairs --pair-limit 500
 python -m benchmarks.tools.validate_reference_labels --csv data/labels/reference_labels_eval_v1.csv
 python -m benchmarks.tools.export_predictions --input logs/eval-100-YYYYMMDD-HHMMSS.json --output data/predictions/pred_stage3_eval100.csv --source stage3
@@ -254,15 +296,15 @@ python -m benchmarks.tools.evaluate_predictions --reference-labels data/labels/r
 
 ## Threshold Tuning
 
-| Run tag                             | pHash | SSIM | Stage2 candidates | Stage3 verified | TP | FP | FN | TN | Precision | Recall | F1     | Accuracy |
-|-------------------------------------|------:|-----:|------------------:|----------------:|---:|---:|---:|---:|----------:|-------:|-------:|---------:|
+| Run tag | pHash | SSIM | Stage2 candidates | Stage3 verified | TP | FP | FN | TN | Precision | Recall | F1 | Accuracy |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | threshold-tuning-baseline-phash5-ssim085 | 5 | 0.85 | 53 | 49 | 48 | 0 | 3 | 8 | 1.0000 | 0.9412 | 0.9697 | 0.9492 |
-| threshold-tuning-phash4-ssim085     | 4 | 0.85 | 53 | 49 | 48 | 0 | 3 | 8 | 1.0000 | 0.9412 | 0.9697 | 0.9492 |
-| threshold-tuning-phash4-ssim090     | 4 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
-| threshold-tuning-phash5-ssim090     | 5 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
-| threshold-tuning-phash6-ssim085     | 6 | 0.85 | 53 | 49 | 48 | 0 | 3 | 8 | 1.0000 | 0.9412 | 0.9697 | 0.9492 |
-| threshold-tuning-phash6-ssim090     | 6 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
-| threshold-tuning-phash7-ssim090     | 7 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
+| threshold-tuning-phash4-ssim085 | 4 | 0.85 | 53 | 49 | 48 | 0 | 3 | 8 | 1.0000 | 0.9412 | 0.9697 | 0.9492 |
+| threshold-tuning-phash4-ssim090 | 4 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
+| threshold-tuning-phash5-ssim090 | 5 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
+| threshold-tuning-phash6-ssim085 | 6 | 0.85 | 53 | 49 | 48 | 0 | 3 | 8 | 1.0000 | 0.9412 | 0.9697 | 0.9492 |
+| threshold-tuning-phash6-ssim090 | 6 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
+| threshold-tuning-phash7-ssim090 | 7 | 0.90 | 53 | 48 | 47 | 0 | 4 | 8 | 1.0000 | 0.9216 | 0.9592 | 0.9322 |
 
 **Selected operating point:** `pHash=5`, `SSIM=0.85`.
 
@@ -281,13 +323,27 @@ Therefore, SSIM=0.85 was retained as the better precision/recall balance.
 ## Final Baseline
 
 - **Config:** pHash=5, SSIM=0.85
-- **Metrics:** Precision 1.0000, Recall 0.9412, F1 0.9697, Accuracy 0.9492
-- **Known Misses:** `ILSVRC2012_val_00000139` (brightness_up), `ILSVRC2012_val_00000141` (brightness_up), and `ILSVRC2012_val_00000126` (green variant).
+- **Pairs evaluated**: 59
+- TP / FP / FN / TN: 48 / 0 / 3 / 8
+- Precision / Recall / F1 / Accuracy: 1.0000 / 0.9412 / 0.9697 / 0.9492
+- **Known misses:**
+  - ILSVRC2012_val_00000139.JPEG ↔ ILSVRC2012_val_00000139_brightness_up.jpg
+  - ILSVRC2012_val_00000141.JPEG ↔ ILSVRC2012_val_00000141_brightness_up.jpg
+  - ILSVRC2012_val_00000126.JPEG ↔ ILSVRC2012_val_00000126_green.jpg
+
 - **Observation:** Missed pairs tend to have low-colour or near-grayscale content with subtle brightness/colour shifts, which can reduce SSIM enough to fall below the threshold.
 
+### Reproducibility:
+
 ```bash
-# Reproducibility
+export PYTHONPATH=services/dedupe-py
 python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/final-baseline-phash5-ssim085.json --export-pairs --pair-limit 500 --phash-threshold 5 --ssim-threshold 0.85 --run-tag final-baseline
 python -m benchmarks.tools.export_predictions --input logs/final-baseline-phash5-ssim085.json --output data/predictions/final-baseline-phash5-ssim085-stage3.csv --source stage3
 python -m benchmarks.tools.evaluate_predictions --reference-labels data/labels/reference_labels_eval_v1.csv --predictions data/predictions/final-baseline-phash5-ssim085-stage3.csv
+```
+
+## Related Docs
+
+- RUNBOOK.md — reproducibility-focused execution guide
+- services/dedupe-py/scripts/README.md — Docker benchmark script usage
 ```

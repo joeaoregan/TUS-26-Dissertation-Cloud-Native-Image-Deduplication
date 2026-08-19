@@ -1,11 +1,14 @@
-from pathlib import Path
-
 import pytest
-
 from core_engine.utils.dedupe_exact import file_hash
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-TEST_DIR = PROJECT_ROOT / "data" / "dedupe_test"
+from .conftest import TEST_DATA_DIR
+
+TEST_DIR = TEST_DATA_DIR / "dedupe_test"
+
+
+def test_example():
+    p = TEST_DATA_DIR / "dedupe_test" / "me.jpg"
+    assert p.exists(), f"Missing test file: {p}"
 
 
 @pytest.fixture

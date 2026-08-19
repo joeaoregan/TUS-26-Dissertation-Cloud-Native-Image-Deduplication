@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 # Build image
-docker build -t tus26-image-dedupe:v0.4.0 .
+docker build -t tus26-image-dedupe:v0.4.0 -f services/dedupe-py/Dockerfile .
 
 # Resolve absolute host paths
 $RepoRoot = (Get-Location).Path
@@ -15,8 +15,8 @@ if (-not (Test-Path $LogsPath)) {
 
 # Run benchmark
 docker run --rm `
-  -e DATASET_DIR=data/dedupe_test_100 `
-  -e OUTPUT_JSON=/app/logs/results-docker-v0.4.0.json `
+  -e DATASET_DIR=dedupe_test_100 `
+  -e OUTPUT_JSON=logs/results-docker-v0.4.0.json `
   -e EXPORT_PAIRS=true `
   -e PAIR_LIMIT=500 `
   -e PHASH_THRESHOLD=5 `

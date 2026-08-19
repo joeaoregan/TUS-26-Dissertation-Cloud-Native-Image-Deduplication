@@ -10,6 +10,8 @@ __pycache__/
 *.pyo
 *.pyd
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # IDE and Editor specific configurations
 .vscode/
@@ -28,22 +30,25 @@ Desktop.ini
 
 # Testing and Code Coverage
 .coverage
+coverage.xml
+pytest-report.xml
 htmlcov/
 coverage/
 
+# Runtime/output artifacts
+logs/
+site/
+release/
+temp/
+*.zip
+
+# Local datasets (large/unversioned)
 data/dedupe_test/
 data/dedupe_test_100/
 data/dedupe_test_100_clean/
 
-# Local data or benchmark image dumps (to prevent uploading raw media)
-core-engine/utils/__pycache__/
-
-# temporary and test files
-temp/
-
-*.zip
-
-# mkdocs
-site/
-
-release/
+# Service-specific caches/artifacts after move
+services/dedupe-py/**/__pycache__/
+services/dedupe-py/.pytest_cache/
+services/dedupe-py/.mypy_cache/
+services/dedupe-py/.ruff_cache/
