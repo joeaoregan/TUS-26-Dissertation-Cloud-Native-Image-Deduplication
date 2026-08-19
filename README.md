@@ -97,20 +97,20 @@ export PYTHONPATH=services/dedupe-py
 1. Exact Byte-Level Deduplication (SHA-256)  
   This script performs rapid cryptographic verification at the binary level. It catches exact copies but misses modified file formats or compressed streams due to the avalanche effect.
 ```bash
-python -m core_engine.utils.dedupe_exact dedupe_test
+python -m core_engine.utils.dedupe_exact data/dedupe_test
 ```
 
 2. Perceptual Image Hashing (pHash)  
   This script calculates structural visual fingerprints to identify near-duplicates (e.g., format shifts, resizing, compression noise) by computing bitwise Hamming distances.
 ```bash
-python -m core_engine.utils.dedupe_perceptual dedupe_test
+python -m core_engine.utils.dedupe_perceptual data/dedupe_test
 ```
 
 3. Structural Similarity Index Measure (SSIM) Verification  
   This script performs fine-grained structural comparison between two candidate image paths to output a similarity score (-1.0 to 1.0).
 
 ```bash
-python -m core_engine.utils.dedupe_ssim "dedupe_test/me.jpg" "dedupe_test/me - Copy.jpg"
+python -m core_engine.utils.dedupe_ssim "data/dedupe_test/me.jpg" "data/dedupe_test/me - Copy.jpg"
 ```
 
 ## Running the Hybrid Cascading Pipeline
@@ -121,7 +121,7 @@ You can execute the entire pipeline directly from your main project root directo
 
 ```bash
 export PYTHONPATH=services/dedupe-py
-python -m core_engine.pipeline dedupe_test
+python -m core_engine.pipeline data/dedupe_test
 ```
 
 ## Testing
@@ -166,16 +166,16 @@ export PYTHONPATH=services/dedupe-py
 python -m benchmarks.benchmark_pipeline
 
 # Custom dataset directory + custom output JSON
-python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/eval-100.json
+python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output logs/eval-100.json
 
 # Export sample duplicate/candidate/verified pair details
-python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/eval-100.json --export-pairs
+python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output logs/eval-100.json --export-pairs
 
 # Increase export cap per pair section
-python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/eval-100.json --export-pairs --pair-limit 300
+python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output logs/eval-100.json --export-pairs --pair-limit 300
 
 # Disable timestamped snapshot
-python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/eval-100.json --no-timestamp
+python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output logs/eval-100.json --no-timestamp
 ```
 
 ### Why Stage 3 Can Be `0.0 ms`
@@ -288,8 +288,13 @@ To evaluate detection quality (not just performance), this project uses manually
 
 ```bash
 export PYTHONPATH=services/dedupe-py
-python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/eval-100-YYYYMMDD-HHMMSS.json --export-pairs --pair-limit 500
-python -m benchmarks.tools.validate_reference_labels --csv data/labels/reference_labels_eval_v1.csv
+python -m benchmarks.benchmark_pipeline --dir ./data/dedupe_test_100 --output logs/eval-100-YYYYMMDD-HHMMSS.json --export-pairs --pair-limit 500
+python -m benchmarks.tools.validate_reference_labels --csv reference_labels_eval_v1.csv
+```
+
+broken for now:
+
+```bash
 python -m benchmarks.tools.export_predictions --input logs/eval-100-YYYYMMDD-HHMMSS.json --output data/predictions/pred_stage3_eval100.csv --source stage3
 python -m benchmarks.tools.evaluate_predictions --reference-labels data/labels/reference_labels_eval_v1.csv --predictions data/predictions/pred_stage3_eval100.csv
 ```
@@ -337,7 +342,7 @@ Therefore, SSIM=0.85 was retained as the better precision/recall balance.
 
 ```bash
 export PYTHONPATH=services/dedupe-py
-python -m benchmarks.benchmark_pipeline --dir data/dedupe_test_100 --output logs/final-baseline-phash5-ssim085.json --export-pairs --pair-limit 500 --phash-threshold 5 --ssim-threshold 0.85 --run-tag final-baseline
+python -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output logs/final-baseline-phash5-ssim085.json --export-pairs --pair-limit 500 --phash-threshold 5 --ssim-threshold 0.85 --run-tag final-baseline
 python -m benchmarks.tools.export_predictions --input logs/final-baseline-phash5-ssim085.json --output data/predictions/final-baseline-phash5-ssim085-stage3.csv --source stage3
 python -m benchmarks.tools.evaluate_predictions --reference-labels data/labels/reference_labels_eval_v1.csv --predictions data/predictions/final-baseline-phash5-ssim085-stage3.csv
 ```
