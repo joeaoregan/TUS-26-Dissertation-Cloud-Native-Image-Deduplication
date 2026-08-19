@@ -1,44 +1,14 @@
-# Git
-.git
-.gitignore
+# Ignore everything by default
+**
 
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.pytest_cache/
-venv/
+# Allow only files needed for dedupe-py image build
+!services/dedupe-py/Dockerfile
+!services/dedupe-py/core_engine/**
+!services/dedupe-py/benchmarks/**
+!services/dedupe-py/api/**
+!services/dedupe-py/jobs/**
+!services/dedupe-py/worker/**
 
-# Build/test artifacts
-dist/
-build/
-*.egg-info/
-htmlcov/
-.coverage
-
-# Project runtime outputs
-logs/
-data/*
-
-docs/
-tests/
-submission/
-
-# OS/editor
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-
-# Zip
-*.zip
-
-# mkdocs
-site/
-
-*.md
-
-*.log
-.env
-.env.*
+# Optional: keep if needed by runtime/imports
+!services/dedupe-py/pyproject.toml
+!services/dedupe-py/README.md

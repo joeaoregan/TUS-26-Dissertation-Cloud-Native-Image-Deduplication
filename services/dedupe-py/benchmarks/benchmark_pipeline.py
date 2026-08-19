@@ -1,12 +1,18 @@
 import argparse
 import json
 import platform
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import imagehash
 import psutil
 from colorama import Fore, init
+from core_engine.utils.dedupe_exact import file_hash
+from core_engine.utils.dedupe_perceptual import (
+    IMAGE_EXTENSIONS,
+    compare_perceptual_hashes,
+)
+from core_engine.utils.dedupe_ssim import calculate_ssim
 from PIL import Image
 
 from benchmarks.constants import (
@@ -25,12 +31,6 @@ from benchmarks.measurement import run_repeated, summarise
 from benchmarks.profile import build_dataset_profile
 from benchmarks.runtime_config import load_runtime_config
 from benchmarks.tools.path_safety import resolve_within
-from core_engine.utils.dedupe_exact import file_hash
-from core_engine.utils.dedupe_perceptual import (
-    IMAGE_EXTENSIONS,
-    compare_perceptual_hashes,
-)
-from core_engine.utils.dedupe_ssim import calculate_ssim
 
 init(autoreset=True)
 
@@ -133,6 +133,8 @@ def run_benchmark(
     ssim_threshold: float = SSIM_THRESHOLD,
     run_tag: str = "",
 ):
+    run_started_at = datetime.now(timezone.utc)
+
     print(
         f"\n{Fore.GREEN}--- Running Benchmark on: {Fore.CYAN}{dataset_dir}{Fore.GREEN} ---"
     )
@@ -172,6 +174,7 @@ def run_benchmark(
 
     metrics = {
         "dataset": str(dataset_dir),
+        "run_started_at_utc": run_started_at.isoformat().replace("+00:00", "Z"),
         "total_images": len(images),
         "runs": {"warmup_discarded": WARMUP_RUNS, "measured_iterations": MEASURED_RUNS},
         "stages": {},
@@ -276,6 +279,14 @@ def run_benchmark(
             "stage3_verified_total": len(verified),
         }
 
+    run_completed_at = datetime.now(timezone.utc)
+    metrics["run_completed_at_utc"] = run_completed_at.isoformat().replace(
+        "+00:00", "Z"
+    )
+    metrics["run_duration_ms"] = round(
+        (run_completed_at - run_started_at).total_seconds() * 1000, 2
+    )
+
     print_benchmark_summary(
         metrics=metrics,
         exact_duplicate_groups=exact_duplicate_groups,
@@ -369,7 +380,7 @@ if __name__ == "__main__":
         raise SystemExit(2)
 
     allowed_dataset_base = (Path.cwd() / "data").resolve()
-    allowed_output_base = (Path.cwd() / "benchmarks").resolve()
+    allowed_output_base = Path.cwd().resolve()
 
     try:
         safe_dataset_dir = resolve_within(allowed_dataset_base, str(args.dataset_dir))

@@ -2,9 +2,8 @@ import argparse
 import csv
 from pathlib import Path
 
-from colorama import Fore, init
-
 from benchmarks.tools.path_safety import resolve_within
+from colorama import Fore, init
 
 VALID_LABELS = {"0", "1"}
 VALID_TYPES = {"exact", "near", "non"}
@@ -24,7 +23,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def resolve_csv_path(csv_arg: Path) -> Path:
-    allowed_input_base = (Path.cwd() / "data" / "reviews").resolve()
+    allowed_input_base = (Path.cwd() / "data" / "labels").resolve()
     try:
         safe_csv = resolve_within(allowed_input_base, str(csv_arg))
     except ValueError as e:
@@ -48,6 +47,7 @@ def validate_row(
     line_no: int,
     row: dict[str, str],
     seen: set[tuple[str, str]],
+    data_base: Path,
 ) -> int:
     errors = 0
 
@@ -72,11 +72,25 @@ def validate_row(
         print(f"{Fore.RED}Line {line_no}: ERROR invalid type '{typ}'")
         errors += 1
 
-    if not Path(a).exists():
+    try:
+        a_path = resolve_within(data_base, a)
+    except ValueError:
+        print(f"{Fore.RED}Line {line_no}: ERROR path escapes data dir: {a}")
+        errors += 1
+        a_path = None
+
+    try:
+        b_path = resolve_within(data_base, b)
+    except ValueError:
+        print(f"{Fore.RED}Line {line_no}: ERROR path escapes data dir: {b}")
+        errors += 1
+        b_path = None
+
+    if a_path and not a_path.exists():
         print(f"{Fore.RED}Line {line_no}: ERROR missing file: {a}")
         errors += 1
 
-    if not Path(b).exists():
+    if b_path and not b_path.exists():
         print(f"{Fore.RED}Line {line_no}: ERROR missing file: {b}")
         errors += 1
 
@@ -96,6 +110,7 @@ def validate_csv_rows(safe_csv: Path) -> tuple[int, int]:
     seen: set[tuple[str, str]] = set()
     total_errors = 0
     total_rows = 0
+    data_base = (Path.cwd() / "data").resolve()
 
     with safe_csv.open("r", encoding="utf-8", newline="") as f:
         reader = csv.DictReader(f)
@@ -103,7 +118,7 @@ def validate_csv_rows(safe_csv: Path) -> tuple[int, int]:
 
         for line_no, row in enumerate(reader, start=2):
             total_rows += 1
-            total_errors += validate_row(line_no, row, seen)
+            total_errors += validate_row(line_no, row, seen, data_base)
 
     return total_rows, total_errors
 

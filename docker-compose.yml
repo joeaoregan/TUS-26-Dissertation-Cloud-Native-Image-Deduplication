@@ -4,6 +4,13 @@ services:
     container_name: dedupe-redis
     ports:
       - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
 
   api:
     build:
@@ -21,8 +28,16 @@ services:
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
+    restart: unless-stopped
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)\""]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
 
   worker:
     build:
@@ -38,5 +53,7 @@ services:
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
+    restart: unless-stopped
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
