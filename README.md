@@ -351,4 +351,62 @@ python -m benchmarks.tools.evaluate_predictions --reference-labels data/labels/r
 
 - RUNBOOK.md — reproducibility-focused execution guide
 - services/dedupe-py/scripts/README.md — Docker benchmark script usage
+
+---
+
+## Interim Results 
+
+### Evaluation 1 - Baseline Performance Evaluation (C1)
+
+Baseline evaluation was run on `data/dedupe_test_100` using `pHash=5` and `SSIM=0.85`.
+
+**Output locations**:
+
+```text
+results/interim/eval1/metrics/table_eval1_summary.csv
+results/interim/eval1/logs/
+results/interim/eval1/reports/
 ```
+
+**Key baseline outcome (C1)**:
+- Precision: `1.0000`
+- Recall: `0.9412`
+- F1: `0.9697`
+- Accuracy: `0.9492`
+- Total pipeline time: `735.27 ± 12.10 ms`
+- Pipeline peak RAM: `11.96 MB`
+
+**Example console output**:
+
+```text
+=== Running Interim Evaluation 1: Baseline Performance Evaluation ===
+Dataset:      data/dedupe_test_100
+
+=== C1: pHash=5, SSIM=0.85 ===
+
+C1 (pHash=5, SSIM=0.85)
++-------------------+----------------+--------------+---------------+
+| Stage             | Mean Time (ms) | Std Dev (ms) | Peak RAM (MB) |
++-------------------+----------------+--------------+---------------+
+| Stage 1 (SHA-256) | 8.68           | 0.24         | 1.52          |
+| Stage 2 (pHash)   | 184.17         | 3.62         | 0.18          |
+| Stage 3 (SSIM)    | 542.42         | 11.47        | 11.96         |
+| Total Pipeline    | 735.27         | 12.10        | 11.96         |
++-------------------+----------------+--------------+---------------+
+Counts -> S1 groups: 10, S1 redundant: 10, S2 candidates: 53, S3 verified: 49
+
+Done.
+Summary CSV: results\interim\eval1\metrics\table_eval1_summary.csv
+Logs:        results\interim\eval1\logs
+JSON reports: results\interim\eval1\reports
+```
+
+To run evaluation 1 use the following command:
+
+```bash
+python services/dedupe-py/run_interim_eval1.py
+```
+
+### Evaluation 2: Threshold Sensitivity / Error Analysis
+
+In progress
