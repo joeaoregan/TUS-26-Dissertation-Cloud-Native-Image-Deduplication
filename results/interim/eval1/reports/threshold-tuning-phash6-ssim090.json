@@ -1,5 +1,6 @@
 {
-    "dataset": "data\\dedupe_test_100",
+    "dataset": "C:\\git\\2025-TUS\\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\\data\\dedupe_test_100",
+    "run_started_at_utc": "2026-08-20T22:45:58.320672Z",
     "total_images": 100,
     "runs": {
         "warmup_discarded": 1,
@@ -9,19 +10,19 @@
         "stage1_sha256": {
             "time_ms": {
                 "raw": [
-                    8.55,
-                    8.46,
-                    8.01,
-                    7.89,
-                    7.79,
-                    8.06,
-                    8.13,
-                    9.5,
-                    9.02,
-                    9.3
+                    8.48,
+                    8.5,
+                    8.52,
+                    8.48,
+                    9.83,
+                    8.53,
+                    8.62,
+                    8.39,
+                    9.79,
+                    8.77
                 ],
-                "mean": 8.47,
-                "std_dev": 0.61
+                "mean": 8.79,
+                "std_dev": 0.55
             },
             "peak_ram_mb": {
                 "raw": [
@@ -43,32 +44,32 @@
         "stage2_phash": {
             "time_ms": {
                 "raw": [
-                    176.19,
-                    187.38,
-                    188.8,
-                    195.64,
-                    178.59,
-                    181.64,
-                    176.78,
-                    180.43,
-                    187.28,
-                    181.49
+                    180.72,
+                    183.99,
+                    191.87,
+                    182.19,
+                    196.09,
+                    179.54,
+                    182.21,
+                    185.22,
+                    186.72,
+                    182.17
                 ],
-                "mean": 183.42,
-                "std_dev": 6.18
+                "mean": 185.07,
+                "std_dev": 5.23
             },
             "peak_ram_mb": {
                 "raw": [
-                    0.1852,
-                    0.1841,
-                    0.1831,
-                    0.1829,
-                    0.1822,
+                    0.183,
+                    0.1833,
+                    0.1836,
+                    0.1827,
+                    0.1816,
+                    0.182,
                     0.1818,
                     0.1817,
-                    0.1822,
-                    0.1821,
-                    0.182
+                    0.1818,
+                    0.1816
                 ],
                 "mean": 0.18,
                 "std_dev": 0.0
@@ -78,37 +79,37 @@
         "stage3_ssim": {
             "time_ms": {
                 "raw": [
-                    523.79,
-                    509.86,
-                    534.62,
-                    599.1,
-                    561.78,
-                    562.38,
-                    566.1,
-                    592.11,
-                    575.85,
-                    578.96
+                    517.98,
+                    502.38,
+                    505.54,
+                    506.71,
+                    516.83,
+                    519.35,
+                    495.88,
+                    541.35,
+                    524.51,
+                    514.55
                 ],
-                "mean": 560.46,
-                "std_dev": 29.22
+                "mean": 514.51,
+                "std_dev": 12.9
             },
             "peak_ram_mb": {
                 "raw": [
-                    11.9568,
-                    11.9587,
+                    11.957,
+                    11.9575,
                     11.9564,
+                    11.9567,
+                    11.9561,
+                    11.9567,
+                    11.9567,
                     11.9563,
-                    11.9564,
-                    11.9564,
-                    11.9565,
-                    11.9569,
-                    11.9565,
-                    11.9563
+                    11.956,
+                    11.9562
                 ],
                 "mean": 11.96,
                 "std_dev": 0.0
             },
-            "verified_pairs": 49
+            "verified_pairs": 48
         }
     },
     "environment": {
@@ -142,34 +143,34 @@
         "profile_read_errors": 0
     },
     "config": {
-        "phash_threshold": 4,
-        "ssim_threshold": 0.85,
+        "phash_threshold": 6,
+        "ssim_threshold": 0.9,
         "export_pairs": true,
         "pair_limit": 500,
-        "run_tag": "threshold-tuning-phash4-ssim085"
+        "run_tag": "threshold-tuning-phash6-ssim090"
     },
     "total_pipeline_time_ms": {
         "raw": [
-            708.53,
-            705.7,
-            731.43,
-            802.64,
-            748.16,
-            752.09,
-            751.02,
-            782.03,
-            772.14,
-            769.75
+            707.17,
+            694.87,
+            705.93,
+            697.37,
+            722.74,
+            707.42,
+            686.71,
+            734.97,
+            721.02,
+            705.5
         ],
-        "mean": 752.35,
-        "std_dev": 31.02
+        "mean": 708.37,
+        "std_dev": 14.39
     },
     "total_pipeline_peak_ram_mb": 11.96,
     "detections": {
         "stage1_exact_duplicate_groups": 10,
         "stage1_redundant_files": 10,
         "stage2_candidate_pairs": 53,
-        "stage3_verified_pairs": 49
+        "stage3_verified_pairs": 48
     },
     "pair_details": {
         "sample_limit": 500,
@@ -714,11 +715,6 @@
                 "ssim_score": 0.945339
             },
             {
-                "file_a": "dedupe_test_100/ILSVRC2012_val_00000137.JPEG",
-                "file_b": "dedupe_test_100/ILSVRC2012_val_00000137_brightness_up.jpg",
-                "ssim_score": 0.857709
-            },
-            {
                 "file_a": "dedupe_test_100/ILSVRC2012_val_00000138.JPEG",
                 "file_b": "dedupe_test_100/ILSVRC2012_val_00000138_brightness_up.jpg",
                 "ssim_score": 0.949908
@@ -781,6 +777,8 @@
         ],
         "stage1_exact_groups_total": 10,
         "stage2_candidates_total": 53,
-        "stage3_verified_total": 49
-    }
+        "stage3_verified_total": 48
+    },
+    "run_completed_at_utc": "2026-08-20T22:46:06.149544Z",
+    "run_duration_ms": 7828.87
 }

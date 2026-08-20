@@ -52,3 +52,5 @@ services/dedupe-py/**/__pycache__/
 services/dedupe-py/.pytest_cache/
 services/dedupe-py/.mypy_cache/
 services/dedupe-py/.ruff_cache/
+
+!results/interim/eval1/logs/

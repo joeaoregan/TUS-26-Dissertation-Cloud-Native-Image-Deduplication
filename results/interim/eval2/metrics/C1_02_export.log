@@ -1,0 +1,18 @@
+$ "C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\venv\Scripts\python.exe" -m benchmarks.tools.export_predictions --input "C:/git/2025-TUS/TUS-26-Dissertation-Cloud-Native-Image-Deduplication/logs/threshold-tuning-baseline-phash5-ssim085.json" --output "C:/git/2025-TUS/TUS-26-Dissertation-Cloud-Native-Image-Deduplication/results/interim/eval2/predictions/threshold-tuning-baseline-phash5-ssim085-stage3.csv" --source stage3
+
+[STDOUT]
+
+
+[STDERR]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\services\dedupe-py\benchmarks\tools\export_predictions.py", line 78, in <module>
+    main()
+    ~~~~^^
+  File "C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\services\dedupe-py\benchmarks\tools\export_predictions.py", line 37, in main
+    safe_input = resolve_within(allowed_input_base, str(args.input))
+  File "C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\services\dedupe-py\benchmarks\tools\path_safety.py", line 14, in resolve_within
+    raise ValueError(f"Path escapes allowed directory: {user_input}")
+ValueError: Path escapes allowed directory: C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\logs\threshold-tuning-baseline-phash5-ssim085.json
+
