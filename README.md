@@ -409,4 +409,48 @@ python services/dedupe-py/run_interim_eval1.py
 
 ### Evaluation 2: Threshold Sensitivity / Error Analysis
 
-In progress
+C1 (baseline) was run on `data/dedupe_test_100` using `pHash=5` and `SSIM=0.85`.  
+C2 was run on `data/dedupe_test_100` using `pHash=4` and `SSIM=0.85`.  
+C3 was run on `data/dedupe_test_100` using `pHash=5` and `SSIM=0.9`.  
+C4 was run on `data/dedupe_test_100` using `pHash=6` and `SSIM=0.85`.  
+C5 was run on `data/dedupe_test_100` using `pHash=6` and `SSIM=0.9`.
+
+**Output locations**:
+
+```text
+results/interim/eval1/metrics/table_eval2_summary.csv
+results/interim/eval1/logs/
+results/interim/eval1/predictions/
+results/interim/eval1/reports/
+```
+
+**Example console output**:
+
+```text
+=== Running Interim Evaluation 2: Threshold Sensitivity / Error Analysis ===
+Dataset:          data/dedupe_test_100
+Reference labels: C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\data\labels\reference_labels_eval_v1.csv
+
+=== Interim Evaluation 2 Results ===
++---------------+-----------------+----------------+------+------+------+------+------------+----------+-----------+------------+
+| Config ID     | pHash Threshold | SSIM Threshold |  TP  |  FP  |  FN  |  TN  | Precision  |  Recall  |  F1 Score |  Accuracy  |
++---------------+-----------------+----------------+------+------+------+------+------------+----------+-----------+------------+
+| C1 (baseline) |        5        |      0.85      |  48  |  0   |  3   |  8   |   1.0000   |  0.9412  |   0.9697  |   0.9492   |
+| C2            |        4        |      0.85      |  48  |  0   |  3   |  8   |   1.0000   |  0.9412  |   0.9697  |   0.9492   |
+| C3            |        5        |      0.9       |  47  |  0   |  4   |  8   |   1.0000   |  0.9216  |   0.9592  |   0.9322   |
+| C4            |        6        |      0.85      |  48  |  0   |  3   |  8   |   1.0000   |  0.9412  |   0.9697  |   0.9492   |
+| C5            |        6        |      0.9       |  47  |  0   |  4   |  8   |   1.0000   |  0.9216  |   0.9592  |   0.9322   |
++---------------+-----------------+----------------+------+------+------+------+------------+----------+-----------+------------+
+
+Done.
+Summary CSV: results\interim\eval2\metrics\table_eval2_summary.csv
+Logs:        results\interim\eval2\logs
+Reports:     results\interim\eval2\reports
+Predictions: results\interim\eval2\predictions
+```
+
+To run evaluation 2 use the following command:
+
+```bash
+python services/dedupe-py/run_interim_eval2.py
+```
