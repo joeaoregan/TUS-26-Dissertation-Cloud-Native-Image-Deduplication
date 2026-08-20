@@ -1,0 +1,8 @@
+$ C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\venv\Scripts\python.exe -m benchmarks.tools.export_predictions --input C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\benchmarks\results\interim\eval2\threshold-tuning-phash6-ssim090.json --output C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\data\reviews\interim\eval2\threshold-tuning-phash6-ssim090-stage3.csv --source stage3
+
+[STDOUT]
+Exported 48 predicted pairs to C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\data\reviews\interim\eval2\threshold-tuning-phash6-ssim090-stage3.csv (source=stage3)
+
+
+[STDERR]
+

@@ -1,0 +1,34 @@
+$ C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\venv\Scripts\python.exe -m benchmarks.benchmark_pipeline --dir dedupe_test_100 --output C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\benchmarks\results\interim\eval2\threshold-tuning-phash6-ssim090.json --export-pairs --pair-limit 500 --phash-threshold 6 --ssim-threshold 0.9 --run-tag threshold-tuning-phash6-ssim090 --no-timestamp
+
+[STDOUT]
+
+--- Running Benchmark on: C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\data\dedupe_test_100 ---
+Total target images found: 100
+Dataset size: 10.37 MB (10871851 bytes)
+Formats: {'.jpeg': 59, '.jpg': 31, '.png': 10}
+Resolution range: 334x296 -> 1061x668
+
+--- Detection Counts ---
+Stage 1 exact duplicate groups: 10
+Stage 1 redundant files:        10
+Stage 2 candidate pairs:        53
+Stage 3 verified pairs:         48
+
+--- Summary (mean ± std dev, ms) ---
+Stage 1 (SHA-256): 8.79 ± 0.53
+Stage 2 (pHash):   184.0 ± 2.9
+Stage 3 (SSIM):    536.1 ± 7.02
+Total Pipeline:    728.89 ± 9.12
+
+--- Peak RAM (MB, mean ± std dev) ---
+Stage 1 (SHA-256): 1.52 ± 0.0
+Stage 2 (pHash):   0.18 ± 0.0
+Stage 3 (SSIM):    11.96 ± 0.0
+Pipeline Peak RAM: 11.96 MB
+Pair export enabled: up to 500 entries per section in 'pair_details'
+
+Benchmark report exported to: C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\benchmarks\results\interim\eval2\threshold-tuning-phash6-ssim090.json
+
+
+[STDERR]
+

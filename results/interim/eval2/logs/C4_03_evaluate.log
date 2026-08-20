@@ -1,0 +1,24 @@
+$ C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\venv\Scripts\python.exe -m benchmarks.tools.evaluate_predictions --reference-labels C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\data\reviews\interim\eval2\reference_labels_eval_v1.csv --predictions C:\git\2025-TUS\TUS-26-Dissertation-Cloud-Native-Image-Deduplication\data\reviews\interim\eval2\threshold-tuning-phash6-ssim085-stage3.csv
+
+[STDOUT]
+
+--- Evaluation (Reference Labels) ---
+Pairs evaluated: 59
+TP=48  FP=0  FN=3  TN=8
+Precision: 1.0000
+Recall:    0.9412
+F1 Score:  0.9697
+Accuracy:  0.9492
+
+False Negatives (label=1 but not predicted):
+- dedupe_test_100/ILSVRC2012_val_00000139.JPEG  <->  dedupe_test_100/ILSVRC2012_val_00000139_brightness_up.jpg
+- dedupe_test_100/ILSVRC2012_val_00000141.JPEG  <->  dedupe_test_100/ILSVRC2012_val_00000141_brightness_up.jpg
+- dedupe_test_100/ILSVRC2012_val_00000126.JPEG  <->  dedupe_test_100/ILSVRC2012_val_00000126_green.jpg
+
+Note: 1 predicted pair(s) were not present in reference labels.
+They were ignored for confusion-matrix scoring.
+Tip: add them to reference labels for full coverage.
+
+
+[STDERR]
+
