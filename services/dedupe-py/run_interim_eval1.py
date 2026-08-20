@@ -24,13 +24,14 @@ PYTHON_EXE = str(Path(sys.executable).resolve())
 
 DATASET_DIR = "dedupe_test_100"
 
+# Only need C1 "Baseline" config for interim evaluation 1. Other configs are commented out.
 # Keep configurations aligned with Eval 2 table labels.
 CONFIGS = [
     ("C1", 5, 0.85, "threshold-tuning-baseline-phash5-ssim085"),
-    ("C2", 4, 0.85, "threshold-tuning-phash4-ssim085"),
-    ("C3", 5, 0.90, "threshold-tuning-phash5-ssim090"),
-    ("C4", 6, 0.85, "threshold-tuning-phash6-ssim085"),
-    ("C5", 6, 0.90, "threshold-tuning-phash6-ssim090"),
+    # ("C2", 4, 0.85, "threshold-tuning-phash4-ssim085"),
+    # ("C3", 5, 0.90, "threshold-tuning-phash5-ssim090"),
+    # ("C4", 6, 0.85, "threshold-tuning-phash6-ssim085"),
+    # ("C5", 6, 0.90, "threshold-tuning-phash6-ssim090"),
 ]
 
 OUT_ROOT = (REPO_ROOT / "results" / "interim" / "eval1").resolve()
@@ -177,13 +178,79 @@ def parse_benchmark_json(json_path: Path) -> dict:
     }
 
 
+def print_stage_table(config_id: str, phash: int, ssim: float, parsed: dict) -> None:
+    rows = [
+        (
+            "Stage 1 (SHA-256)",
+            parsed["Stage1TimeMsMean"],
+            parsed["Stage1TimeMsStd"],
+            parsed["Stage1MemMBMean"],
+        ),
+        (
+            "Stage 2 (pHash)",
+            parsed["Stage2TimeMsMean"],
+            parsed["Stage2TimeMsStd"],
+            parsed["Stage2MemMBMean"],
+        ),
+        (
+            "Stage 3 (SSIM)",
+            parsed["Stage3TimeMsMean"],
+            parsed["Stage3TimeMsStd"],
+            parsed["Stage3MemMBMean"],
+        ),
+        (
+            "Total Pipeline",
+            parsed["TotalTimeMsMean"],
+            parsed["TotalTimeMsStd"],
+            parsed["PipelinePeakMemMB"],
+        ),
+    ]
+
+    w_stage = max(len("Stage"), max(len(r[0]) for r in rows))
+    w_mean = max(len("Mean Time (ms)"), max(len(str(r[1])) for r in rows))
+    w_std = max(len("Std Dev (ms)"), max(len(str(r[2])) for r in rows))
+    w_ram = max(len("Peak RAM (MB)"), max(len(str(r[3])) for r in rows))
+
+    sep = f"+-{'-' * w_stage}-+-{'-' * w_mean}-+-{'-' * w_std}-+-{'-' * w_ram}-+"
+
+    print(f"\n{Fore.GREEN}{config_id} (pHash={phash}, SSIM={ssim})")
+    print(sep)
+    print(
+        f"| {'Stage'.ljust(w_stage)} "
+        f"| {'Mean Time (ms)'.ljust(w_mean)} "
+        f"| {'Std Dev (ms)'.ljust(w_std)} "
+        f"| {'Peak RAM (MB)'.ljust(w_ram)} |"
+    )
+    print(sep)
+    for stage, mean, std, ram in rows:
+        print(
+            f"| {stage.ljust(w_stage)} "
+            f"| {str(mean).ljust(w_mean)} "
+            f"| {str(std).ljust(w_std)} "
+            f"| {str(ram).ljust(w_ram)} |"
+        )
+    print(sep)
+
+    print(
+        f"Counts -> "
+        f"S1 groups: {parsed['Stage1ExactGroups']}, "
+        f"S1 redundant: {parsed['Stage1RedundantFiles']}, "
+        f"S2 candidates: {parsed['Stage2CandidatePairs']}, "
+        f"S3 verified: {parsed['Stage3VerifiedPairs']}"
+    )
+
+
 def main():
     METRICS_DIR.mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    print(f"{Fore.YELLOW}Using Python: {Fore.CYAN}{PYTHON_EXE}")
-    print(f"{Fore.YELLOW}Repository:   {Fore.CYAN}{REPO_ROOT}")
+    print(
+        f"{Fore.GREEN}=== Running Interim Evaluation 1: Baseline Performance Evaluation ==="
+    )
+
+    # print(f"{Fore.YELLOW}Using Python: {Fore.CYAN}{PYTHON_EXE}")
+    # print(f"{Fore.YELLOW}Repository:   {Fore.CYAN}{REPO_ROOT}")
     print(f"{Fore.YELLOW}Dataset:      {Fore.CYAN}data/{DATASET_DIR}")
 
     rows = []
@@ -220,6 +287,7 @@ def main():
         )
 
         parsed = parse_benchmark_json(benchmark_json)
+        print_stage_table(config_id, phash, ssim, parsed)
 
         rows.append(
             {
