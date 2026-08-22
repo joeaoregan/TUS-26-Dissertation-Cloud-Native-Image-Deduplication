@@ -80,3 +80,24 @@ data/robustness/resize_*/
 data/robustness/crop_center_*/
 data/robustness/rotate_*/
 data/robustness/format_png/
+
+# scalability
+data/base/
+data/scalability/
+
+# Eval staging/intermediate artifacts (do not commit)
+benchmarks/results/
+benchmarks/*.json
+data/reviews/interim/
+data/reviews/final/
+data/reviews/pred_stage3_*.csv
+
+# Scalability materialised subsets (rebuildable from data/base)
+data/scalability/t5/
+data/scalability/t10/
+data/scalability/s/
+data/scalability/m/
+data/scalability/l/
+data/scalability/xl/
+
+data/reviews/reference_labels_eval_*.csv
