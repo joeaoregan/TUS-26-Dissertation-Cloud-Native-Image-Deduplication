@@ -39,16 +39,6 @@ REFERENCE_LABELS_SOURCE = (
     REPO_ROOT / "data" / "labels" / "reference_labels_eval_v2_robustness.csv"
 ).resolve()
 
-# Optional size-specific labels (recommended for tiny subsets)
-# If a size key exists here and file exists, it will be used instead of full labels.
-SIZE_LABELS = {
-    "t5": REPO_ROOT / "data" / "labels" / "reference_labels_eval_v2_robustness_t5.csv",
-    "t10": REPO_ROOT
-    / "data"
-    / "labels"
-    / "reference_labels_eval_v2_robustness_t10.csv",
-}
-
 DETECTION_TABLE_COLUMNS = [
     ("ConfigID", "Config ID", 13, "left"),
     ("pHashThreshold", "pHash", 7, "center"),
@@ -73,6 +63,15 @@ COST_TABLE_COLUMNS = [
     ("Stage2CandidatePairs", "S2 Pairs", 9, "center"),
     ("Stage3VerifiedPairs", "S3 Pairs", 9, "center"),
 ]
+
+
+def labels_path_for_size(size_key: str) -> Path:
+    return (
+        REPO_ROOT
+        / "data"
+        / "labels"
+        / f"reference_labels_eval_v2_robustness_{size_key}.csv"
+    )
 
 
 def load_common_config() -> dict:
@@ -346,14 +345,12 @@ def cleanup_subset(size_key: str) -> None:
 
 
 def resolve_labels_for_size(size_key: str) -> Path:
-    path = SIZE_LABELS.get(size_key)
-    if path is None:
-        raise FileNotFoundError(
-            f"No size-specific reference labels configured for '{size_key}'. "
-            "Add mapping in SIZE_LABELS."
-        )
+    path = labels_path_for_size(size_key)
     if not path.is_file():
-        raise FileNotFoundError(f"Missing reference labels for '{size_key}': {path}")
+        raise FileNotFoundError(
+            f"Missing reference labels for '{size_key}': {path}\n"
+            f"Generate with: python evals/utils/robustness/build_subset_labels.py"
+        )
     return path.resolve()
 
 
