@@ -15,10 +15,10 @@ Stage 2 candidate pairs:        53
 Stage 3 verified pairs:         48
 
 --- Summary (mean ± std dev, ms) ---
-Stage 1 (SHA-256): 8.92 ± 1.03
-Stage 2 (pHash):   185.64 ± 3.56
-Stage 3 (SSIM):    533.59 ± 10.4
-Total Pipeline:    728.15 ± 10.51
+Stage 1 (SHA-256): 8.45 ± 1.07
+Stage 2 (pHash):   186.39 ± 3.13
+Stage 3 (SSIM):    542.92 ± 13.87
+Total Pipeline:    737.76 ± 14.18
 
 --- Peak RAM (MB, mean ± std dev) ---
 Stage 1 (SHA-256): 1.52 ± 0.0
