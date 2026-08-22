@@ -346,10 +346,15 @@ def cleanup_subset(size_key: str) -> None:
 
 
 def resolve_labels_for_size(size_key: str) -> Path:
-    candidate = SIZE_LABELS.get(size_key)
-    if candidate and candidate.is_file():
-        return candidate.resolve()
-    return REFERENCE_LABELS_SOURCE
+    path = SIZE_LABELS.get(size_key)
+    if path is None:
+        raise FileNotFoundError(
+            f"No size-specific reference labels configured for '{size_key}'. "
+            "Add mapping in SIZE_LABELS."
+        )
+    if not path.is_file():
+        raise FileNotFoundError(f"Missing reference labels for '{size_key}': {path}")
+    return path.resolve()
 
 
 def write_detection_summary(path: Path, rows: list[dict]) -> None:
@@ -597,6 +602,10 @@ def main() -> None:
             raise ValueError(
                 f"Unknown size '{s}'. Valid sizes: {', '.join(subset_sizes.keys())}"
             )
+
+    # Fail fast: require size-specific labels for all requested sizes
+    for s in args.sizes:
+        _ = resolve_labels_for_size(s)
 
     configs = build_configs(cfg)
     pair_limits = cfg.get("pair_limits", {})
