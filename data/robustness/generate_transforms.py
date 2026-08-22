@@ -17,7 +17,10 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 
+from colorama import Fore, init
 from PIL import Image, ImageEnhance
+
+init(autoreset=True)
 
 ROOT = Path(__file__).resolve().parent
 BASE_DIR = ROOT / "base"
@@ -78,12 +81,17 @@ def generate() -> list[OutputRecord]:
     rotate_degrees = [2, -2]
     channel_shifts = [("r", 20), ("g", 20), ("b", 20)]
 
+    print(
+        f"{Fore.YELLOW}Generating transformed images from base images in {Fore.CYAN}{BASE_DIR}{Fore.RESET}..."
+    )
+
     for src in iter_base_images(BASE_DIR):
         base_name = stem_safe_name(src)
 
         with Image.open(src) as im_raw:
             im = ensure_rgb(im_raw)
 
+            print(f"{Fore.CYAN}Processing {Fore.RESET} {src.relative_to(ROOT)}...")
             # 1) Brightness
             for factor in brightness_factors:
                 out_dir = ROOT / f"brightness_{str(factor).replace('.', 'p')}"
@@ -254,8 +262,8 @@ def write_manifest(records: list[OutputRecord]) -> None:
 def main() -> None:
     records = generate()
     write_manifest(records)
-    print(f"Done. Generated {len(records)} transformed images.")
-    print(f"Manifest: {MANIFEST_CSV}")
+    print(f"{Fore.GREEN}Done. Generated {len(records)} transformed images.")
+    print(f"{Fore.YELLOW}Manifest: {Fore.CYAN}{MANIFEST_CSV}")
 
 
 if __name__ == "__main__":
