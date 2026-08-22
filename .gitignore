@@ -55,3 +55,28 @@ services/dedupe-py/.ruff_cache/
 
 !results/interim/eval1/logs/
 !results/interim/eval2/logs/
+
+# Robustness
+data/robustness/base/*.JPEG
+data/robustness/base/*.JPG
+data/robustness/base/*.PNG
+data/robustness/base/*.WEBP
+data/robustness/base/*.BMP
+data/robustness/base/*.TIFF
+data/robustness/base/*.TIF
+data/robustness/base/*.jpeg
+data/robustness/base/*.jpg
+data/robustness/base/*.png
+data/robustness/base/*.webp
+data/robustness/base/*.bmp
+data/robustness/base/*.tiff
+data/robustness/base/*.tif
+
+data/robustness/brightness_*/
+data/robustness/contrast_*/
+data/robustness/colourshift_*/
+data/robustness/jpeg_q*/
+data/robustness/resize_*/
+data/robustness/crop_center_*/
+data/robustness/rotate_*/
+data/robustness/format_png/
