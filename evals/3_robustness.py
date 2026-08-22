@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import csv
 import json
 import os
@@ -7,6 +8,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 from colorama import Fore, init
@@ -15,62 +17,37 @@ init(autoreset=True)
 
 # ============================================================
 # Interim Evaluation 3 (Robustness)
-# - Runs each threshold configuration (C1-C5) on robustness dataset
+# - Runs threshold configs from evals/common_config.json
+# - Supports multiple subset sizes (e.g. t5 t10) in one run
+# - Materialises subsets from data/base into data/robustness/<size>
+# - DEFAULT: cleans up materialised subsets after each size run
 # - Exports Stage 3 predictions
 # - Evaluates predictions against robustness reference labels
 # - Prints report-style detection/cost tables
-# - Writes logs, reports, predictions and summary CSVs
+# - Writes logs, reports, predictions and summary CSVs per size
 # ============================================================
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = Path(__file__).resolve().parents[1]
 DEDUPE_PY_DIR = REPO_ROOT / "services" / "dedupe-py"
 PYTHON_EXE = str(Path(sys.executable).resolve())
 
-DATASET_DIR = "robustness"
+MASTER_DIR = REPO_ROOT / "data" / "base"
+ROBUSTNESS_ROOT = REPO_ROOT / "data" / "robustness"
 
+# Default (fallback) robustness labels (full set)
 REFERENCE_LABELS_SOURCE = (
     REPO_ROOT / "data" / "labels" / "reference_labels_eval_v2_robustness.csv"
 ).resolve()
 
-CONFIGS = [
-    ("C1", 5, 0.85, "eval3-robustness-c1"),
-    ("C2", 4, 0.85, "eval3-robustness-c2"),
-    ("C3", 5, 0.90, "eval3-robustness-c3"),
-    ("C4", 6, 0.85, "eval3-robustness-c4"),
-    ("C5", 6, 0.90, "eval3-robustness-c5"),
-]
-
-# ============================================================
-# Final result locations
-# ============================================================
-
-OUT_ROOT = (REPO_ROOT / "results" / "interim" / "eval3").resolve()
-
-METRICS_DIR = OUT_ROOT / "metrics"
-LOGS_DIR = OUT_ROOT / "logs"
-PREDICTIONS_DIR = OUT_ROOT / "predictions"
-REPORTS_DIR = OUT_ROOT / "reports"
-
-DETECTION_SUMMARY_CSV = METRICS_DIR / "table_eval3_detection_summary.csv"
-COST_SUMMARY_CSV = METRICS_DIR / "table_eval3_cost_summary.csv"
-
-# ============================================================
-# Staging locations for current path-safety rules
-# ============================================================
-
-BENCHMARK_STAGING_DIR = (
-    REPO_ROOT / "benchmarks" / "results" / "interim" / "eval3"
-).resolve()
-
-REVIEW_STAGING_DIR = (REPO_ROOT / "data" / "reviews" / "interim" / "eval3").resolve()
-
-REFERENCE_LABELS_STAGED = (
-    REVIEW_STAGING_DIR / "reference_labels_eval_v2_robustness.csv"
-).resolve()
-
-# ============================================================
-# Table: detection quality
-# ============================================================
+# Optional size-specific labels (recommended for tiny subsets)
+# If a size key exists here and file exists, it will be used instead of full labels.
+SIZE_LABELS = {
+    "t5": REPO_ROOT / "data" / "labels" / "reference_labels_eval_v2_robustness_t5.csv",
+    "t10": REPO_ROOT
+    / "data"
+    / "labels"
+    / "reference_labels_eval_v2_robustness_t10.csv",
+}
 
 DETECTION_TABLE_COLUMNS = [
     ("ConfigID", "Config ID", 13, "left"),
@@ -86,10 +63,6 @@ DETECTION_TABLE_COLUMNS = [
     ("Accuracy", "Accuracy", 10, "center"),
 ]
 
-# ============================================================
-# Table: computational cost
-# ============================================================
-
 COST_TABLE_COLUMNS = [
     ("ConfigID", "Config ID", 13, "left"),
     ("Stage1Time", "Stage 1 Time", 18, "center"),
@@ -102,15 +75,60 @@ COST_TABLE_COLUMNS = [
 ]
 
 
+def load_common_config() -> dict:
+    cfg_path = Path(__file__).resolve().parent / "common_config.json"
+    if not cfg_path.is_file():
+        raise FileNotFoundError(f"Missing config file: {cfg_path}")
+    return json.loads(cfg_path.read_text(encoding="utf-8"))
+
+
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(description="Run Interim Eval 3 (robustness)")
+    p.add_argument(
+        "--sizes",
+        nargs="+",
+        required=True,
+        help="Subset size keys from common_config.json (e.g. --sizes t5 t10)",
+    )
+    p.add_argument(
+        "--pair-limit",
+        default=None,
+        help="Override pair-limit from common_config.json",
+    )
+    p.add_argument(
+        "--rebuild-subsets",
+        action="store_true",
+        help="Force rebuild subset folders even if they already exist",
+    )
+    p.add_argument(
+        "--keep-subsets",
+        action="store_true",
+        help="Keep materialised subset folders (default is cleanup after each size run)",
+    )
+    return p.parse_args()
+
+
+def build_configs(cfg: dict) -> list[tuple]:
+    threshold_configs = cfg.get("threshold_configs", [])
+    enabled = [c for c in threshold_configs if c.get("enabled", True)]
+    if not enabled:
+        raise ValueError("No enabled threshold_configs in common_config.json")
+
+    configs = []
+    for c in enabled:
+        for required in ("id", "phash", "ssim", "tag"):
+            if required not in c:
+                raise ValueError(f"Missing '{required}' in threshold config: {c}")
+        configs.append((c["id"], int(c["phash"]), float(c["ssim"]), c["tag"]))
+    return configs
+
+
 def build_environment() -> dict:
     env = os.environ.copy()
     existing_pythonpath = env.get("PYTHONPATH")
-
-    if existing_pythonpath:
-        env["PYTHONPATH"] = str(DEDUPE_PY_DIR) + os.pathsep + existing_pythonpath
-    else:
-        env["PYTHONPATH"] = str(DEDUPE_PY_DIR)
-
+    env["PYTHONPATH"] = str(DEDUPE_PY_DIR) + (
+        os.pathsep + existing_pythonpath if existing_pythonpath else ""
+    )
     return env
 
 
@@ -123,6 +141,7 @@ def run_cmd(cmd: list[str], log_file: Path) -> str:
         errors="replace",
         cwd=str(REPO_ROOT),
         env=build_environment(),
+        check=False,
     )
 
     log_file.parent.mkdir(parents=True, exist_ok=True)
@@ -154,17 +173,16 @@ def strip_ansi(text: str) -> str:
 
 def parse_eval_metrics(text: str) -> dict:
     clean_text = strip_ansi(text)
-
     patterns = {
-        "PairsEvaluated": (r"\bPairs\s+evaluated\b\s*[:=]\s*(\d+)"),
+        "PairsEvaluated": r"\bPairs\s+evaluated\b\s*[:=]\s*(\d+)",
         "TP": r"\bTP\b\s*[:=]\s*(\d+)",
         "FP": r"\bFP\b\s*[:=]\s*(\d+)",
         "FN": r"\bFN\b\s*[:=]\s*(\d+)",
         "TN": r"\bTN\b\s*[:=]\s*(\d+)",
-        "Precision": (r"\bPrecision\b\s*[:=]\s*([0-9]*\.?[0-9]+)"),
-        "Recall": (r"\bRecall\b\s*[:=]\s*([0-9]*\.?[0-9]+)"),
-        "F1Score": (r"\bF1(?:\s*Score)?\b\s*[:=]\s*([0-9]*\.?[0-9]+)"),
-        "Accuracy": (r"\bAccuracy\b\s*[:=]\s*([0-9]*\.?[0-9]+)"),
+        "Precision": r"\bPrecision\b\s*[:=]\s*([0-9]*\.?[0-9]+)",
+        "Recall": r"\bRecall\b\s*[:=]\s*([0-9]*\.?[0-9]+)",
+        "F1Score": r"\bF1(?:\s*Score)?\b\s*[:=]\s*([0-9]*\.?[0-9]+)",
+        "Accuracy": r"\bAccuracy\b\s*[:=]\s*([0-9]*\.?[0-9]+)",
     }
 
     metrics = {}
@@ -222,34 +240,6 @@ def parse_benchmark_cost(json_path: Path) -> dict:
     }
 
 
-def validate_inputs() -> None:
-    dataset_path = REPO_ROOT / "data" / DATASET_DIR
-    if not dataset_path.is_dir():
-        raise FileNotFoundError(f"Dataset directory does not exist: {dataset_path}")
-
-    if not REFERENCE_LABELS_SOURCE.is_file():
-        raise FileNotFoundError(
-            f"Reference labels file does not exist: {REFERENCE_LABELS_SOURCE}"
-        )
-
-
-def prepare_directories() -> None:
-    directories = [
-        METRICS_DIR,
-        LOGS_DIR,
-        PREDICTIONS_DIR,
-        REPORTS_DIR,
-        BENCHMARK_STAGING_DIR,
-        REVIEW_STAGING_DIR,
-    ]
-    for directory in directories:
-        directory.mkdir(parents=True, exist_ok=True)
-
-
-def prepare_reference_labels() -> None:
-    shutil.copy2(REFERENCE_LABELS_SOURCE, REFERENCE_LABELS_STAGED)
-
-
 def format_table_cell(value, width: int, alignment: str) -> str:
     text = str(value)
     if alignment == "left":
@@ -288,7 +278,7 @@ def print_table_row(row: dict, row_index: int, columns: list[tuple]) -> None:
     line = (
         "| "
         + " | ".join(
-            format_table_cell(display_row[key], width, alignment)
+            format_table_cell(display_row.get(key, ""), width, alignment)
             for key, _, width, alignment in columns
         )
         + " |"
@@ -308,7 +298,61 @@ def print_table_footer(columns: list[tuple]) -> None:
     print(f"{Fore.BLUE}{build_table_separator(columns)}")
 
 
-def write_detection_summary(rows: list[dict]) -> None:
+def materialise_subset(size_key: str, subset_sizes: dict, rebuild: bool) -> str:
+    if size_key not in subset_sizes:
+        valid = ", ".join(subset_sizes.keys())
+        raise ValueError(f"Unknown size '{size_key}'. Valid sizes: {valid}")
+
+    count = int(subset_sizes[size_key])
+    target_dir = ROBUSTNESS_ROOT / size_key
+
+    if not MASTER_DIR.is_dir():
+        raise FileNotFoundError(f"Missing master directory: {MASTER_DIR}")
+
+    files = sorted(
+        p
+        for p in MASTER_DIR.iterdir()
+        if p.is_file() and p.suffix.lower() in {".jpeg", ".jpg", ".png"}
+    )
+
+    if len(files) < count:
+        raise ValueError(
+            f"Need {count} files for size '{size_key}', found {len(files)} in {MASTER_DIR}"
+        )
+
+    if target_dir.exists() and not rebuild:
+        existing = sorted(
+            p
+            for p in target_dir.iterdir()
+            if p.is_file() and p.suffix.lower() in {".jpeg", ".jpg", ".png"}
+        )
+        if len(existing) == count:
+            return f"robustness/{size_key}"
+
+    if target_dir.exists():
+        shutil.rmtree(target_dir)
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    for p in files[:count]:
+        shutil.copy2(p, target_dir / p.name)
+
+    return f"robustness/{size_key}"
+
+
+def cleanup_subset(size_key: str) -> None:
+    target_dir = ROBUSTNESS_ROOT / size_key
+    if target_dir.exists():
+        shutil.rmtree(target_dir)
+
+
+def resolve_labels_for_size(size_key: str) -> Path:
+    candidate = SIZE_LABELS.get(size_key)
+    if candidate and candidate.is_file():
+        return candidate.resolve()
+    return REFERENCE_LABELS_SOURCE
+
+
+def write_detection_summary(path: Path, rows: list[dict]) -> None:
     fieldnames = [
         "ConfigID",
         "RunTag",
@@ -326,14 +370,14 @@ def write_detection_summary(rows: list[dict]) -> None:
         "BenchmarkJSON",
         "PredictionsCSV",
     ]
-
-    with DETECTION_SUMMARY_CSV.open("w", newline="", encoding="utf-8") as csv_file:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
 
 
-def write_cost_summary(rows: list[dict]) -> None:
+def write_cost_summary(path: Path, rows: list[dict]) -> None:
     fieldnames = [
         "ConfigID",
         "RunTag",
@@ -352,52 +396,91 @@ def write_cost_summary(rows: list[dict]) -> None:
         "Stage3VerifiedPairs",
         "BenchmarkJSON",
     ]
-
     csv_rows = [{field: row.get(field, "") for field in fieldnames} for row in rows]
-
-    with COST_SUMMARY_CSV.open("w", newline="", encoding="utf-8") as csv_file:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(csv_rows)
 
 
-def main() -> None:
-    validate_inputs()
-    prepare_directories()
-    prepare_reference_labels()
+def run_for_size(
+    size_key: str, dataset_dir: str, configs: list[tuple], pair_limit: str
+) -> None:
+    size_start = time.perf_counter()
 
-    print(f"{Fore.GREEN}=== Running Interim Evaluation 3: Robustness ===")
-    print(f"{Fore.YELLOW}Dataset:          {Fore.CYAN}data/{DATASET_DIR}")
-    print(f"{Fore.YELLOW}Reference labels: {Fore.CYAN}{REFERENCE_LABELS_SOURCE}")
+    out_root = (REPO_ROOT / "results" / "interim" / f"eval3_{size_key}").resolve()
+    metrics_dir = out_root / "metrics"
+    logs_dir = out_root / "logs"
+    predictions_dir = out_root / "predictions"
+    reports_dir = out_root / "reports"
+
+    detection_summary_csv = (
+        metrics_dir / f"table_eval3_{size_key}_detection_summary.csv"
+    )
+    cost_summary_csv = metrics_dir / f"table_eval3_{size_key}_cost_summary.csv"
+
+    benchmark_staging_dir = (
+        REPO_ROOT / "benchmarks" / "results" / "interim" / f"eval3_{size_key}"
+    ).resolve()
+    review_staging_dir = (
+        REPO_ROOT / "data" / "reviews" / "interim" / f"eval3_{size_key}"
+    ).resolve()
+
+    labels_source = resolve_labels_for_size(size_key)
+    reference_labels_staged = review_staging_dir / labels_source.name
+
+    for d in [
+        metrics_dir,
+        logs_dir,
+        predictions_dir,
+        reports_dir,
+        benchmark_staging_dir,
+        review_staging_dir,
+    ]:
+        d.mkdir(parents=True, exist_ok=True)
+
+    if not labels_source.is_file():
+        raise FileNotFoundError(
+            f"Reference labels file does not exist: {labels_source}"
+        )
+    shutil.copy2(labels_source, reference_labels_staged)
+
+    print(
+        f"\n{Fore.GREEN}=== Running Interim Evaluation 3: Robustness ({size_key.upper()}) ==="
+    )
+    print(f"{Fore.YELLOW}Dataset:          {Fore.CYAN}data/{dataset_dir}")
+    print(f"{Fore.YELLOW}Reference labels: {Fore.CYAN}{labels_source}")
+    print(f"{Fore.YELLOW}Pair limit:       {Fore.CYAN}{pair_limit}")
 
     detection_rows = []
     cost_rows = []
 
     print_table_header(
-        "Table A - Detection Performance Across Threshold Configurations (Eval 3)",
+        f"Table A - Detection Performance Across Threshold Configurations (Eval 3, {size_key.upper()})",
         DETECTION_TABLE_COLUMNS,
     )
 
-    for row_index, (config_id, phash, ssim, run_tag) in enumerate(CONFIGS):
-        staged_benchmark_json = (BENCHMARK_STAGING_DIR / f"{run_tag}.json").resolve()
-        final_benchmark_json = (REPORTS_DIR / f"{run_tag}.json").resolve()
+    for row_index, (config_id, phash, ssim, tag) in enumerate(configs):
+        run_tag = f"eval3-{size_key}-{config_id.lower()}-{tag}"
 
-        staged_predictions_csv = (
-            REVIEW_STAGING_DIR / f"{run_tag}-stage3.csv"
-        ).resolve()
-        final_predictions_csv = (PREDICTIONS_DIR / f"{run_tag}-stage3.csv").resolve()
+        staged_benchmark_json = benchmark_staging_dir / f"{run_tag}.json"
+        final_benchmark_json = reports_dir / f"{run_tag}.json"
+
+        staged_predictions_csv = review_staging_dir / f"{run_tag}-stage3.csv"
+        final_predictions_csv = predictions_dir / f"{run_tag}-stage3.csv"
 
         benchmark_command = [
             PYTHON_EXE,
             "-m",
             "benchmarks.benchmark_pipeline",
             "--dir",
-            DATASET_DIR,
+            dataset_dir,
             "--output",
             str(staged_benchmark_json),
             "--export-pairs",
             "--pair-limit",
-            "5000",
+            str(pair_limit),
             "--phash-threshold",
             str(phash),
             "--ssim-threshold",
@@ -406,8 +489,7 @@ def main() -> None:
             run_tag,
             "--no-timestamp",
         ]
-
-        run_cmd(benchmark_command, LOGS_DIR / f"{config_id}_01_benchmark.log")
+        run_cmd(benchmark_command, logs_dir / f"{config_id}_01_benchmark.log")
         shutil.copy2(staged_benchmark_json, final_benchmark_json)
 
         export_command = [
@@ -421,8 +503,7 @@ def main() -> None:
             "--source",
             "stage3",
         ]
-
-        run_cmd(export_command, LOGS_DIR / f"{config_id}_02_export.log")
+        run_cmd(export_command, logs_dir / f"{config_id}_02_export.log")
         shutil.copy2(staged_predictions_csv, final_predictions_csv)
 
         evaluation_command = [
@@ -430,13 +511,12 @@ def main() -> None:
             "-m",
             "benchmarks.tools.evaluate_predictions",
             "--reference-labels",
-            str(REFERENCE_LABELS_STAGED),
+            str(reference_labels_staged),
             "--predictions",
             str(staged_predictions_csv),
         ]
-
         evaluation_output = run_cmd(
-            evaluation_command, LOGS_DIR / f"{config_id}_03_evaluate.log"
+            evaluation_command, logs_dir / f"{config_id}_03_evaluate.log"
         )
 
         quality = parse_eval_metrics(evaluation_output)
@@ -459,7 +539,6 @@ def main() -> None:
             "BenchmarkJSON": final_benchmark_json.as_posix(),
             "PredictionsCSV": final_predictions_csv.as_posix(),
         }
-
         detection_rows.append(detection_row)
         print_table_row(detection_row, row_index, DETECTION_TABLE_COLUMNS)
 
@@ -471,13 +550,12 @@ def main() -> None:
             **cost,
             "BenchmarkJSON": final_benchmark_json.as_posix(),
         }
-
         cost_rows.append(cost_row)
 
     print_table_footer(DETECTION_TABLE_COLUMNS)
 
     print_table_header(
-        "Table B - Computational Cost by Configuration (Eval 3)",
+        f"Table B - Computational Cost by Configuration (Eval 3, {size_key.upper()})",
         COST_TABLE_COLUMNS,
     )
 
@@ -489,20 +567,76 @@ def main() -> None:
             "Stage3Time": f"{row['Stage3TimeMsMean']} +/- {row['Stage3TimeMsStd']}",
             "TotalTime": f"{row['TotalTimeMsMean']} +/- {row['TotalTimeMsStd']}",
         }
-
         print_table_row(display_row, row_index, COST_TABLE_COLUMNS)
 
     print_table_footer(COST_TABLE_COLUMNS)
 
-    write_detection_summary(detection_rows)
-    write_cost_summary(cost_rows)
+    write_detection_summary(detection_summary_csv, detection_rows)
+    write_cost_summary(cost_summary_csv, cost_rows)
 
-    print(f"\n{Fore.GREEN}Done.")
-    print(f"{Fore.YELLOW}Detection summary: {Fore.CYAN}{DETECTION_SUMMARY_CSV}")
-    print(f"{Fore.YELLOW}Cost summary:      {Fore.CYAN}{COST_SUMMARY_CSV}")
-    print(f"{Fore.YELLOW}Logs:              {Fore.CYAN}{LOGS_DIR}")
-    print(f"{Fore.YELLOW}Reports:           {Fore.CYAN}{REPORTS_DIR}")
-    print(f"{Fore.YELLOW}Predictions:       {Fore.CYAN}{PREDICTIONS_DIR}")
+    print(
+        f"\n{Fore.GREEN}Completed size {size_key.upper()} in {(time.perf_counter() - size_start) / 60:.2f} min"
+    )
+    print(f"{Fore.YELLOW}Detection summary: {Fore.CYAN}{detection_summary_csv}")
+    print(f"{Fore.YELLOW}Cost summary:      {Fore.CYAN}{cost_summary_csv}")
+    print(f"{Fore.YELLOW}Logs:              {Fore.CYAN}{logs_dir}")
+    print(f"{Fore.YELLOW}Reports:           {Fore.CYAN}{reports_dir}")
+    print(f"{Fore.YELLOW}Predictions:       {Fore.CYAN}{predictions_dir}")
+
+
+def main() -> None:
+    cfg = load_common_config()
+    args = parse_args()
+
+    subset_sizes = cfg.get("subset_sizes", {})
+    if not subset_sizes:
+        raise ValueError("Missing subset_sizes in common_config.json")
+
+    for s in args.sizes:
+        if s not in subset_sizes:
+            raise ValueError(
+                f"Unknown size '{s}'. Valid sizes: {', '.join(subset_sizes.keys())}"
+            )
+
+    configs = build_configs(cfg)
+    pair_limits = cfg.get("pair_limits", {})
+    effective_pair_limit = (
+        str(args.pair_limit)
+        if args.pair_limit is not None
+        else str(pair_limits.get("eval3", 5000))
+    )
+
+    overall_start = time.perf_counter()
+
+    print(f"{Fore.GREEN}=== Running Interim Evaluation 3: Robustness ===")
+    print(f"{Fore.YELLOW}Master dataset: {Fore.CYAN}{MASTER_DIR}")
+    print(
+        f"{Fore.YELLOW}Sizes to run:   {Fore.CYAN}{', '.join(s.upper() for s in args.sizes)}"
+    )
+    print(f"{Fore.YELLOW}Pair limit:     {Fore.CYAN}{effective_pair_limit}")
+    print(f"{Fore.YELLOW}Configs:        {Fore.CYAN}{', '.join(c[0] for c in configs)}")
+    print(
+        f"{Fore.YELLOW}Subset cleanup: {Fore.CYAN}"
+        + ("OFF (--keep-subsets)" if args.keep_subsets else "ON (default)")
+    )
+
+    for size_key in args.sizes:
+        dataset_dir = materialise_subset(size_key, subset_sizes, args.rebuild_subsets)
+        try:
+            run_for_size(
+                size_key=size_key,
+                dataset_dir=dataset_dir,
+                configs=configs,
+                pair_limit=effective_pair_limit,
+            )
+        finally:
+            if not args.keep_subsets:
+                cleanup_subset(size_key)
+
+    print(f"\n{Fore.GREEN}All requested sizes complete.")
+    print(
+        f"{Fore.YELLOW}Total runtime: {Fore.CYAN}{(time.perf_counter() - overall_start) / 60:.2f} min"
+    )
 
 
 if __name__ == "__main__":
