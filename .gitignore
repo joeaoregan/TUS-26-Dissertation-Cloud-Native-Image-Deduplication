@@ -45,7 +45,6 @@ temp/
 # Local datasets (large/unversioned)
 data/dedupe_test/
 data/dedupe_test_100/
-data/dedupe_test_100_clean/
 
 # Service-specific caches/artifacts after move
 services/dedupe-py/**/__pycache__/
@@ -57,20 +56,20 @@ services/dedupe-py/.ruff_cache/
 !results/interim/eval2/logs/
 
 # Robustness
-data/robustness/base/*.JPEG
-data/robustness/base/*.JPG
-data/robustness/base/*.PNG
-data/robustness/base/*.WEBP
-data/robustness/base/*.BMP
-data/robustness/base/*.TIFF
-data/robustness/base/*.TIF
-data/robustness/base/*.jpeg
-data/robustness/base/*.jpg
-data/robustness/base/*.png
-data/robustness/base/*.webp
-data/robustness/base/*.bmp
-data/robustness/base/*.tiff
-data/robustness/base/*.tif
+data/base/*.JPEG
+data/base/*.JPG
+data/base/*.PNG
+data/base/*.WEBP
+data/base/*.BMP
+data/base/*.TIFF
+data/base/*.TIF
+data/base/*.jpeg
+data/base/*.jpg
+data/base/*.png
+data/base/*.webp
+data/base/*.bmp
+data/base/*.tiff
+data/base/*.tif
 
 data/robustness/brightness_*/
 data/robustness/contrast_*/

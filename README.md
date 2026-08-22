@@ -53,9 +53,9 @@ A multi-stage, cascading image deduplication pipeline designed to identify exact
 │       ├── jobs/                        # Job model/state handling (cloud-native in-progress)
 │       └── scripts/                     # Utility scripts (docker benchmark helpers, etc.)
 ├── data/
+│   ├── base/                            # 5,000 sequentially numbered images added for Evaluation 4: Scalability
 │   ├── dedupe_test/                     # Evaluation testing dataset (small)
 │   ├── dedupe_test_100/                 # Evaluation testing dataset (100 images)
-│   ├── dedupe_test_100_clean/           # Evaluation testing dataset (100 unique, unaltered images)
 │   ├── labels/                          # Reference label CSV files
 │   ├── predictions/                     # Prediction stage CSV outputs
 │   └── reviews/                         # Side-by-side comparison HTML review files

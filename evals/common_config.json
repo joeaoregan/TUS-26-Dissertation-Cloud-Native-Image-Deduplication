@@ -1,0 +1,65 @@
+{
+  "version": "1.0",
+  "paths": {
+    "repo_root_from_evals_dir": "..",
+    "results_root_dir": "results",
+    "labels_dir": "data/labels"
+  },
+  "threshold_configs": [
+    {
+      "id": "C1",
+      "phash": 5,
+      "ssim": 0.85,
+      "tag": "threshold-tuning-baseline-phash5-ssim085",
+      "enabled": true,
+      "is_baseline": true
+    },
+    {
+      "id": "C2",
+      "phash": 4,
+      "ssim": 0.85,
+      "tag": "threshold-tuning-phash4-ssim085",
+      "enabled": true,
+      "is_baseline": false
+    },
+    {
+      "id": "C3",
+      "phash": 5,
+      "ssim": 0.9,
+      "tag": "threshold-tuning-phash5-ssim090",
+      "enabled": true,
+      "is_baseline": false
+    },
+    {
+      "id": "C4",
+      "phash": 6,
+      "ssim": 0.85,
+      "tag": "threshold-tuning-phash6-ssim085",
+      "enabled": true,
+      "is_baseline": false
+    },
+    {
+      "id": "C5",
+      "phash": 6,
+      "ssim": 0.9,
+      "tag": "threshold-tuning-phash6-ssim090",
+      "enabled": true,
+      "is_baseline": false
+    }
+  ],
+  "pair_limits": {
+    "eval1": 500,
+    "eval2": 500,
+    "eval3": 5000,
+    "eval4": 5000
+  },
+  "subset_sizes": {
+    "xxs": 5,
+    "xs": 50,
+    "s": 100,
+    "m": 500,
+    "l": 1000,
+    "xl": 2000,
+    "xxl": 5000
+  }
+}
