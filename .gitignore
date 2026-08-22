@@ -80,6 +80,8 @@ data/robustness/crop_center_*/
 data/robustness/rotate_*/
 data/robustness/format_png/
 
+results/interim/eval3_*/
+
 # scalability
 data/base/
 data/scalability/
@@ -100,3 +102,4 @@ data/scalability/l/
 data/scalability/xl/
 
 data/reviews/reference_labels_eval_*.csv
+
