@@ -26,7 +26,6 @@ DEDUPE_PY_DIR = REPO_ROOT / "services" / "dedupe-py"
 
 MASTER_DIR = REPO_ROOT / "data" / "base"
 SCALABILITY_ROOT = REPO_ROOT / "data" / "scalability"
-LABELS_ROOT = REPO_ROOT / "data" / "labels"
 TRANSFORM_MANIFEST = SCALABILITY_ROOT / "transform_manifest.csv"
 IMAGE_EXTENSIONS = {".jpeg", ".jpg", ".png", ".bmp", ".tif", ".tiff", ".webp"}
 LABEL_FIELDNAMES = ["img_a", "img_b", "label", "type", "notes"]
@@ -40,15 +39,6 @@ SIZE_TO_COUNT = {
     "m": 1000,
     "l": 2000,
     "xl": 5000,
-}
-
-SIZE_TO_LABELS = {
-    "t5": "reference_labels_eval_v3_scalability_t5.csv",
-    "t10": "reference_labels_eval_v3_scalability_t10.csv",
-    "s": "reference_labels_eval_v3_scalability_s.csv",
-    "m": "reference_labels_eval_v3_scalability_m.csv",
-    "l": "reference_labels_eval_v3_scalability_l.csv",
-    "xl": "reference_labels_eval_v3_scalability_xl.csv",
 }
 
 DETECTION_COLUMNS = [
@@ -309,10 +299,13 @@ def load_transform_manifest() -> list[dict[str, str]]:
 
 
 def build_file_list_for_subset(
-    size_key: str, sources: list[Path], manifest_rows: list[dict[str, str]]
+    size_key: str,
+    sources: list[Path],
+    manifest_rows: list[dict[str, str]],
+    output_dir: Path,
 ) -> Path:
     source_names = {p.name for p in sources}
-    out_csv = LABELS_ROOT / f"reference_images_eval_v3_scalability_{size_key}.csv"
+    out_csv = output_dir / f"reference_images_eval_v3_scalability_{size_key}.csv"
 
     rows = [{"path": data_relative(p)} for p in sources]
     seen = {r["path"] for r in rows}
@@ -333,9 +326,12 @@ def build_file_list_for_subset(
 
 
 def build_labels_for_subset(
-    size_key: str, sources: list[Path], manifest_rows: list[dict[str, str]]
+    size_key: str,
+    sources: list[Path],
+    manifest_rows: list[dict[str, str]],
+    output_dir: Path,
 ) -> Path:
-    out_csv = LABELS_ROOT / SIZE_TO_LABELS[size_key]
+    out_csv = output_dir / f"reference_labels_eval_v3_scalability_{size_key}.csv"
     source_names = {p.name for p in sources}
     source_by_name = {p.name: p for p in sources}
     by_source: dict[str, list[dict[str, str]]] = {}
@@ -424,15 +420,6 @@ def run_for_size(
         print(
             f"{Fore.YELLOW}Note: --rebuild-subsets is ignored for manifest-based Eval 4 inputs."
         )
-    sources = select_sources(size_key)
-    manifest_rows = load_transform_manifest()
-    file_list_src = build_file_list_for_subset(size_key, sources, manifest_rows)
-    labels_src = build_labels_for_subset(size_key, sources, manifest_rows).resolve()
-    labels_file = labels_src.name
-    if not labels_src.is_file():
-        raise FileNotFoundError(
-            f"Missing labels file for size '{size_key}': {labels_src}"
-        )
 
     out_root = (REPO_ROOT / "results" / "final" / f"eval4_{size_key}").resolve()
     logs_dir = out_root / "logs"
@@ -457,13 +444,23 @@ def run_for_size(
     ]:
         d.mkdir(parents=True, exist_ok=True)
 
-    labels_staged = review_stage_dir / labels_file
-    shutil.copy2(labels_src, labels_staged)
+    sources = select_sources(size_key)
+    manifest_rows = load_transform_manifest()
+    file_list_src = build_file_list_for_subset(
+        size_key, sources, manifest_rows, review_stage_dir
+    ).resolve()
+    labels_staged = build_labels_for_subset(
+        size_key, sources, manifest_rows, review_stage_dir
+    ).resolve()
+    if not labels_staged.is_file():
+        raise FileNotFoundError(
+            f"Missing staged labels file for size '{size_key}': {labels_staged}"
+        )
 
     print(f"\n{Fore.GREEN}=== Eval 4 ({size_key.upper()}) ===")
     print(f"{Fore.YELLOW}Dataset root:     {Fore.CYAN}data")
     print(f"{Fore.YELLOW}Image file list:  {Fore.CYAN}{file_list_src}")
-    print(f"{Fore.YELLOW}Reference labels: {Fore.CYAN}{labels_src}")
+    print(f"{Fore.YELLOW}Reference labels: {Fore.CYAN}{labels_staged}")
 
     detection_rows = []
     cost_rows = []
