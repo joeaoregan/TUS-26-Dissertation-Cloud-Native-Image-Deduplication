@@ -19,8 +19,8 @@ init(autoreset=True)
 # Interim Evaluation 3 (Robustness)
 # - Runs threshold configs from evals/common_config.json
 # - Supports multiple subset sizes (e.g. t5 t10) in one run
-# - Materialises subsets from data/base into data/robustness/<size>
-# - DEFAULT: cleans up materialised subsets after each size run
+# - Slices the full robustness reference labels by configured pair count
+# - Builds per-size image file lists from the selected reference pairs
 # - Exports Stage 3 predictions
 # - Evaluates predictions against robustness reference labels
 # - Prints report-style detection/cost tables
@@ -31,8 +31,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEDUPE_PY_DIR = REPO_ROOT / "services" / "dedupe-py"
 PYTHON_EXE = str(Path(sys.executable).resolve())
 
+DATA_DIR = REPO_ROOT / "data"
 MASTER_DIR = REPO_ROOT / "data" / "base"
 ROBUSTNESS_ROOT = REPO_ROOT / "data" / "robustness"
+FILE_LIST_FIELDNAMES = ["path"]
+LABEL_FIELDNAMES = ["img_a", "img_b", "label", "type", "notes"]
 
 # Default (fallback) robustness labels (full set)
 REFERENCE_LABELS_SOURCE = (
@@ -51,6 +54,7 @@ DETECTION_TABLE_COLUMNS = [
     ("Recall", "Recall", 8, "center"),
     ("F1Score", "F1 Score", 9, "center"),
     ("Accuracy", "Accuracy", 10, "center"),
+    ("RunTime", "Run Time", 9, "center"),
 ]
 
 COST_TABLE_COLUMNS = [
@@ -63,15 +67,6 @@ COST_TABLE_COLUMNS = [
     ("Stage2CandidatePairs", "S2 Pairs", 9, "center"),
     ("Stage3VerifiedPairs", "S3 Pairs", 9, "center"),
 ]
-
-
-def labels_path_for_size(size_key: str) -> Path:
-    return (
-        REPO_ROOT
-        / "data"
-        / "labels"
-        / f"reference_labels_eval_v2_robustness_{size_key}.csv"
-    )
 
 
 def load_common_config() -> dict:
@@ -97,12 +92,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--rebuild-subsets",
         action="store_true",
-        help="Force rebuild subset folders even if they already exist",
+        help="Deprecated: Eval 3 now uses file lists instead of materialised subsets",
     )
     p.add_argument(
         "--keep-subsets",
         action="store_true",
-        help="Keep materialised subset folders (default is cleanup after each size run)",
+        help="Deprecated: Eval 3 now uses file lists instead of materialised subsets",
     )
     return p.parse_args()
 
@@ -297,6 +292,14 @@ def print_table_footer(columns: list[tuple]) -> None:
     print(f"{Fore.BLUE}{build_table_separator(columns)}")
 
 
+def repo_relative(path: Path | str) -> str:
+    p = Path(path)
+    try:
+        return p.resolve().relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return p.as_posix()
+
+
 def materialise_subset(size_key: str, subset_sizes: dict, rebuild: bool) -> str:
     if size_key not in subset_sizes:
         valid = ", ".join(subset_sizes.keys())
@@ -344,14 +347,81 @@ def cleanup_subset(size_key: str) -> None:
         shutil.rmtree(target_dir)
 
 
-def resolve_labels_for_size(size_key: str) -> Path:
-    path = labels_path_for_size(size_key)
-    if not path.is_file():
+def resolve_reference_labels_source() -> Path:
+    if not REFERENCE_LABELS_SOURCE.is_file():
         raise FileNotFoundError(
-            f"Missing reference labels for '{size_key}': {path}\n"
-            f"Generate with: python evals/utils/robustness/build_subset_labels.py"
+            f"Missing full robustness reference labels: {REFERENCE_LABELS_SOURCE}"
         )
-    return path.resolve()
+    return REFERENCE_LABELS_SOURCE
+
+
+def write_csv(path: Path, fieldnames: list[str], rows: list[dict]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def resolve_label_image_path(data_rel_path: str) -> str:
+    rel_path = data_rel_path.replace("\\", "/").strip()
+    if (DATA_DIR / rel_path).is_file():
+        return rel_path
+
+    if rel_path.startswith("robustness/base/"):
+        base_rel_path = f"base/{Path(rel_path).name}"
+        if (DATA_DIR / base_rel_path).is_file():
+            return base_rel_path
+
+    raise FileNotFoundError(f"Label image path does not exist under data/: {rel_path}")
+
+
+def write_reference_inputs(
+    size_key: str,
+    labels_source: Path,
+    requested_pair_count: int,
+    review_staging_dir: Path,
+) -> tuple[Path, Path, int, int]:
+    file_list_path = (
+        review_staging_dir / f"reference_images_eval_v2_robustness_{size_key}.csv"
+    )
+    staged_labels_path = (
+        review_staging_dir / f"reference_labels_eval_v2_robustness_{size_key}.csv"
+    )
+
+    with labels_source.open("r", encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f)
+        if set(reader.fieldnames or []) != set(LABEL_FIELDNAMES):
+            raise ValueError(
+                f"Reference labels headers must be exactly: {sorted(LABEL_FIELDNAMES)}"
+            )
+
+        label_rows: list[dict[str, str]] = []
+        image_paths: list[str] = []
+        seen_images: set[str] = set()
+
+        for row in reader:
+            if len(label_rows) >= requested_pair_count:
+                break
+
+            normalised = dict(row)
+            normalised["img_a"] = resolve_label_image_path(row["img_a"])
+            normalised["img_b"] = resolve_label_image_path(row["img_b"])
+            label_rows.append(normalised)
+
+            for rel_path in (normalised["img_a"], normalised["img_b"]):
+                if rel_path not in seen_images:
+                    image_paths.append(rel_path)
+                    seen_images.add(rel_path)
+
+    write_csv(
+        file_list_path,
+        FILE_LIST_FIELDNAMES,
+        [{"path": rel_path} for rel_path in image_paths],
+    )
+    write_csv(staged_labels_path, LABEL_FIELDNAMES, label_rows)
+
+    return file_list_path, staged_labels_path, len(label_rows), len(image_paths)
 
 
 def write_detection_summary(path: Path, rows: list[dict]) -> None:
@@ -369,6 +439,7 @@ def write_detection_summary(path: Path, rows: list[dict]) -> None:
         "Recall",
         "F1Score",
         "Accuracy",
+        "RunTime",
         "BenchmarkJSON",
         "PredictionsCSV",
     ]
@@ -407,7 +478,7 @@ def write_cost_summary(path: Path, rows: list[dict]) -> None:
 
 
 def run_for_size(
-    size_key: str, dataset_dir: str, configs: list[tuple], pair_limit: str
+    size_key: str, configs: list[tuple], pair_limit: str, requested_pair_count: int
 ) -> None:
     size_start = time.perf_counter()
 
@@ -429,9 +500,7 @@ def run_for_size(
         REPO_ROOT / "data" / "reviews" / "interim" / f"eval3_{size_key}"
     ).resolve()
 
-    labels_source = resolve_labels_for_size(size_key)
-    reference_labels_staged = review_staging_dir / labels_source.name
-
+    labels_source = resolve_reference_labels_source()
     for d in [
         metrics_dir,
         logs_dir,
@@ -442,17 +511,30 @@ def run_for_size(
     ]:
         d.mkdir(parents=True, exist_ok=True)
 
-    if not labels_source.is_file():
-        raise FileNotFoundError(
-            f"Reference labels file does not exist: {labels_source}"
-        )
-    shutil.copy2(labels_source, reference_labels_staged)
+    (
+        file_list_source,
+        reference_labels_staged,
+        reference_pair_count,
+        input_image_count,
+    ) = write_reference_inputs(
+        size_key, labels_source, requested_pair_count, review_staging_dir
+    )
 
     print(
         f"\n{Fore.GREEN}=== Running Interim Evaluation 3: Robustness ({size_key.upper()}) ==="
     )
-    print(f"{Fore.YELLOW}Dataset:          {Fore.CYAN}data/{dataset_dir}")
-    print(f"{Fore.YELLOW}Reference labels: {Fore.CYAN}{labels_source}")
+    print(f"{Fore.YELLOW}Dataset root:     {Fore.CYAN}data")
+    print(f"{Fore.YELLOW}Image file list:  {Fore.CYAN}{repo_relative(file_list_source)}")
+    print(f"{Fore.YELLOW}Reference source: {Fore.CYAN}{repo_relative(labels_source)}")
+    print(f"{Fore.YELLOW}Staged labels:    {Fore.CYAN}{repo_relative(reference_labels_staged)}")
+    print(f"{Fore.YELLOW}Input images:     {Fore.CYAN}{input_image_count}")
+    if reference_pair_count == requested_pair_count:
+        print(f"{Fore.YELLOW}Reference pairs:  {Fore.CYAN}{reference_pair_count}")
+    else:
+        print(
+            f"{Fore.YELLOW}Reference pairs:  {Fore.CYAN}{reference_pair_count} "
+            f"{Fore.YELLOW}(requested {requested_pair_count}; capped by source)"
+        )
     print(f"{Fore.YELLOW}Pair limit:       {Fore.CYAN}{pair_limit}")
 
     detection_rows = []
@@ -464,6 +546,7 @@ def run_for_size(
     )
 
     for row_index, (config_id, phash, ssim, tag) in enumerate(configs):
+        config_start = time.perf_counter()
         run_tag = f"eval3-{size_key}-{config_id.lower()}-{tag}"
 
         staged_benchmark_json = benchmark_staging_dir / f"{run_tag}.json"
@@ -477,7 +560,9 @@ def run_for_size(
             "-m",
             "benchmarks.benchmark_pipeline",
             "--dir",
-            dataset_dir,
+            ".",
+            "--file-list",
+            file_list_source.relative_to(DATA_DIR).as_posix(),
             "--output",
             str(staged_benchmark_json),
             "--export-pairs",
@@ -523,6 +608,7 @@ def run_for_size(
 
         quality = parse_eval_metrics(evaluation_output)
         cost = parse_benchmark_cost(staged_benchmark_json)
+        config_elapsed = time.perf_counter() - config_start
 
         detection_row = {
             "ConfigID": config_id,
@@ -538,6 +624,7 @@ def run_for_size(
             "Recall": quality["Recall"],
             "F1Score": quality["F1Score"],
             "Accuracy": quality["Accuracy"],
+            "RunTime": f"{config_elapsed:.1f}s",
             "BenchmarkJSON": final_benchmark_json.as_posix(),
             "PredictionsCSV": final_predictions_csv.as_posix(),
         }
@@ -579,11 +666,11 @@ def run_for_size(
     print(
         f"\n{Fore.GREEN}Completed size {size_key.upper()} in {(time.perf_counter() - size_start) / 60:.2f} min"
     )
-    print(f"{Fore.YELLOW}Detection summary: {Fore.CYAN}{detection_summary_csv}")
-    print(f"{Fore.YELLOW}Cost summary:      {Fore.CYAN}{cost_summary_csv}")
-    print(f"{Fore.YELLOW}Logs:              {Fore.CYAN}{logs_dir}")
-    print(f"{Fore.YELLOW}Reports:           {Fore.CYAN}{reports_dir}")
-    print(f"{Fore.YELLOW}Predictions:       {Fore.CYAN}{predictions_dir}")
+    print(f"{Fore.YELLOW}Detection summary: {Fore.CYAN}{repo_relative(detection_summary_csv)}")
+    print(f"{Fore.YELLOW}Cost summary:      {Fore.CYAN}{repo_relative(cost_summary_csv)}")
+    print(f"{Fore.YELLOW}Logs:              {Fore.CYAN}{repo_relative(logs_dir)}")
+    print(f"{Fore.YELLOW}Reports:           {Fore.CYAN}{repo_relative(reports_dir)}")
+    print(f"{Fore.YELLOW}Predictions:       {Fore.CYAN}{repo_relative(predictions_dir)}")
 
 
 def main() -> None:
@@ -600,9 +687,8 @@ def main() -> None:
                 f"Unknown size '{s}'. Valid sizes: {', '.join(subset_sizes.keys())}"
             )
 
-    # Fail fast: require size-specific labels for all requested sizes
-    for s in args.sizes:
-        _ = resolve_labels_for_size(s)
+    # Fail fast: all sizes are sliced from the one full robustness label source.
+    _ = resolve_reference_labels_source()
 
     configs = build_configs(cfg)
     pair_limits = cfg.get("pair_limits", {})
@@ -615,29 +701,26 @@ def main() -> None:
     overall_start = time.perf_counter()
 
     print(f"{Fore.GREEN}=== Running Interim Evaluation 3: Robustness ===")
-    print(f"{Fore.YELLOW}Master dataset: {Fore.CYAN}{MASTER_DIR}")
+    print(f"{Fore.YELLOW}Master dataset: {Fore.CYAN}{repo_relative(MASTER_DIR)}")
     print(
         f"{Fore.YELLOW}Sizes to run:   {Fore.CYAN}{', '.join(s.upper() for s in args.sizes)}"
     )
     print(f"{Fore.YELLOW}Pair limit:     {Fore.CYAN}{effective_pair_limit}")
     print(f"{Fore.YELLOW}Configs:        {Fore.CYAN}{', '.join(c[0] for c in configs)}")
-    print(
-        f"{Fore.YELLOW}Subset cleanup: {Fore.CYAN}"
-        + ("OFF (--keep-subsets)" if args.keep_subsets else "ON (default)")
-    )
+    print(f"{Fore.YELLOW}Input mode:     {Fore.CYAN}CSV file list")
+    if args.rebuild_subsets or args.keep_subsets:
+        print(
+            f"{Fore.YELLOW}Note:           {Fore.CYAN}"
+            "--rebuild-subsets/--keep-subsets are ignored in file-list mode"
+        )
 
     for size_key in args.sizes:
-        dataset_dir = materialise_subset(size_key, subset_sizes, args.rebuild_subsets)
-        try:
-            run_for_size(
-                size_key=size_key,
-                dataset_dir=dataset_dir,
-                configs=configs,
-                pair_limit=effective_pair_limit,
-            )
-        finally:
-            if not args.keep_subsets:
-                cleanup_subset(size_key)
+        run_for_size(
+            size_key=size_key,
+            configs=configs,
+            pair_limit=effective_pair_limit,
+            requested_pair_count=int(subset_sizes[size_key]),
+        )
 
     print(f"\n{Fore.GREEN}All requested sizes complete.")
     print(
