@@ -25,7 +25,7 @@ init(autoreset=True)
 
 SEED = 42
 
-ROOT = Path(__file__).resolve().parents[2]  # repo root
+ROOT = Path(__file__).resolve().parents[3]  # repo root
 DATA_DIR = ROOT / "data"
 ROBUSTNESS_DIR = DATA_DIR / "robustness"
 MANIFEST_CSV = ROBUSTNESS_DIR / "transform_manifest.csv"

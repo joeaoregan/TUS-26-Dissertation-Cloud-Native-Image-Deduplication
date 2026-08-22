@@ -22,7 +22,8 @@ from PIL import Image, ImageEnhance
 
 init(autoreset=True)
 
-ROOT = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parents[3]
+ROOT = REPO_ROOT / "data" / "robustness"
 BASE_DIR = ROOT / "base"
 MANIFEST_CSV = ROOT / "transform_manifest.csv"
 
