@@ -1,4 +1,5 @@
 import argparse
+import csv
 import json
 import platform
 from datetime import datetime, timezone
@@ -123,6 +124,33 @@ def write_benchmark_outputs(
         print(f"{Fore.GREEN}Timestamped snapshot exported to: {Fore.CYAN}{stamped}")
 
 
+def load_images_from_file_list(file_list: Path, data_root: Path) -> list[Path]:
+    images: list[Path] = []
+
+    with file_list.open("r", encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f)
+        if not reader.fieldnames or "path" not in reader.fieldnames:
+            raise ValueError("File list CSV must include a 'path' column.")
+
+        for line_no, row in enumerate(reader, start=2):
+            rel_path = (row.get("path") or "").strip()
+            if not rel_path:
+                raise ValueError(f"File list line {line_no}: empty path")
+
+            image_path = resolve_within(data_root, rel_path)
+            if not image_path.is_file():
+                raise FileNotFoundError(
+                    f"File list line {line_no}: missing file: {rel_path}"
+                )
+            if image_path.suffix.lower() not in IMAGE_EXTENSIONS:
+                raise ValueError(
+                    f"File list line {line_no}: unsupported image type: {rel_path}"
+                )
+            images.append(image_path)
+
+    return sorted(set(images), key=lambda p: str(p).lower())
+
+
 def run_benchmark(
     dataset_dir: Path,
     output_json: Path = Path("benchmarks/results.json"),
@@ -132,21 +160,28 @@ def run_benchmark(
     phash_threshold: int = PHASH_THRESHOLD,
     ssim_threshold: float = SSIM_THRESHOLD,
     run_tag: str = "",
+    file_list: Path | None = None,
+    data_root: Path | None = None,
 ):
     run_started_at = datetime.now(timezone.utc)
 
     print(
         f"\n{Fore.GREEN}--- Running Benchmark on: {Fore.CYAN}{dataset_dir}{Fore.GREEN} ---"
     )
+    if file_list is not None:
+        print(f"{Fore.YELLOW}File list: {Fore.CYAN}{file_list}")
 
-    images = sorted(
-        [
-            p
-            for p in dataset_dir.rglob("*")
-            if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
-        ],
-        key=lambda p: str(p).lower(),
-    )
+    if file_list is not None:
+        images = load_images_from_file_list(file_list, data_root or dataset_dir)
+    else:
+        images = sorted(
+            [
+                p
+                for p in dataset_dir.rglob("*")
+                if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
+            ],
+            key=lambda p: str(p).lower(),
+        )
     print(f"{Fore.YELLOW}Total target images found: {Fore.CYAN}{len(images)}")
     if not images:
         print(f"{Fore.RED}No valid images found in {dataset_dir}")
@@ -192,6 +227,7 @@ def run_benchmark(
             "export_pairs": export_pairs,
             "pair_limit": pair_limit,
             "run_tag": run_tag,
+            "file_list": str(file_list) if file_list else "",
         },
     }
 
@@ -362,6 +398,12 @@ if __name__ == "__main__":
         default=runtime_cfg["run_tag"] or "",
         help="Optional run tag to store in output JSON config",
     )
+    parser.add_argument(
+        "--file-list",
+        type=Path,
+        default=None,
+        help="Optional CSV of data-relative image paths to benchmark.",
+    )
 
     args = parser.parse_args()
 
@@ -385,8 +427,17 @@ if __name__ == "__main__":
     try:
         safe_dataset_dir = resolve_within(allowed_dataset_base, str(args.dataset_dir))
         safe_output_json = resolve_within(allowed_output_base, str(args.output_json))
+        safe_file_list = (
+            resolve_within(allowed_dataset_base, str(args.file_list))
+            if args.file_list
+            else None
+        )
     except ValueError as e:
         print(f"{Fore.RED}Error: {Fore.RESET}{e}")
+        raise SystemExit(2)
+
+    if safe_file_list is not None and not safe_file_list.is_file():
+        print(f"{Fore.RED}File list '{safe_file_list}' not found.")
         raise SystemExit(2)
 
     if safe_dataset_dir.exists() and safe_dataset_dir.is_dir():
@@ -399,6 +450,8 @@ if __name__ == "__main__":
             phash_threshold=args.phash_threshold,
             ssim_threshold=args.ssim_threshold,
             run_tag=args.run_tag,
+            file_list=safe_file_list,
+            data_root=allowed_dataset_base,
         )
     else:
         print(f"{Fore.RED}Directory '{safe_dataset_dir}' not found or is not a folder.")

@@ -1,0 +1,6 @@
+img_a,img_b,label,type,notes
+base/ILSVRC2012_val_00002390.JPEG,scalability/colourshift_b_p20/ILSVRC2012_val_00001742__colourshift_b_p20.jpg,0,non,"non-duplicate:different_source;variant_transform=colour_shift;parameter=channel=b,delta=+20"
+base/ILSVRC2012_val_00000559.JPEG,scalability/resize_0p5/ILSVRC2012_val_00000559__resize_0.50.jpg,1,near,transform=resize;parameter=factor=0.50;family=geometric
+base/ILSVRC2012_val_00004671.JPEG,scalability/crop_center_0p75/ILSVRC2012_val_00004671__crop_center_0.75.jpg,1,near,transform=center_crop;parameter=fraction=0.75;family=geometric
+base/ILSVRC2012_val_00003304.JPEG,scalability/crop_center_0p9/ILSVRC2012_val_00001519__crop_center_0.90.jpg,0,non,non-duplicate:different_source;variant_transform=center_crop;parameter=fraction=0.90
+base/ILSVRC2012_val_00002828.JPEG,scalability/crop_center_0p75/ILSVRC2012_val_00002828__crop_center_0.75.jpg,1,near,transform=center_crop;parameter=fraction=0.75;family=geometric
