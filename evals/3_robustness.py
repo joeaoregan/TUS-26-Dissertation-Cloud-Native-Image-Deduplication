@@ -16,7 +16,7 @@ from colorama import Fore, init
 init(autoreset=True)
 
 # ============================================================
-# Interim Evaluation 3 (Robustness)
+# Final Evaluation 3 (Robustness)
 # - Runs threshold configs from evals/common_config.json
 # - Supports multiple subset sizes (e.g. t5 t10) in one run
 # - Slices the full robustness reference labels by configured pair count
@@ -77,7 +77,7 @@ def load_common_config() -> dict:
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Run Interim Eval 3 (robustness)")
+    p = argparse.ArgumentParser(description="Run Final Eval 3 (robustness)")
     p.add_argument(
         "--sizes",
         nargs="+",
@@ -482,7 +482,7 @@ def run_for_size(
 ) -> None:
     size_start = time.perf_counter()
 
-    out_root = (REPO_ROOT / "results" / "interim" / f"eval3_{size_key}").resolve()
+    out_root = (REPO_ROOT / "results" / "final" / f"eval3_{size_key}").resolve()
     metrics_dir = out_root / "metrics"
     logs_dir = out_root / "logs"
     predictions_dir = out_root / "predictions"
@@ -494,10 +494,10 @@ def run_for_size(
     cost_summary_csv = metrics_dir / f"table_eval3_{size_key}_cost_summary.csv"
 
     benchmark_staging_dir = (
-        REPO_ROOT / "benchmarks" / "results" / "interim" / f"eval3_{size_key}"
+        REPO_ROOT / "benchmarks" / "results" / "final" / f"eval3_{size_key}"
     ).resolve()
     review_staging_dir = (
-        REPO_ROOT / "data" / "reviews" / "interim" / f"eval3_{size_key}"
+        REPO_ROOT / "data" / "reviews" / "final" / f"eval3_{size_key}"
     ).resolve()
 
     labels_source = resolve_reference_labels_source()
@@ -521,12 +521,16 @@ def run_for_size(
     )
 
     print(
-        f"\n{Fore.GREEN}=== Running Interim Evaluation 3: Robustness ({size_key.upper()}) ==="
+        f"\n{Fore.GREEN}=== Running Final Evaluation 3: Robustness ({size_key.upper()}) ==="
     )
     print(f"{Fore.YELLOW}Dataset root:     {Fore.CYAN}data")
-    print(f"{Fore.YELLOW}Image file list:  {Fore.CYAN}{repo_relative(file_list_source)}")
+    print(
+        f"{Fore.YELLOW}Image file list:  {Fore.CYAN}{repo_relative(file_list_source)}"
+    )
     print(f"{Fore.YELLOW}Reference source: {Fore.CYAN}{repo_relative(labels_source)}")
-    print(f"{Fore.YELLOW}Staged labels:    {Fore.CYAN}{repo_relative(reference_labels_staged)}")
+    print(
+        f"{Fore.YELLOW}Staged labels:    {Fore.CYAN}{repo_relative(reference_labels_staged)}"
+    )
     print(f"{Fore.YELLOW}Input images:     {Fore.CYAN}{input_image_count}")
     if reference_pair_count == requested_pair_count:
         print(f"{Fore.YELLOW}Reference pairs:  {Fore.CYAN}{reference_pair_count}")
@@ -666,11 +670,17 @@ def run_for_size(
     print(
         f"\n{Fore.GREEN}Completed size {size_key.upper()} in {(time.perf_counter() - size_start) / 60:.2f} min"
     )
-    print(f"{Fore.YELLOW}Detection summary: {Fore.CYAN}{repo_relative(detection_summary_csv)}")
-    print(f"{Fore.YELLOW}Cost summary:      {Fore.CYAN}{repo_relative(cost_summary_csv)}")
+    print(
+        f"{Fore.YELLOW}Detection summary: {Fore.CYAN}{repo_relative(detection_summary_csv)}"
+    )
+    print(
+        f"{Fore.YELLOW}Cost summary:      {Fore.CYAN}{repo_relative(cost_summary_csv)}"
+    )
     print(f"{Fore.YELLOW}Logs:              {Fore.CYAN}{repo_relative(logs_dir)}")
     print(f"{Fore.YELLOW}Reports:           {Fore.CYAN}{repo_relative(reports_dir)}")
-    print(f"{Fore.YELLOW}Predictions:       {Fore.CYAN}{repo_relative(predictions_dir)}")
+    print(
+        f"{Fore.YELLOW}Predictions:       {Fore.CYAN}{repo_relative(predictions_dir)}"
+    )
 
 
 def main() -> None:
@@ -700,7 +710,7 @@ def main() -> None:
 
     overall_start = time.perf_counter()
 
-    print(f"{Fore.GREEN}=== Running Interim Evaluation 3: Robustness ===")
+    print(f"{Fore.GREEN}=== Running Final Evaluation 3: Robustness ===")
     print(f"{Fore.YELLOW}Master dataset: {Fore.CYAN}{repo_relative(MASTER_DIR)}")
     print(
         f"{Fore.YELLOW}Sizes to run:   {Fore.CYAN}{', '.join(s.upper() for s in args.sizes)}"
