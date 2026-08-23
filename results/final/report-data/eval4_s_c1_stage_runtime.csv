@@ -1,0 +1,4 @@
+Stage,MeanMs,StdDevMs,MeanSeconds,StdDevSeconds
+Stage 1 - SHA-256,162.21,7.31,0.16221,0.00731
+Stage 2 - pHash,8683.54,141.66,8.68354,0.14166
+Stage 3 - SSIM,95720.26,1582.86,95.72026,1.58286
