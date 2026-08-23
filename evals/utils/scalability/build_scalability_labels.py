@@ -19,7 +19,9 @@ their transformed variants, while the files stay in their canonical folders.
 
 from __future__ import annotations
 
+import argparse
 import csv
+import json
 import random
 from pathlib import Path
 
@@ -32,23 +34,63 @@ DATA_DIR = REPO_ROOT / "data"
 BASE_DIR = DATA_DIR / "base"
 SCALABILITY_DIR = DATA_DIR / "scalability"
 MANIFEST_CSV = SCALABILITY_DIR / "transform_manifest.csv"
+COMMON_CONFIG_JSON = REPO_ROOT / "evals" / "common_config.json"
 OUT_DIR = DATA_DIR / "labels"
 LABEL_PREFIX = "reference_labels_eval_v3_scalability_"
 IMAGE_PREFIX = "reference_images_eval_v3_scalability_"
 COMBINED_LABELS_CSV = OUT_DIR / "reference_labels_eval_v3_scalability.csv"
 
 VALID_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"}
-SIZE_TO_COUNT = {
-    "t5": 5,
-    "t10": 10,
-    "s": 500,
-    "m": 1000,
-    "l": 2000,
-    "xl": 5000,
-}
 LABEL_FIELDNAMES = ["img_a", "img_b", "label", "type", "notes"]
 IMAGE_FIELDNAMES = ["path"]
 SEED = 42
+DEFAULT_SKIP_SIZES = {"xxl"}
+
+
+def parse_args(valid_sizes: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Build Eval 4 scalability reference image and label CSVs."
+    )
+    parser.add_argument(
+        "--sizes",
+        nargs="+",
+        choices=valid_sizes,
+        default=None,
+        help=(
+            "Subset size keys to build. Defaults to all configured sizes except "
+            f"{', '.join(sorted(DEFAULT_SKIP_SIZES))}."
+        ),
+    )
+    parser.add_argument(
+        "--include-xxl",
+        action="store_true",
+        help="Include xxl when --sizes is not provided.",
+    )
+    return parser.parse_args()
+
+
+def load_subset_sizes() -> dict[str, int]:
+    if not COMMON_CONFIG_JSON.is_file():
+        raise FileNotFoundError(f"Missing config: {COMMON_CONFIG_JSON}")
+
+    cfg = json.loads(COMMON_CONFIG_JSON.read_text(encoding="utf-8"))
+    subset_sizes = cfg.get("subset_sizes", {})
+    if not subset_sizes:
+        raise ValueError("No subset_sizes found in evals/common_config.json")
+
+    return {key: int(value) for key, value in subset_sizes.items()}
+
+
+def select_size_keys(
+    subset_sizes: dict[str, int], requested_sizes: list[str] | None, include_xxl: bool
+) -> list[str]:
+    if requested_sizes:
+        selected = requested_sizes
+    else:
+        skipped = set() if include_xxl else DEFAULT_SKIP_SIZES
+        selected = [key for key in subset_sizes if key not in skipped]
+
+    return sorted(selected, key=lambda key: subset_sizes[key])
 
 
 def data_relative(path: Path) -> str:
@@ -78,8 +120,8 @@ def load_transform_manifest() -> list[dict[str, str]]:
         return list(reader)
 
 
-def select_sources(size_key: str) -> list[Path]:
-    count = SIZE_TO_COUNT[size_key]
+def select_sources(size_key: str, subset_sizes: dict[str, int]) -> list[Path]:
+    count = subset_sizes[size_key]
     subset_dir = SCALABILITY_DIR / size_key
     source_dir = subset_dir if subset_dir.is_dir() else BASE_DIR
     if not source_dir.is_dir():
@@ -192,9 +234,9 @@ def write_csv(path: Path, fieldnames: list[str], rows: list[dict[str, str]]) -> 
 
 
 def write_size_inputs(
-    size_key: str, manifest_rows: list[dict[str, str]]
+    size_key: str, manifest_rows: list[dict[str, str]], subset_sizes: dict[str, int]
 ) -> tuple[Path, Path, int, int, int]:
-    sources = select_sources(size_key)
+    sources = select_sources(size_key, subset_sizes)
     positives, positives_by_source = build_positive_rows(sources, manifest_rows)
     if not positives:
         raise ValueError(f"No usable transform pairs found for size '{size_key}'")
@@ -238,13 +280,16 @@ def write_combined_labels(size_csvs: list[Path]) -> int:
 
 
 def main() -> None:
+    subset_sizes = load_subset_sizes()
+    args = parse_args(list(subset_sizes.keys()))
+    size_keys = select_size_keys(subset_sizes, args.sizes, args.include_xxl)
     manifest_rows = load_transform_manifest()
     label_csvs: list[Path] = []
     summaries: list[tuple[str, int, int, int, Path, Path]] = []
 
-    for size_key in SIZE_TO_COUNT:
+    for size_key in size_keys:
         image_csv, labels_csv, image_count, positives, negatives = write_size_inputs(
-            size_key, manifest_rows
+            size_key, manifest_rows, subset_sizes
         )
         label_csvs.append(labels_csv)
         summaries.append(
@@ -254,6 +299,7 @@ def main() -> None:
     total_rows = write_combined_labels(label_csvs)
 
     print(f"\n{Fore.GREEN}=== EVAL 4 SCALABILITY INPUT BUILD ===")
+    print(f"{Fore.YELLOW}Sizes built: {Fore.CYAN}{', '.join(size_keys)}")
     for size_key, image_count, positives, negatives, image_csv, labels_csv in summaries:
         print(
             f"{Fore.YELLOW}{size_key:>4}: "

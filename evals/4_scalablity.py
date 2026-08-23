@@ -32,15 +32,6 @@ LABEL_FIELDNAMES = ["img_a", "img_b", "label", "type", "notes"]
 FILE_LIST_FIELDNAMES = ["path"]
 SEED = 42
 
-SIZE_TO_COUNT = {
-    "t5": 5,
-    "t10": 10,
-    "s": 500,
-    "m": 1000,
-    "l": 2000,
-    "xl": 5000,
-}
-
 DETECTION_COLUMNS = [
     ("ConfigID", "Config ID", 13, "left"),
     ("pHashThreshold", "pHash", 7, "center"),
@@ -90,14 +81,14 @@ def build_configs_from_common_config(cfg: dict) -> list[tuple]:
     return configs
 
 
-def parse_args():
+def parse_args(valid_sizes: list[str]):
     p = argparse.ArgumentParser(description="Run final Eval 4 (scalability)")
     p.add_argument(
         "--sizes",
         nargs="+",
         required=True,
-        choices=["t5", "t10", "s", "m", "l", "xl"],
-        help="One or more sizes to run back-to-back, e.g. --sizes s m l",
+        choices=valid_sizes,
+        help="Subset size keys from common_config.json, e.g. --sizes xxs xs s m l",
     )
     p.add_argument(
         "--pair-limit",
@@ -248,8 +239,12 @@ def write_csv(path: Path, fieldnames, rows):
         w.writerows(rows)
 
 
-def select_sources(size_key: str) -> list[Path]:
-    count = SIZE_TO_COUNT[size_key]
+def select_sources(size_key: str, subset_sizes: dict) -> list[Path]:
+    if size_key not in subset_sizes:
+        valid = ", ".join(subset_sizes.keys())
+        raise ValueError(f"Unknown size '{size_key}'. Valid sizes: {valid}")
+
+    count = int(subset_sizes[size_key])
     subset_dir = SCALABILITY_ROOT / size_key
     source_dir = subset_dir if subset_dir.is_dir() else MASTER_DIR
 
@@ -413,7 +408,11 @@ def build_labels_for_subset(
 
 
 def run_for_size(
-    size_key: str, pair_limit: str, rebuild_subsets: bool, configs: list[tuple]
+    size_key: str,
+    pair_limit: str,
+    rebuild_subsets: bool,
+    configs: list[tuple],
+    subset_sizes: dict,
 ):
     size_start = time.perf_counter()
     if rebuild_subsets:
@@ -444,7 +443,7 @@ def run_for_size(
     ]:
         d.mkdir(parents=True, exist_ok=True)
 
-    sources = select_sources(size_key)
+    sources = select_sources(size_key, subset_sizes)
     manifest_rows = load_transform_manifest()
     file_list_src = build_file_list_for_subset(
         size_key, sources, manifest_rows, review_stage_dir
@@ -658,7 +657,11 @@ def run_for_size(
 
 def main():
     cfg = load_common_config()
-    args = parse_args()
+    subset_sizes = cfg.get("subset_sizes", {})
+    if not subset_sizes:
+        raise ValueError("Missing subset_sizes in common_config.json")
+
+    args = parse_args(list(subset_sizes.keys()))
     configs = build_configs_from_common_config(cfg)
     pair_limits = cfg.get("pair_limits", {})
     effective_pair_limit = (
@@ -682,6 +685,7 @@ def main():
             pair_limit=effective_pair_limit,
             rebuild_subsets=args.rebuild_subsets,
             configs=configs,
+            subset_sizes=subset_sizes,
         )
 
     print(f"\n{Fore.GREEN}All requested sizes complete.")
