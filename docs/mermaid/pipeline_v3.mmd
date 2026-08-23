@@ -1,0 +1,18 @@
+flowchart TD
+    Asset["Ingested Image Asset"] --> S1["Stage 1:<br/>SHA-256 Hashing"]
+    
+    S1 -->|Exact Match| Ptr["Store<br/>Pointer"]
+    S1 -->|Unique / Modified| S2["Stage 2:<br/>DCT pHash Generator"]
+    
+    S2 -->|D_H > 5| U1["Mark<br/>Unique"]
+    S2 -->|D_H <= 5| S3["Stage 3:<br/>SSIM Engine"]
+
+    S3 -->|SSIM < 0.85| U2["Mark<br/>Unique"]
+    S3 -->|SSIM >= 0.85| V["Pair Verified<br/>(Duplicate)"]
+
+
+    classDef stage fill:#f0f4f8,stroke:#2b6cb0,stroke-width:1.5px,color:#1a202c;
+    classDef outcome fill:#edf2f7,stroke:#4a5568,stroke-width:1px,color:#2d3748;
+
+    class S1,S2,S3 stage;
+    class Asset,Ptr,U1,V,U2 outcome;
