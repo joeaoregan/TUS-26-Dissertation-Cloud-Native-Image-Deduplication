@@ -106,3 +106,8 @@ data/reviews/reference_labels_eval_*.csv
 results/final/eval4_t5/
 results/final/eval4_t10/
 results/final/eval4_t20/
+
+# Regenerable evaluation artifacts
+results/final/eval*/logs/
+results/final/eval*/predictions/
+results/final/eval*/reports/
