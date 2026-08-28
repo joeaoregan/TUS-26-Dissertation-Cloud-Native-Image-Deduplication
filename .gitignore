@@ -111,3 +111,6 @@ results/final/eval4_t20/
 results/final/eval*/logs/
 results/final/eval*/predictions/
 results/final/eval*/reports/
+
+# Local dev only
+dev/
