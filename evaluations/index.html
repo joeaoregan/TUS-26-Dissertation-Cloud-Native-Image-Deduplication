@@ -11,28 +11,28 @@
       
       
       
-        <link rel="prev" href="../02-benchmarking-and-evaluation-framework/">
+        <link rel="prev" href="../testing/">
       
       
-        <link rel="next" href="../04-containerisation-and-runtime-configuration/">
+        <link rel="next" href="evaluation-1/">
       
       
         
       
       
-      <link rel="icon" href="../../images/favicon.ico">
+      <link rel="icon" href="../images/favicon.ico">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
-        <title>03 - Threshold Tuning and Reproducibility Baseline - Cloud-Native Perceptual Image Deduplication</title>
+        <title>Overview - Cloud-Native Perceptual Image Deduplication</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -51,7 +51,7 @@
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#phase-03-threshold-tuning-and-reproducibility-baseline" class="md-skip">
+        <a href="#evaluation-results" class="md-skip">
           Skip to content
         </a>
       
@@ -90,9 +90,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Cloud-Native Perceptual Image Deduplication" class="md-header__button md-logo" aria-label="Cloud-Native Perceptual Image Deduplication" data-md-component="logo">
+    <a href=".." title="Cloud-Native Perceptual Image Deduplication" class="md-header__button md-logo" aria-label="Cloud-Native Perceptual Image Deduplication" data-md-component="logo">
       
-  <img src="../../images/logo.png" alt="logo">
+  <img src="../images/logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              03 - Threshold Tuning and Reproducibility Baseline
+              Overview
             
           </span>
         </div>
@@ -222,7 +222,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../.." class="md-tabs__link">
+        <a href=".." class="md-tabs__link">
           
   
   
@@ -238,13 +238,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../phase-notes/" class="md-tabs__link">
           
   
   
@@ -264,7 +262,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../features/" class="md-tabs__link">
+        <a href="../features/" class="md-tabs__link">
           
   
   
@@ -284,7 +282,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../testing/" class="md-tabs__link">
+        <a href="../testing/" class="md-tabs__link">
           
   
   
@@ -300,11 +298,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../evaluations/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
           
   
   
@@ -324,7 +324,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../deliverables/" class="md-tabs__link">
+        <a href="../deliverables/" class="md-tabs__link">
           
   
   
@@ -358,9 +358,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Cloud-Native Perceptual Image Deduplication" class="md-nav__button md-logo" aria-label="Cloud-Native Perceptual Image Deduplication" data-md-component="logo">
+    <a href=".." title="Cloud-Native Perceptual Image Deduplication" class="md-nav__button md-logo" aria-label="Cloud-Native Perceptual Image Deduplication" data-md-component="logo">
       
-  <img src="../../images/logo.png" alt="logo">
+  <img src="../images/logo.png" alt="logo">
 
     </a>
     Cloud-Native Perceptual Image Deduplication
@@ -439,7 +439,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -559,31 +559,26 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
@@ -601,7 +596,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -619,7 +614,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../phase-notes/" class="md-nav__link">
         
   
   
@@ -647,7 +642,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../01-local-pipeline-foundation/" class="md-nav__link">
+      <a href="../phase-notes/01-local-pipeline-foundation/" class="md-nav__link">
         
   
   
@@ -675,7 +670,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../02-benchmarking-and-evaluation-framework/" class="md-nav__link">
+      <a href="../phase-notes/02-benchmarking-and-evaluation-framework/" class="md-nav__link">
         
   
   
@@ -700,37 +695,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    03 - Threshold Tuning and Reproducibility Baseline
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../phase-notes/03-threshold-tuning-and-reproducibility-baseline/" class="md-nav__link">
         
   
   
@@ -746,103 +714,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#objective" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Objective
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#changes-introduced" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Changes Introduced
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tuning-sweep" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tuning Sweep
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#selected-operating-point" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Selected Operating Point
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#final-baseline-metrics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Final Baseline Metrics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reproducibility-assets-added" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reproducibility Assets Added
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#result" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Result
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -855,7 +726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../04-containerisation-and-runtime-configuration/" class="md-nav__link">
+      <a href="../phase-notes/04-containerisation-and-runtime-configuration/" class="md-nav__link">
         
   
   
@@ -883,7 +754,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../05-async-job-orchestration-and-worker-model/" class="md-nav__link">
+      <a href="../phase-notes/05-async-job-orchestration-and-worker-model/" class="md-nav__link">
         
   
   
@@ -911,7 +782,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../06-observability-and-resilience-hardening/" class="md-nav__link">
+      <a href="../phase-notes/06-observability-and-resilience-hardening/" class="md-nav__link">
         
   
   
@@ -939,7 +810,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../07-cloud-deployment-and-scale-validation/" class="md-nav__link">
+      <a href="../phase-notes/07-cloud-deployment-and-scale-validation/" class="md-nav__link">
         
   
   
@@ -1026,7 +897,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../features/" class="md-nav__link">
+      <a href="../features/" class="md-nav__link">
         
   
   
@@ -1113,7 +984,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../testing/" class="md-nav__link">
+      <a href="../testing/" class="md-nav__link">
         
   
   
@@ -1145,26 +1016,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -1182,7 +1058,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1197,10 +1073,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../evaluations/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1216,6 +1119,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#evaluation-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cost-ordered-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost-ordered pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reproducibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproducibility
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1228,7 +1184,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluations/evaluation-1/" class="md-nav__link">
+      <a href="evaluation-1/" class="md-nav__link">
         
   
   
@@ -1256,7 +1212,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluations/evaluation-2/" class="md-nav__link">
+      <a href="evaluation-2/" class="md-nav__link">
         
   
   
@@ -1284,7 +1240,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluations/evaluation-3/" class="md-nav__link">
+      <a href="evaluation-3/" class="md-nav__link">
         
   
   
@@ -1312,7 +1268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluations/evaluation-4/" class="md-nav__link">
+      <a href="evaluation-4/" class="md-nav__link">
         
   
   
@@ -1399,7 +1355,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deliverables/" class="md-nav__link">
+      <a href="../deliverables/" class="md-nav__link">
         
   
   
@@ -1427,7 +1383,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deliverables/project-proposal/" class="md-nav__link">
+      <a href="../deliverables/project-proposal/" class="md-nav__link">
         
   
   
@@ -1455,7 +1411,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deliverables/literature-review/" class="md-nav__link">
+      <a href="../deliverables/literature-review/" class="md-nav__link">
         
   
   
@@ -1483,7 +1439,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deliverables/interim-presentation/" class="md-nav__link">
+      <a href="../deliverables/interim-presentation/" class="md-nav__link">
         
   
   
@@ -1511,7 +1467,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deliverables/interim-results-report/" class="md-nav__link">
+      <a href="../deliverables/interim-results-report/" class="md-nav__link">
         
   
   
@@ -1539,7 +1495,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deliverables/final-results-report/" class="md-nav__link">
+      <a href="../deliverables/final-results-report/" class="md-nav__link">
         
   
   
@@ -1567,7 +1523,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deliverables/final-poster/" class="md-nav__link">
+      <a href="../deliverables/final-poster/" class="md-nav__link">
         
   
   
@@ -1595,7 +1551,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deliverables/full-academic-article/" class="md-nav__link">
+      <a href="../deliverables/full-academic-article/" class="md-nav__link">
         
   
   
@@ -1650,10 +1606,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#objective" class="md-nav__link">
+  <a href="#evaluation-structure" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Objective
+        Evaluation structure
       
     </span>
   </a>
@@ -1661,10 +1617,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#changes-introduced" class="md-nav__link">
+  <a href="#cost-ordered-pipeline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Changes Introduced
+        Cost-ordered pipeline
       
     </span>
   </a>
@@ -1672,54 +1628,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tuning-sweep" class="md-nav__link">
+  <a href="#reproducibility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tuning Sweep
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#selected-operating-point" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Selected Operating Point
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#final-baseline-metrics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Final Baseline Metrics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reproducibility-assets-added" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reproducibility Assets Added
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#result" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Result
+        Reproducibility
       
     </span>
   </a>
@@ -1752,51 +1664,57 @@
   
 
 
-<h1 id="phase-03-threshold-tuning-and-reproducibility-baseline">Phase 03: Threshold Tuning and Reproducibility Baseline<a class="headerlink" href="#phase-03-threshold-tuning-and-reproducibility-baseline" title="Permanent link">&para;</a></h1>
-<h2 id="objective">Objective<a class="headerlink" href="#objective" title="Permanent link">&para;</a></h2>
-<p>Tune similarity thresholds and establish a reproducible final local baseline.</p>
-<h2 id="changes-introduced">Changes Introduced<a class="headerlink" href="#changes-introduced" title="Permanent link">&para;</a></h2>
-<p>Runtime-configurable benchmark arguments:
-- <code>--phash-threshold</code>
-- <code>--ssim-threshold</code>
-- <code>--run-tag</code></p>
-<p>This removed the need to edit source code between experimental runs.</p>
-<h2 id="tuning-sweep">Tuning Sweep<a class="headerlink" href="#tuning-sweep" title="Permanent link">&para;</a></h2>
-<p>Tested combinations:
-- <strong>pHash</strong>: 4, 5, 6, 7
-- <strong>SSIM</strong>: 0.85, 0.90</p>
-<p>Observed behaviour:
-- pHash changes (4–7) did not alter results on the evaluation dataset.
-- SSIM 0.90 reduced recall without improving precision.</p>
-<h2 id="selected-operating-point">Selected Operating Point<a class="headerlink" href="#selected-operating-point" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>pHash=5</strong></li>
-<li><strong>SSIM=0.85</strong></li>
-</ul>
-<h2 id="final-baseline-metrics">Final Baseline Metrics<a class="headerlink" href="#final-baseline-metrics" title="Permanent link">&para;</a></h2>
-<ul>
-<li>TP=48, FP=0, FN=3, TN=8</li>
-<li>Precision=1.0000</li>
-<li>Recall=0.9412</li>
-<li>F1=0.9697</li>
-<li>Accuracy=0.9492</li>
-</ul>
-<p>Known misses:
-- <code>ILSVRC2012_val_00000139</code> (brightness_up)
-- <code>ILSVRC2012_val_00000141</code> (brightness_up)
-- <code>ILSVRC2012_val_00000126</code> (green variant)</p>
-<p>Observed tendency:
-- Misses often involve low-colour/near-grayscale imagery with subtle brightness/colour shifts.</p>
-<h2 id="reproducibility-assets-added">Reproducibility Assets Added<a class="headerlink" href="#reproducibility-assets-added" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>submission/RUNBOOK.md</code></li>
-<li><code>submission/README_SUBMISSION.md</code></li>
-<li>final baseline JSON/CSV artifacts</li>
-<li>SHA-256 checksum manifest</li>
-<li>Benchmark JSON includes internal UTC timestamps (<code>run_started_at_utc</code>, <code>run_completed_at_utc</code>) and <code>run_duration_ms</code></li>
-</ul>
-<h2 id="result">Result<a class="headerlink" href="#result" title="Permanent link">&para;</a></h2>
-<p>A stable, reproducible, and defensible local baseline was established for dissertation submission and cloud-native extension.</p>
+<h1 id="evaluation-results">Evaluation Results<a class="headerlink" href="#evaluation-results" title="Permanent link">&para;</a></h1>
+<p>The dissertation evaluates the image-deduplication pipeline from four
+complementary perspectives: processing cost, threshold selection, robustness to
+image transformations, and scalability. Together, these evaluations test both
+detection quality and the computational consequences of the three-stage design.</p>
+<h2 id="evaluation-structure">Evaluation structure<a class="headerlink" href="#evaluation-structure" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Evaluation</th>
+<th>Question</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="evaluation-1/">1. Pipeline runtime</a></td>
+<td>Where is processing time spent?</td>
+<td>Per-stage runtime and candidate counts</td>
+</tr>
+<tr>
+<td><a href="evaluation-2/">2. Threshold selection</a></td>
+<td>How do pHash and SSIM thresholds affect detection?</td>
+<td>Precision, recall, F1 score, and accuracy</td>
+</tr>
+<tr>
+<td><a href="evaluation-3/">3. Robustness</a></td>
+<td>Which transformations remain detectable?</td>
+<td>Recall by transformation family</td>
+</tr>
+<tr>
+<td><a href="evaluation-4/">4. Scalability</a></td>
+<td>How does runtime change with workload size?</td>
+<td>Runtime growth, throughput, memory, and stage composition</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cost-ordered-pipeline">Cost-ordered pipeline<a class="headerlink" href="#cost-ordered-pipeline" title="Permanent link">&para;</a></h2>
+<p>The pipeline performs inexpensive, high-confidence work first. SHA-256 resolves
+binary-identical files, pHash narrows the candidate set using perceptual
+similarity, and SSIM performs the most detailed comparison only on surviving
+pairs. This ordering limits the number of expensive structural comparisons.</p>
+<p><img alt="Cost-ordered three-stage image-deduplication pipeline" src="../thesis-assets/figure-1-cost-ordered-cascade.svg" /></p>
+<p><em>Figure 1. The candidate workload narrows as comparison detail and cost increase.</em></p>
+<p><a href="../thesis-assets/figure-1-cost-ordered-cascade.png">PNG version</a> | <a href="../thesis-assets/figure-1-cost-ordered-cascade.svg">SVG version</a></p>
+<h2 id="reproducibility">Reproducibility<a class="headerlink" href="#reproducibility" title="Permanent link">&para;</a></h2>
+<p>The figures are generated by <code>tools/build_thesis_figures.py</code>. Their inputs are
+the versioned evaluation summaries, prediction exports, and reference labels in
+the repository. The SVG files are used in this site for resolution-independent
+display; matching PNG files are retained for documents and software that do not
+support SVG.</p>
 
 
 
@@ -1832,7 +1750,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../02-benchmarking-and-evaluation-framework/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 02 - Benchmarking and Evaluation Framework">
+          <a href="../testing/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1842,20 +1760,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                02 - Benchmarking and Evaluation Framework
+                Overview
               </div>
             </div>
           </a>
         
         
           
-          <a href="../04-containerisation-and-runtime-configuration/" class="md-footer__link md-footer__link--next" aria-label="Next: 04 - Containerisation and Runtime Configuration">
+          <a href="evaluation-1/" class="md-footer__link md-footer__link--next" aria-label="Next: Evaluation 1 - Pipeline Runtime">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                04 - Containerisation and Runtime Configuration
+                Evaluation 1 - Pipeline Runtime
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1892,10 +1810,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "content.code.copy", "toc.follow", "navigation.footer", "navigation.instant.preview", "navigation.tracking", "navigation.path", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "content.code.copy", "toc.follow", "navigation.footer", "navigation.instant.preview", "navigation.tracking", "navigation.path", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

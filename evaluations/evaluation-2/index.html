@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../02-benchmarking-and-evaluation-framework/">
+        <link rel="prev" href="../evaluation-1/">
       
       
-        <link rel="next" href="../04-containerisation-and-runtime-configuration/">
+        <link rel="next" href="../evaluation-3/">
       
       
         
@@ -25,7 +25,7 @@
     
     
       
-        <title>03 - Threshold Tuning and Reproducibility Baseline - Cloud-Native Perceptual Image Deduplication</title>
+        <title>Evaluation 2 - Threshold Selection - Cloud-Native Perceptual Image Deduplication</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#phase-03-threshold-tuning-and-reproducibility-baseline" class="md-skip">
+        <a href="#evaluation-2-threshold-selection" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              03 - Threshold Tuning and Reproducibility Baseline
+              Evaluation 2 - Threshold Selection
             
           </span>
         </div>
@@ -238,13 +238,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../phase-notes/" class="md-tabs__link">
           
   
   
@@ -300,11 +298,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../evaluations/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -559,31 +559,26 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
@@ -601,7 +596,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -619,7 +614,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../phase-notes/" class="md-nav__link">
         
   
   
@@ -647,7 +642,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../01-local-pipeline-foundation/" class="md-nav__link">
+      <a href="../../phase-notes/01-local-pipeline-foundation/" class="md-nav__link">
         
   
   
@@ -675,7 +670,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../02-benchmarking-and-evaluation-framework/" class="md-nav__link">
+      <a href="../../phase-notes/02-benchmarking-and-evaluation-framework/" class="md-nav__link">
         
   
   
@@ -700,37 +695,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    03 - Threshold Tuning and Reproducibility Baseline
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../phase-notes/03-threshold-tuning-and-reproducibility-baseline/" class="md-nav__link">
         
   
   
@@ -746,103 +714,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#objective" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Objective
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#changes-introduced" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Changes Introduced
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tuning-sweep" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tuning Sweep
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#selected-operating-point" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Selected Operating Point
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#final-baseline-metrics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Final Baseline Metrics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reproducibility-assets-added" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reproducibility Assets Added
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#result" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Result
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -855,7 +726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../04-containerisation-and-runtime-configuration/" class="md-nav__link">
+      <a href="../../phase-notes/04-containerisation-and-runtime-configuration/" class="md-nav__link">
         
   
   
@@ -883,7 +754,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../05-async-job-orchestration-and-worker-model/" class="md-nav__link">
+      <a href="../../phase-notes/05-async-job-orchestration-and-worker-model/" class="md-nav__link">
         
   
   
@@ -911,7 +782,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../06-observability-and-resilience-hardening/" class="md-nav__link">
+      <a href="../../phase-notes/06-observability-and-resilience-hardening/" class="md-nav__link">
         
   
   
@@ -939,7 +810,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../07-cloud-deployment-and-scale-validation/" class="md-nav__link">
+      <a href="../../phase-notes/07-cloud-deployment-and-scale-validation/" class="md-nav__link">
         
   
   
@@ -1145,26 +1016,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -1182,7 +1058,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1200,7 +1076,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluations/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
@@ -1228,7 +1104,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluations/evaluation-1/" class="md-nav__link">
+      <a href="../evaluation-1/" class="md-nav__link">
         
   
   
@@ -1253,10 +1129,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../evaluations/evaluation-2/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation 2 - Threshold Selection
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1272,6 +1175,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Results
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interpretation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpretation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1284,7 +1240,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluations/evaluation-3/" class="md-nav__link">
+      <a href="../evaluation-3/" class="md-nav__link">
         
   
   
@@ -1312,7 +1268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluations/evaluation-4/" class="md-nav__link">
+      <a href="../evaluation-4/" class="md-nav__link">
         
   
   
@@ -1661,10 +1617,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#changes-introduced" class="md-nav__link">
+  <a href="#results" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Changes Introduced
+        Results
       
     </span>
   </a>
@@ -1672,54 +1628,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tuning-sweep" class="md-nav__link">
+  <a href="#interpretation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tuning Sweep
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#selected-operating-point" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Selected Operating Point
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#final-baseline-metrics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Final Baseline Metrics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reproducibility-assets-added" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reproducibility Assets Added
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#result" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Result
+        Interpretation
       
     </span>
   </a>
@@ -1752,51 +1664,84 @@
   
 
 
-<h1 id="phase-03-threshold-tuning-and-reproducibility-baseline">Phase 03: Threshold Tuning and Reproducibility Baseline<a class="headerlink" href="#phase-03-threshold-tuning-and-reproducibility-baseline" title="Permanent link">&para;</a></h1>
+<h1 id="evaluation-2-threshold-selection">Evaluation 2: Threshold Selection<a class="headerlink" href="#evaluation-2-threshold-selection" title="Permanent link">&para;</a></h1>
 <h2 id="objective">Objective<a class="headerlink" href="#objective" title="Permanent link">&para;</a></h2>
-<p>Tune similarity thresholds and establish a reproducible final local baseline.</p>
-<h2 id="changes-introduced">Changes Introduced<a class="headerlink" href="#changes-introduced" title="Permanent link">&para;</a></h2>
-<p>Runtime-configurable benchmark arguments:
-- <code>--phash-threshold</code>
-- <code>--ssim-threshold</code>
-- <code>--run-tag</code></p>
-<p>This removed the need to edit source code between experimental runs.</p>
-<h2 id="tuning-sweep">Tuning Sweep<a class="headerlink" href="#tuning-sweep" title="Permanent link">&para;</a></h2>
-<p>Tested combinations:
-- <strong>pHash</strong>: 4, 5, 6, 7
-- <strong>SSIM</strong>: 0.85, 0.90</p>
-<p>Observed behaviour:
-- pHash changes (4–7) did not alter results on the evaluation dataset.
-- SSIM 0.90 reduced recall without improving precision.</p>
-<h2 id="selected-operating-point">Selected Operating Point<a class="headerlink" href="#selected-operating-point" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>pHash=5</strong></li>
-<li><strong>SSIM=0.85</strong></li>
-</ul>
-<h2 id="final-baseline-metrics">Final Baseline Metrics<a class="headerlink" href="#final-baseline-metrics" title="Permanent link">&para;</a></h2>
-<ul>
-<li>TP=48, FP=0, FN=3, TN=8</li>
-<li>Precision=1.0000</li>
-<li>Recall=0.9412</li>
-<li>F1=0.9697</li>
-<li>Accuracy=0.9492</li>
-</ul>
-<p>Known misses:
-- <code>ILSVRC2012_val_00000139</code> (brightness_up)
-- <code>ILSVRC2012_val_00000141</code> (brightness_up)
-- <code>ILSVRC2012_val_00000126</code> (green variant)</p>
-<p>Observed tendency:
-- Misses often involve low-colour/near-grayscale imagery with subtle brightness/colour shifts.</p>
-<h2 id="reproducibility-assets-added">Reproducibility Assets Added<a class="headerlink" href="#reproducibility-assets-added" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>submission/RUNBOOK.md</code></li>
-<li><code>submission/README_SUBMISSION.md</code></li>
-<li>final baseline JSON/CSV artifacts</li>
-<li>SHA-256 checksum manifest</li>
-<li>Benchmark JSON includes internal UTC timestamps (<code>run_started_at_utc</code>, <code>run_completed_at_utc</code>) and <code>run_duration_ms</code></li>
-</ul>
-<h2 id="result">Result<a class="headerlink" href="#result" title="Permanent link">&para;</a></h2>
-<p>A stable, reproducible, and defensible local baseline was established for dissertation submission and cloud-native extension.</p>
+<p>Evaluation 2 measures how nearby pHash and SSIM threshold choices affect
+classification quality. Five configurations were tested against 59 labelled
+pairs. C1 is the selected baseline, using a pHash threshold of 5 and an SSIM
+threshold of 0.85.</p>
+<h2 id="results">Results<a class="headerlink" href="#results" title="Permanent link">&para;</a></h2>
+<p><img alt="Detection metrics by threshold configuration" src="../../thesis-assets/figure-4-2-eval2-detection-by-configuration.svg" /></p>
+<p><em>Figure 4.2. Precision, recall, F1 score, and accuracy for configurations C1-C5.</em></p>
+<p><a href="../../thesis-assets/figure-4-2-eval2-detection-by-configuration.png">PNG version</a> | <a href="../../thesis-assets/figure-4-2-eval2-detection-by-configuration.svg">SVG version</a></p>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th style="text-align: right;">pHash</th>
+<th style="text-align: right;">SSIM</th>
+<th style="text-align: right;">Precision</th>
+<th style="text-align: right;">Recall</th>
+<th style="text-align: right;">F1 score</th>
+<th style="text-align: right;">Accuracy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1 (baseline)</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.85</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.9412</td>
+<td style="text-align: right;">0.9697</td>
+<td style="text-align: right;">0.9492</td>
+</tr>
+<tr>
+<td>C2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.85</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.9412</td>
+<td style="text-align: right;">0.9697</td>
+<td style="text-align: right;">0.9492</td>
+</tr>
+<tr>
+<td>C3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.90</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.9216</td>
+<td style="text-align: right;">0.9592</td>
+<td style="text-align: right;">0.9322</td>
+</tr>
+<tr>
+<td>C4</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0.85</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.9412</td>
+<td style="text-align: right;">0.9697</td>
+<td style="text-align: right;">0.9492</td>
+</tr>
+<tr>
+<td>C5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0.90</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.9216</td>
+<td style="text-align: right;">0.9592</td>
+<td style="text-align: right;">0.9322</td>
+</tr>
+</tbody>
+</table>
+<h2 id="interpretation">Interpretation<a class="headerlink" href="#interpretation" title="Permanent link">&para;</a></h2>
+<p>All configurations produced perfect precision and therefore no false-positive
+detections in this dataset. Changing the pHash threshold from 4 to 6 did not
+alter the reported classification metrics when the SSIM threshold remained
+fixed. Raising SSIM from 0.85 to 0.90 introduced one additional false negative,
+reducing recall from 0.9412 to 0.9216. C1 retains the less restrictive SSIM
+threshold and was selected as the balanced baseline for later evaluations.</p>
+<p><strong>Data source:</strong> <code>results/interim/eval2/metrics/table_eval2_detection_summary.csv</code></p>
 
 
 
@@ -1832,7 +1777,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../02-benchmarking-and-evaluation-framework/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 02 - Benchmarking and Evaluation Framework">
+          <a href="../evaluation-1/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Evaluation 1 - Pipeline Runtime">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1842,20 +1787,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                02 - Benchmarking and Evaluation Framework
+                Evaluation 1 - Pipeline Runtime
               </div>
             </div>
           </a>
         
         
           
-          <a href="../04-containerisation-and-runtime-configuration/" class="md-footer__link md-footer__link--next" aria-label="Next: 04 - Containerisation and Runtime Configuration">
+          <a href="../evaluation-3/" class="md-footer__link md-footer__link--next" aria-label="Next: Evaluation 3 - Robustness">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                04 - Containerisation and Runtime Configuration
+                Evaluation 3 - Robustness
               </div>
             </div>
             <div class="md-footer__button md-icon">
