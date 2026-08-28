@@ -40,7 +40,7 @@ EVAL4_SCALABILITY = (
 EVAL4_RUNTIME_COMPOSITION = (
     REPO_ROOT / "results" / "final" / "report-data" / "eval4_c1_runtime_composition.csv"
 )
-OUTPUT_DIR = REPO_ROOT / "submission" / "thesis-assets"
+OUTPUT_DIR = REPO_ROOT / "docs" / "thesis-assets"
 
 
 def build_cost_ordered_cascade_figure() -> tuple[Path, Path]:

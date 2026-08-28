@@ -48,6 +48,12 @@ nav:
       - Overview: features/index.md
   - Testing:
       - Overview: testing/index.md
+  - Evaluations:
+      - Overview: evaluations/index.md
+      - Evaluation 1 - Pipeline Runtime: evaluations/evaluation-1.md
+      - Evaluation 2 - Threshold Selection: evaluations/evaluation-2.md
+      - Evaluation 3 - Robustness: evaluations/evaluation-3.md
+      - Evaluation 4 - Scalability: evaluations/evaluation-4.md
   - Deliverables:
       - Overview: deliverables/index.md
       - Project Proposal: deliverables/project-proposal.md
