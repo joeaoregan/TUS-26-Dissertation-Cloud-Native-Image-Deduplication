@@ -24,9 +24,6 @@ A multi-stage, cascading image deduplication pipeline designed to identify exact
 ## Structure
 
 ```text
-## Structure
-
-```text
 ├── services/
 │   └── dedupe-py/                       # Python deduplication service
 │       ├── benchmarks/                  # Benchmark runner and analysis helpers
@@ -84,7 +81,12 @@ pip install -r services/dedupe-py/core_engine/requirements.txt
 
 This project is tested with **Python 3.13.x** (benchmark runs validated on **3.13.15**).
 
-> Note: Python 3.14 may fail dependency installation (notably NumPy/scikit-image wheel compatibility) unless package versions are updated.
+
+> [!NOTE]
+> Python 3.14 may fail dependency installation
+> (notably NumPy/scikit-image wheel compatibility)
+> unless package versions are updated.
+
 
 ## Run Stage Execution
 
